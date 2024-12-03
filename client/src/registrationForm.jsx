@@ -68,7 +68,10 @@ function UserForm() {
       frm.append("referral", formElements.referral);
       frm.append("friendName", formElements.friendName);
 
-      const response = await axios.post("http://localhost:5000/register", frm);
+      const response = await axios.post(
+        "http://localhost:5000/api/students/register",
+        frm
+      );
       alert("Form submitted successfully");
       console.log("Response:", response.data);
     } catch (error) {
