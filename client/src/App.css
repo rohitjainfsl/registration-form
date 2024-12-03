@@ -266,7 +266,7 @@ a {
   text-decoration: none;
 }
 
-.form-group{
+.form-group {
   align-items: center;
 }
 
@@ -287,4 +287,9 @@ nav ul li a {
 
 nav ul li a:hover {
   text-decoration: underline;
+}
+.tnc .form-check-inline {
+  padding-left: 0;
+  display: flex;
+  align-items: center;
 }
