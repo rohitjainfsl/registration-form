@@ -1,25 +1,18 @@
-import React from "react";
-
+import { FaPhoneAlt } from "react-icons/fa";
 const Header = () => {
   return (
-    <div className="flex w-full h-12">
-      <div className="w-1/2 bg-[#f27144] text-black text-center flex items-center justify-center">
-        <a
-          href="tel:+8824453320"
-          className="hover:underline transition duration-200"
-        >
-          +8824453320
-        </a>
+    <section className="upper-header">
+      <div className="container">
+        <div className="gradient">
+          <p className="mb-0">
+            <a className="d-flex items-center" href="tel:918824453320">
+              <FaPhoneAlt />
+              +91-8824453320
+            </a>
+          </p>
+        </div>
       </div>
-      <div className="w-1/2 bg-[#2691bf] text-white text-center flex items-center justify-center">
-        <a
-          href="tel:+9024881021"
-          className="hover:underline transition duration-200"
-        >
-          +9024881021
-        </a>
-      </div>
-    </div>
+    </section>
   );
 };
 

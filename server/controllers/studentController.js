@@ -33,7 +33,11 @@ export async function register(req, res) {
     // const aadharFront = req.files.aadharFront.path;
     // const aadharBack = req.files.aadharBack.path;
 
-    await cloudinaryUpload([req.files.aadharFront[0], req.files.aadharBack[0]]);
+    const cloudinaryObject = await cloudinaryUpload([
+      req.files.aadharFront[0],
+      req.files.aadharBack[0],
+    ]);
+    if (cloudinaryObject) console.log(cloudinaryObject);
 
     // const newRegistration = new studentModel({
     //   name,

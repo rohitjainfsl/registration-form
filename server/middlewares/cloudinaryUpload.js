@@ -19,8 +19,9 @@ export async function cloudinaryUpload(images) {
 
       uploadStream.end(images[0].buffer);
     });
-    console.log(result)
+    console.log(result);
   }
+  return Object.keys(result).length > 0 ? result : null;
 
   // Upload an image
   //   const uploadResult = await cloudinary.uploader

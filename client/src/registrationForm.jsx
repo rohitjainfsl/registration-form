@@ -1,7 +1,5 @@
-import "./App.css";
 import { useState } from "react";
 import Modal from "./t&m_model.jsx";
-import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 
 function UserForm() {

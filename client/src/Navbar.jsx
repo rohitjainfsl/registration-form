@@ -1,147 +1,84 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import Logo from "./assets/logo.png";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="bg-[#2691bf] shadow-md">
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        {/* Logo */}
-        <Link to="/" className="text-black text-xl font-bold">
-          <span className="bg-[#f27144] text-white px-2 py-1 rounded">MyApp</span>
-        </Link>
-
-        {/* Desktop Navigation */}
-        <nav>
-          <ul className="hidden md:flex space-x-6 text-black font-semibold">
-            <li>
-              <Link
-                to="/"
-                className=" text-black hover:text-[#f27144] transition duration-200"
-              >
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/courses"
-                className=" text-black hover:text-[#f27144] transition duration-200"
-              >
-                Courses
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/blog"
-                className=" text-black hover:text-[#f27144] transition duration-200"
-              >
-                Blog
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/contact"
-                className=" text-black hover:text-[#f27144] transition duration-200"
-              >
-                Contact
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/registration"
-                className=" text-black hover:text-[#f27144] transition duration-200"
-              >
-                Register/Login
-              </Link>
-            </li>
-          </ul>
-        </nav>
-
-        {/* Mobile Menu Button */}
+    <nav className="navbar navbar-expand-lg bg py-0">
+      <div className="container">
+        <a className="navbar-brand imglogo" href="#">
+          <Link to="/">
+            <img src={Logo} alt="Full Stack Learning" />
+          </Link>
+        </a>
         <button
-          onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}
-          className="md:hidden text-white focus:outline-none"
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
         >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M4 6h16M4 12h16M4 18h16"
-            ></path>
-          </svg>
+          <span>
+            <i id="bar" className="ri-menu-line"></i>
+          </span>
         </button>
-      </div>
-
-      {/* Mobile Navigation */}
-      {isMobileMenuOpen && (
-        <nav className="md:hidden bg-[#2691bf] text-white">
-          <ul className="flex flex-col space-y-4 p-4">
-            <li>
-              <Link
-                to="/"
-                className=" text-black hover:text-[#f27144] transition duration-200"
-                onClick={() => setMobileMenuOpen(false)}
+        <div className="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul className="navbar-nav m-auto mb-2 mb-lg-0">
+            <li className="nav-item font">
+              <a
+                className="nav-link active"
+                aria-current="page"
+                href="index.html"
               >
                 Home
-              </Link>
+              </a>
             </li>
-            <li>
-              <Link
-                to="/courses"
-                className=" text-black hover:text-[#f27144] transition duration-200"
-                onClick={() => setMobileMenuOpen(false)}
+            <li className="nav-item font">
+              <a
+                className="nav-link active"
+                aria-current="page"
+                href="Courses.html"
               >
                 Courses
-              </Link>
+              </a>
             </li>
-            <li>
-              <Link
-                to="/blog"
-                className=" text-black hover:text-[#f27144] transition duration-200"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Blog
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/contact"
-                className=" text-black hover:text-[#f27144] transition duration-200"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Contact
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/registration"
-                className=" text-black hover:text-[#f27144] transition duration-200"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                register/Login
-              </Link>
-            </li>
-            <li>
+            <li className="nav-item font">
               <a
-                href="tel:+1234567890"
-                className=" text-black hover:text-[#f27144] transition duration-200"
-                onClick={() => setMobileMenuOpen(false)}
+                className="nav-link active"
+                aria-current="page"
+                href="about.html"
               >
-                +1234567890
+                About
+              </a>
+            </li>
+            <li className="nav-item font">
+              <a className="nav-link active" aria-current="page" href="#">
+                Blog
+              </a>
+            </li>
+
+            <li className="nav-item font">
+              <a
+                className="nav-link active"
+                aria-current="page"
+                href="contact_us.html"
+              >
+                Contact Us
               </a>
             </li>
           </ul>
-        </nav>
-      )}
-    </header>
+          <form className="d-flex">
+            <a href="/registration" className="btn btn-warning">
+              Login / Register
+            </a>
+          </form>
+        </div>
+      </div>
+    </nav>
   );
 };
 

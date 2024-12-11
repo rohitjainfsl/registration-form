@@ -1,3 +1,50 @@
+* {
+  font-family: Poppins, "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+/* HEADER */
+.upper-header {
+  width: 100%;
+  padding: 0 10px;
+  background: rgb(242, 113, 68);
+  background: linear-gradient(
+    45deg,
+    rgba(242, 113, 68, 1) 63%,
+    rgba(38, 145, 191, 1) 63%
+  );
+  font-size: 14px;
+}
+.gradient {
+  display: flex;
+  align-items: center;
+  justify-content: right;
+}
+.gradient p {
+  text-align: right;
+  padding-right: 30px;
+}
+.gradient p a {
+  color: white;
+}
+.gradient p a svg {
+  font-size: 0.8rem;
+}
+
+.imglogo {
+  width: 90px;
+}
+.font a.nav-link.active {
+  font-size: 20px;
+  color: #f27144;
+  margin-left: 20px;
+}
+button.btn.btn-warning,
+a.btn.btn-warning {
+  background-color: #f27144;
+  color: white;
+  font-weight: 600;
+  text-decoration: none;
+}
+
 .card {
   margin: 20px 0 40px 0;
 }
@@ -292,4 +339,12 @@ nav ul li a:hover {
   padding-left: 0;
   display: flex;
   align-items: center;
+}
+
+.gradient {
+  background: linear-gradient(
+    45deg,
+    rgba(242, 113, 68, 1) 63%,
+    rgba(38, 145, 191, 1) 63%
+  );
 }

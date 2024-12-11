@@ -1,22 +1,19 @@
-import React from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-
-import Home from './Pages/Home';
-import UserForm from './registrationForm';
-import About from './Pages/About';
-import Navbar from './Navbar';
-import Header from './Pages/Header';
-import Courses from './Pages/Courses';
-import Blog from './Pages/Blog';
-
-
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Home from "./Pages/Home";
+import UserForm from "./registrationForm";
+import About from "./Pages/About";
+import Navbar from "./Navbar";
+import Header from "./Pages/Header";
+import Courses from "./Pages/Courses";
+import Blog from "./Pages/Blog";
+import "./App.css";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: (
       <>
-        <Header/>
+        <Header />
         <Navbar />
         <Home />
       </>
@@ -60,11 +57,8 @@ const router = createBrowserRouter([
   },
 ]);
 
-
 function App() {
-  return (
-    <RouterProvider router={router} />
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;
