@@ -5,8 +5,6 @@ import axios from "axios";
 function UserForm() {
   const [modalOpen, setModalOpen] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
-  const [selectedCourse, setSelectedCourse] = useState("");
-  const [otherCourse, setOtherCourse] = useState("");
   const [role, setRole] = useState("student");
   const [isChecked, setIsChecked] = useState(false);
   const [isSameAddress, setIsSameAddress] = useState(false);
@@ -82,15 +80,7 @@ function UserForm() {
     setIsChecked(event.target.value === "Friend");
     setFormData({ ...formElements, referral: event.target.value });
   };
-
-  // const handleAgree = () => {
-  //   setTermsAccepted(true); // Set the terms as accepted
-  //   setShowModal(false); // Close the modal
-  // };
-
-  // const handleInputChange = (event) => {
-  //   setFriendName(event.target.value);
-  // };
+  
 
   const handleRoleChange = (event) => {
     setRole(event.target.value);
@@ -116,19 +106,6 @@ function UserForm() {
     console.log("Closing modal...");
     setModalOpen(false);
   };
-
-  // const handleCourseChange = (e) => {
-  //   const { value } = e.target;
-  //   setSelectedCourse(value);
-
-  //   if (value !== "other") {
-  //     setOtherCourse("");
-  //   }
-  // };
-
-  // const handleTermsChange = (e) => {
-  //   setTermsAccepted(e.target.checked);
-  // };
 
   const handleInputChangeForm = (e) => {
     const { name, value } = e.target;

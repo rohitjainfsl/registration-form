@@ -29,52 +29,40 @@ const Navbar = () => {
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav m-auto mb-2 mb-lg-0">
             <li className="nav-item font">
-              <a
-                className="nav-link active"
-                aria-current="page"
-                href="index.html"
-              >
+              <Link to="/" className="nav-link active" aria-current="page">
                 Home
-              </a>
+              </Link>
             </li>
             <li className="nav-item font">
-              <a
-                className="nav-link active"
-                aria-current="page"
-                href="Courses.html"
-              >
+              <Link className="nav-link active" aria-current="page" to="">
                 Courses
-              </a>
+              </Link>
             </li>
             <li className="nav-item font">
-              <a
-                className="nav-link active"
-                aria-current="page"
-                href="about.html"
-              >
+              <Link className="nav-link active" aria-current="page" to="">
                 About
-              </a>
+              </Link>
             </li>
             <li className="nav-item font">
-              <a className="nav-link active" aria-current="page" href="#">
+              <Link className="nav-link active" aria-current="page" to="#">
                 Blog
-              </a>
+              </Link>
             </li>
 
             <li className="nav-item font">
-              <a
-                className="nav-link active"
-                aria-current="page"
-                href="contact_us.html"
-              >
+              <Link className="nav-link active" aria-current="page" to="">
                 Contact Us
-              </a>
+              </Link>
             </li>
           </ul>
           <form className="d-flex">
-            <a href="/registration" className="btn btn-warning">
+            <Link
+              to="/registration"
+              className="btn btn-warning"
+              target="_blank"
+            >
               Login / Register
-            </a>
+            </Link>
           </form>
         </div>
       </div>
