@@ -8,54 +8,59 @@ import Courses from "./Pages/Courses";
 import Blog from "./Pages/Blog";
 import "./App.css";
 
-const router = createBrowserRouter([
+const router = createBrowserRouter(
+  [
+    {
+      path: "/",
+      element: (
+        <>
+          <Header />
+          <Navbar />
+          <Home />
+        </>
+      ),
+    },
+    {
+      path: "/registration",
+      element: (
+        <>
+          <Navbar />
+          <UserForm />
+        </>
+      ),
+    },
+    {
+      path: "/about",
+      element: (
+        <>
+          <Navbar />
+          <About />
+        </>
+      ),
+    },
+    {
+      path: "/courses",
+      element: (
+        <>
+          <Navbar />
+          <Courses />
+        </>
+      ),
+    },
+    {
+      path: "/blog",
+      element: (
+        <>
+          <Navbar />
+          <Blog />
+        </>
+      ),
+    },
+  ],
   {
-    path: "/",
-    element: (
-      <>
-        <Header />
-        <Navbar />
-        <Home />
-      </>
-    ),
-  },
-  {
-    path: "/registration",
-    element: (
-      <>
-        <Navbar />
-        <UserForm />
-      </>
-    ),
-  },
-  {
-    path: "/about",
-    element: (
-      <>
-        <Navbar />
-        <About />
-      </>
-    ),
-  },
-  {
-    path: "/courses",
-    element: (
-      <>
-        <Navbar />
-        <Courses />
-      </>
-    ),
-  },
-  {
-    path: "/blog",
-    element: (
-      <>
-        <Navbar />
-        <Blog />
-      </>
-    ),
-  },
-]);
+    basename: "/",
+  }
+);
 
 function App() {
   return <RouterProvider router={router} />;
