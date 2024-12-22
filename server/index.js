@@ -23,11 +23,10 @@ const __dirname = dirname(__filename);
 //   },
 // });
 
-
 const PORT = 5000;
 const app = express();
 
-app.use(cors({ origin: "http://localhost:5173" }));
+app.use(cors({ origin: process.env.FRONTEND_PATH }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use("/static", express.static(join(__dirname, "uploads")));
