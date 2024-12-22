@@ -1,6 +1,7 @@
 import { v2 as cloudinary } from "cloudinary";
 
 export async function cloudinaryUpload(images) {
+  const results = [];
   // Configuration
   cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -19,9 +20,10 @@ export async function cloudinaryUpload(images) {
 
       uploadStream.end(images[0].buffer);
     });
-    console.log(result);
+    // console.log(result);
+    results.push(result);
   }
-  return Object.keys(result).length > 0 ? result : null;
+  return results.length > 0 ? results : null;
 
   // Upload an image
   //   const uploadResult = await cloudinary.uploader

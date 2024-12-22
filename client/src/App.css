@@ -348,3 +348,9 @@ nav ul li a:hover {
     rgba(38, 145, 191, 1) 63%
   );
 }
+
+.aadharDisplay {
+  width: 300px;
+  object-fit: contain;
+  height: 200px;
+}

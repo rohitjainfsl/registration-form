@@ -1,13 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "./t&m_model.jsx";
-import axios from "axios";
+import instance from "./axiosConfig.js";
+import { useNavigate } from "react-router-dom";
 
 function UserForm() {
+  const navigate = useNavigate();
+
   const [modalOpen, setModalOpen] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [role, setRole] = useState("student");
   const [isChecked, setIsChecked] = useState(false);
   const [isSameAddress, setIsSameAddress] = useState(false);
+  const [aadharDisplay, setAadharDisplay] = useState({
+    front: "",
+    back: "",
+  });
+  const [showMessage, setShowMessage] = useState(false);
+
   const [formElements, setFormData] = useState({
     name: "",
     email: "",
@@ -30,6 +39,11 @@ function UserForm() {
     referral: "",
     friendName: "",
   });
+
+  useEffect(() => {
+    const options = new URLSearchParams(window.location.search);
+    if (options.has("success")) setShowMessage(true);
+  }, []);
 
   const handleAgree = () => {
     setTermsAccepted(true);
@@ -64,13 +78,18 @@ function UserForm() {
       frm.append("referral", formElements.referral);
       frm.append("friendName", formElements.friendName);
 
-      const response = await axios.post(
-        "http://localhost:5000/api/students/register",
-        frm
-      );
-      alert("Form submitted successfully");
-      console.log("Response:", response.data);
+      const response = await instance.post("/students/register", frm);
+      // alert("Form submitted successfully");
+      // console.log("Response:", response.data);
+
+      if (
+        response.status === 201 &&
+        response.data.message === "Registration Successful"
+      )
+        // setShowMessage(true);
+        navigate("/registration?success=true");
     } catch (error) {
+      setShowMessage(false);
       console.error("Error submitting form", error);
       alert("Failed to submit form");
     }
@@ -80,7 +99,6 @@ function UserForm() {
     setIsChecked(event.target.value === "Friend");
     setFormData({ ...formElements, referral: event.target.value });
   };
-  
 
   const handleRoleChange = (event) => {
     setRole(event.target.value);
@@ -116,8 +134,16 @@ function UserForm() {
     }));
   };
 
-  const handleFileChangeForm = (e) => {
+  const handleFileChangeForm = (e, imageKey) => {
     setFormData({ ...formElements, [e.target.name]: e.target.files[0] });
+    const reader = new FileReader();
+    reader.onload = () => {
+      setAadharDisplay((prev) => ({
+        ...prev,
+        [imageKey]: reader.result,
+      }));
+    };
+    reader.readAsDataURL(e.target.files[0]);
   };
 
   return (
@@ -126,15 +152,18 @@ function UserForm() {
         <div className="container-fluid">
           <div className="row">
             <div
-              className="success-msg alert alert-success alert-dismissible fade hide"
+              className={`success-msg alert alert-success alert-dismissible ${
+                showMessage ? "d-flex gap-4 items-center justify-content-center" : "hide fade"
+              }`}
               role="alert"
             >
-              <strong>THANKS. Your registration is successful.</strong>
+              <h3 className="mb-0">THANKS. Your registration is successful.</h3>
               <button
                 type="button"
-                className="close"
+                className="close fs-2"
                 data-dismiss="alert"
                 aria-label="Close"
+                onClick={() => setShowMessage(false)}
               >
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -297,7 +326,7 @@ function UserForm() {
                             className="form-control"
                             id="aadharFront"
                             name="aadharFront"
-                            onChange={handleFileChangeForm}
+                            onChange={(e) => handleFileChangeForm(e, "front")}
                             required
                           />
                         </div>
@@ -308,9 +337,32 @@ function UserForm() {
                             className="form-control"
                             id="aadharBack"
                             name="aadharBack"
-                            onChange={handleFileChangeForm}
+                            onChange={(e) => handleFileChangeForm(e, "back")}
                             required
                           />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="form-group row">
+                      <div className="offset-sm-2 col-sm-10 row">
+                        <div className="col-6">
+                          {aadharDisplay.front && (
+                            <img
+                              className="aadharDisplay"
+                              src={aadharDisplay.front}
+                              alt="Aadhaar Front"
+                            />
+                          )}
+                        </div>
+                        <div className="col-6">
+                          {aadharDisplay.back && (
+                            <img
+                              className="aadharDisplay"
+                              src={aadharDisplay.back}
+                              alt="Aadhaar Back"
+                            />
+                          )}
                         </div>
                       </div>
                     </div>
