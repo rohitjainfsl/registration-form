@@ -82,6 +82,9 @@ function UserForm() {
       // alert("Form submitted successfully");
       // console.log("Response:", response.data);
 
+      console.log(response.status);
+      console.log(response.data.message);
+
       if (
         response.status === 201 &&
         response.data.message === "Registration Successful"
@@ -153,7 +156,9 @@ function UserForm() {
           <div className="row">
             <div
               className={`success-msg alert alert-success alert-dismissible ${
-                showMessage ? "d-flex gap-4 items-center justify-content-center" : "hide fade"
+                showMessage
+                  ? "d-flex gap-4 items-center justify-content-center"
+                  : "hide fade"
               }`}
               role="alert"
             >
