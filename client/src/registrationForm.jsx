@@ -90,7 +90,9 @@ function UserForm() {
         response.data.message === "Registration Successful"
       )
         // setShowMessage(true);
-        navigate("/registration?success=true");
+        // navigate("/registration?success=true", { replace: true });
+        window.location.href =
+          "https://registration-form-1-mbw5.onrender.com/registration?success=true";
     } catch (error) {
       setShowMessage(false);
       console.error("Error submitting form", error);
