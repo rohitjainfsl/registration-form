@@ -66,63 +66,63 @@ import "./App.css";
 function App() {
   // return <RouterProvider router={router} />;
   return (
-    // <BrowserRouter>
-    //   <Routes>
-    //     <Route
-    //       path="/"
-    //       element={
-    //         <>
-    //           <Header />
-    //           <Navbar />
-    //           <Home />
-    //         </>
-    //       }
-    //     ></Route>
-    //     <Route
-    //       path="/registration"
-    //       element={
-    //         <>
-    //           <Navbar />
-    //           <UserForm />
-    //         </>
-    //       }
-    //     ></Route>
-    //     <Route
-    //       path="/about"
-    //       element={
-    //         <>
-    //           <Navbar />
-    //           <About />
-    //         </>
-    //       }
-    //     ></Route>
-    //     <Route
-    //       path="/course"
-    //       element={
-    //         <>
-    //           <Navbar />
-    //           <Courses />
-    //         </>
-    //       }
-    //     ></Route>
-    //     <Route
-    //       path="/blog"
-    //       element={
-    //         <>
-    //           <Navbar />
-    //           <Blog />
-    //         </>
-    //       }
-    //     ></Route>
-    //   </Routes>
-    // </BrowserRouter>
-
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<div>Home</div>} />
-        <Route path="/test" element={<div>Test Page</div>} />
+        <Route
+          path="/"
+          element={
+            <>
+              <Header />
+              <Navbar />
+              <Home />
+            </>
+          }
+        ></Route>
+        <Route
+          path="/registration"
+          element={
+            <>
+              <Navbar />
+              <UserForm />
+            </>
+          }
+        ></Route>
+        <Route
+          path="/about"
+          element={
+            <>
+              <Navbar />
+              <About />
+            </>
+          }
+        ></Route>
+        <Route
+          path="/course"
+          element={
+            <>
+              <Navbar />
+              <Courses />
+            </>
+          }
+        ></Route>
+        <Route
+          path="/blog"
+          element={
+            <>
+              <Navbar />
+              <Blog />
+            </>
+          }
+        ></Route>
       </Routes>
     </BrowserRouter>
+
+    // <BrowserRouter>
+    //   <Routes>
+    //     <Route path="/" element={<div>Home</div>} />
+    //     <Route path="/test" element={<div>Test Page</div>} />
+    //   </Routes>
+    // </BrowserRouter>
   );
 }
 
