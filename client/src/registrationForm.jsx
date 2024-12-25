@@ -4,6 +4,7 @@ import instance from "./axiosConfig.js";
 import { useNavigate } from "react-router-dom";
 
 function UserForm() {
+  const backendPath = import.meta.env.VITE_BACKEND_PATH;
   const navigate = useNavigate();
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -39,6 +40,7 @@ function UserForm() {
     referral: "",
     friendName: "",
   });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const options = new URLSearchParams(window.location.search);
@@ -52,7 +54,7 @@ function UserForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form data before submit:", formElements); // Log current form data
+    // console.log("Form data before submit:", formElements); // Log current form data
 
     try {
       const frm = new FormData();
@@ -79,20 +81,12 @@ function UserForm() {
       frm.append("friendName", formElements.friendName);
 
       const response = await instance.post("/students/register", frm);
-      // alert("Form submitted successfully");
-      // console.log("Response:", response.data);
-
-      console.log(response.status);
-      console.log(response.data.message);
 
       if (
         response.status === 201 &&
         response.data.message === "Registration Successful"
       )
-        // setShowMessage(true);
-        // navigate("/registration?success=true", { replace: true });
-        window.location.href =
-          "https://registration-form-1-mbw5.onrender.com/registration?success=true";
+        window.location.href = backendPath + "/registration?success=true";
     } catch (error) {
       setShowMessage(false);
       console.error("Error submitting form", error);
@@ -731,16 +725,16 @@ function UserForm() {
                             className="form-check-input"
                             type="radio"
                             name="referral"
-                            id="facebook"
-                            value="Facebook"
+                            id="linkedin"
+                            value="Linkedin"
                             required
                             onChange={handleRadioChange}
                           />
                           <label
                             className="form-check-label"
-                            htmlFor="facebook"
+                            htmlFor="linkedin"
                           >
-                            Facebook
+                            Linkedin
                           </label>
                         </div>
                         <div className="form-check form-check-inline">
