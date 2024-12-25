@@ -57,6 +57,7 @@ function UserForm() {
     // console.log("Form data before submit:", formElements); // Log current form data
 
     try {
+      setLoading(true);
       const frm = new FormData();
       frm.append("name", formElements.name);
       frm.append("email", formElements.email);
@@ -91,6 +92,8 @@ function UserForm() {
       setShowMessage(false);
       console.error("Error submitting form", error);
       alert("Failed to submit form");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -147,6 +150,24 @@ function UserForm() {
 
   return (
     <>
+      {loading && (
+        <div
+          id="loading"
+          style={{
+            position: "absolute",
+            zIndex: 99,
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <h3>Loading...</h3>
+        </div>
+      )}
       <div id="wrapper">
         <div className="container-fluid">
           <div className="row">
