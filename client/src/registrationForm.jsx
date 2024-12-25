@@ -151,20 +151,7 @@ function UserForm() {
   return (
     <>
       {loading && (
-        <div
-          id="loading"
-          style={{
-            position: "absolute",
-            zIndex: 99,
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
+        <div id="loading">
           <h3>Loading...</h3>
         </div>
       )}
