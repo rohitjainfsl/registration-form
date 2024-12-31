@@ -260,6 +260,7 @@ function UserForm() {
                           name="dob"
                           value={formElements.dob}
                           onChange={handleInputChangeForm}
+                          placeholder="dd-mm-yyyy"
                           required
                         />
                       </div>
