@@ -362,6 +362,9 @@ nav ul li a:hover {
   color: #fff;
   text-transform: uppercase;
 }
+.react-datepicker-wrapper {
+  display: block;
+}
 
 @media all and (min-width: 768px) {
   ::placeholder {

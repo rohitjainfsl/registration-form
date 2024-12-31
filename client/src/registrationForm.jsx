@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import Modal from "./t&m_model.jsx";
 import instance from "./axiosConfig.js";
 import { useNavigate } from "react-router-dom";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 function UserForm() {
   const backendPath = import.meta.env.VITE_BACKEND_PATH;
@@ -41,6 +43,8 @@ function UserForm() {
     friendName: "",
   });
   const [loading, setLoading] = useState(false);
+
+  const [startDate, setStartDate] = useState(new Date());
 
   useEffect(() => {
     const options = new URLSearchParams(window.location.search);
@@ -253,7 +257,7 @@ function UserForm() {
                         Date of Birth
                       </label>
                       <div className="col-sm-10">
-                        <input
+                        {/* <input
                           type="date"
                           className="form-control"
                           id="dob"
@@ -261,6 +265,16 @@ function UserForm() {
                           value={formElements.dob}
                           onChange={handleInputChangeForm}
                           placeholder="dd-mm-yyyy"
+                          required
+                        /> */}
+
+                        <DatePicker
+                          id="dob"
+                          selected={formElements.dob}
+                          onChange={handleInputChangeForm}
+                          dateFormat="dd-MM-yyyy"
+                          className="form-control"
+                          placeholderText="dd-mm-yyyy"
                           required
                         />
                       </div>
