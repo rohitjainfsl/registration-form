@@ -271,6 +271,7 @@ function UserForm() {
                         <DatePicker
                           id="dob"
                           selected={formElements.dob}
+                          value={formElements.dob}
                           onChange={handleInputChangeForm}
                           dateFormat="dd-MM-yyyy"
                           className="form-control"
