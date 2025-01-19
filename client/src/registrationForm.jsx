@@ -44,7 +44,7 @@ function UserForm() {
   });
   const [loading, setLoading] = useState(false);
 
-  const [startDate, setStartDate] = useState(new Date());
+  const [DOB, setDOB] = useState("");
 
   useEffect(() => {
     const options = new URLSearchParams(window.location.search);
@@ -66,7 +66,7 @@ function UserForm() {
       frm.append("name", formElements.name);
       frm.append("email", formElements.email);
       frm.append("phone", formElements.phone);
-      frm.append("dob", formElements.dob);
+      frm.append("dob", DOB);
       frm.append("gender", formElements.gender);
       frm.append("aadharFront", formElements.aadharFront);
       frm.append("aadharBack", formElements.aadharBack);
@@ -122,12 +122,10 @@ function UserForm() {
   };
 
   const termsCondition = () => {
-    console.log("Opening modal...");
     setModalOpen(true);
   };
 
   const closeModal = () => {
-    console.log("Closing modal...");
     setModalOpen(false);
   };
 
@@ -257,22 +255,11 @@ function UserForm() {
                         Date of Birth
                       </label>
                       <div className="col-sm-10">
-                        {/* <input
-                          type="date"
-                          className="form-control"
-                          id="dob"
-                          name="dob"
-                          value={formElements.dob}
-                          onChange={handleInputChangeForm}
-                          placeholder="dd-mm-yyyy"
-                          required
-                        /> */}
-
                         <DatePicker
                           id="dob"
-                          selected={formElements.dob}
-                          value={formElements.dob}
-                          onChange={handleInputChangeForm}
+                          name="dob"
+                          selected={DOB}
+                          onChange={(date) => setDOB(date)}
                           dateFormat="dd-MM-yyyy"
                           className="form-control"
                           placeholderText="dd-mm-yyyy"
