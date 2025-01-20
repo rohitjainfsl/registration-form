@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import studentModel from "../models/studentModel.js";
 import { cloudinaryUpload } from "../middlewares/cloudinaryUpload.js";
+import { sendAckEmail } from "../services/acknowledgement.js";
 
 export async function register(req, res) {
   // console.log(req.body);
@@ -69,13 +70,13 @@ export async function register(req, res) {
     });
     await newRegistration.save();
 
-    await sendAckEmail(newRegistration);
+    sendAckEmail(newRegistration);
 
     return res.status(201).send({ message: "Registration Successful" });
   } catch (error) {
     return res
       .status(500)
-      .send({ message: "Error registering student ", error });
+      .send({ message: "Error registering student ", error: error.message });
   }
 }
 
