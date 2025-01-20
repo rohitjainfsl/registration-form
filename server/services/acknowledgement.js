@@ -97,7 +97,7 @@ export function sendDataByEmail(newData) {
       subject: "New Registration at Full Stack Learning",
       html:
         "<strong>New Registration at Full Stack Learning at " +
-        output +
+        table +
         "</strong>",
     };
     sgMail
