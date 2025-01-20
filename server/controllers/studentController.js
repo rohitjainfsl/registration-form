@@ -68,6 +68,9 @@ export async function register(req, res) {
       aadharBack,
     });
     await newRegistration.save();
+
+    await sendAckEmail(newRegistration);
+
     return res.status(201).send({ message: "Registration Successful" });
   } catch (error) {
     return res
