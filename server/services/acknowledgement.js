@@ -20,10 +20,34 @@ export function sendAckEmail(newData) {
 }
 
 export function sendDataByEmail(newData) {
+  const getDayName = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ];
+  const getMonthName = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
   const dt = new Date();
-  const day = dt.getDay();
+  const day = getDayName[dt.getDay()];
   const date = dt.getDate();
-  const month = dt.getMonth() + 1;
+  const month = getMonthName[dt.getMonth() + 1];
   const year = dt.getFullYear();
   const hour = dt.getHours();
   const min = dt.getMinutes();
@@ -49,8 +73,6 @@ export function sendDataByEmail(newData) {
       newData.laddress +
       "</td></tr><tr><th>Permanent Address</th><td>" +
       newData.paddress +
-      "</td></tr><tr><th>Are you a</th><td>" +
-      newData.role +
       "</td></tr>";
     if (newData.role === "student") {
       table +=
@@ -73,7 +95,7 @@ export function sendDataByEmail(newData) {
       "<tr><th>How you come to know about us?</th><td>" +
       newData.referral +
       "</td></tr>";
-    if (newData.referral === "friend") {
+    if (newData.referral.toLowerCase() === "friend") {
       table +=
         "<tr><th>Friend's Name</th><td>" + newData.friendName + "</td></tr>";
     }
