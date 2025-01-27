@@ -59,7 +59,7 @@ const Navbar = () => {
             <Link
               to="/registration"
               className="btn btn-warning"
-              target="_blank"
+            
             >
               Login / Register
             </Link>

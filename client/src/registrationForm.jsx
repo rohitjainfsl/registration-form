@@ -6,7 +6,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 function UserForm() {
-  const backendPath = import.meta.env.VITE_BACKEND_PATH;
+  // const backendPath = import.meta.env.VITE_BACKEND_PATH;
   const navigate = useNavigate();
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -91,7 +91,9 @@ function UserForm() {
         response.status === 201 &&
         response.data.message === "Registration Successful"
       )
-        window.location.href = backendPath + "/registration?success=true";
+        // window.location.href = backendPath + "/registration?success=true";
+        navigate("/login");
+
     } catch (error) {
       setShowMessage(false);
       console.error("Error submitting form", error);
