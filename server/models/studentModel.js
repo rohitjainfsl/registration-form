@@ -23,8 +23,10 @@ const studentSchema = new Schema(
     qualificationYear: String,
     referral: String,
     role: String,
+    password: String,
   },
-  { timestamps: true }
+  { timestamps: true },
+  
 );
 const studentModel = model("student", studentSchema);
 export default studentModel;

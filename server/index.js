@@ -7,6 +7,7 @@ import { dirname, join } from "path";
 // import path from "path";
 import studentRouter from "./routes/studentRouter.js";
 import connectToDB from "./connection.js";
+import loginRouter from "./routes/loginRouter.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -33,3 +34,4 @@ await connectToDB();
 app.listen(PORT, () => console.log("Server started at port " + PORT));
 
 app.use("/api/students", studentRouter);
+app.use("/api/login", loginRouter);

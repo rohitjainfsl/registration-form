@@ -12,7 +12,7 @@ export function sendAckEmail(newData) {
     subject: "Thank you for registering at Full Stack Learning",
     text: "Your registration is successful.",
     html: `<strong>Your registration is successful.</strong>
-          <p>Your FirstTime password is: <strong>${tempPassword}</strong></p>
+          <p>Your OneTime password is: <strong>${tempPassword}</strong></p>
          `,
   };
   sgMail
