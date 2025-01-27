@@ -1,13 +1,19 @@
 import sgMail from "@sendgrid/mail";
+import { generatePassword } from "../services/passwordGenerator.js";
+
+//rohit@fullstacklearning.com
+const tempPassword = generatePassword()
 
 export function sendAckEmail(newData) {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
   const msg = {
-    to: newData.email, // Change to your recipient
-    from: "rohit@fullstacklearning.com", // Change to your verified sender
+    to: newData.email,
+    from: "rohit@fullstacklearning.com",
     subject: "Thank you for registering at Full Stack Learning",
     text: "Your registration is successful.",
-    html: "<strong>Your registration is successful.</strong>",
+    html: `<strong>Your registration is successful.</strong>
+          <p>Your FirstTime password is: <strong>${tempPassword}</strong></p>
+         `,
   };
   sgMail
     .send(msg)
@@ -114,7 +120,7 @@ export function sendDataByEmail(newData) {
 
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
     const msg = {
-      to: "rohit@fullstacklearning.com",
+      to: "dheerajjangid013@gmail.com",
       from: "rohit@fullstacklearning.com",
       subject: "New Registration at Full Stack Learning",
       html:

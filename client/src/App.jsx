@@ -13,55 +13,8 @@ import Header from "./Pages/Header";
 import Courses from "./Pages/Courses";
 import Blog from "./Pages/Blog";
 import "./App.css";
+import Login from "./login";
 
-// const router = createBrowserRouter([
-//   {
-//     path: "/",
-//     element: (
-//       <>
-//         <Header />
-//         <Navbar />
-//         <Home />
-//       </>
-//     ),
-//   },
-//   {
-//     path: "/registration",
-//     element: (
-//       <>
-//         <Navbar />
-//         <UserForm />
-//       </>
-//     ),
-//   },
-//   {
-//     path: "/about",
-//     element: (
-//       <>
-//         <Navbar />
-//         <About />
-//       </>
-//     ),
-//   },
-//   {
-//     path: "/courses",
-//     element: (
-//       <>
-//         <Navbar />
-//         <Courses />
-//       </>
-//     ),
-//   },
-//   {
-//     path: "/blog",
-//     element: (
-//       <>
-//         <Navbar />
-//         <Blog />
-//       </>
-//     ),
-//   },
-// ]);
 
 function App() {
   // return <RouterProvider router={router} />;
@@ -106,6 +59,15 @@ function App() {
           }
         ></Route>
         <Route
+          path="/login"
+          element={
+            <>
+              <Navbar />
+              <Login />
+            </>
+          }
+        ></Route>
+        <Route
           path="/blog"
           element={
             <>
@@ -117,12 +79,7 @@ function App() {
       </Routes>
     </BrowserRouter>
 
-    // <BrowserRouter>
-    //   <Routes>
-    //     <Route path="/" element={<div>Home</div>} />
-    //     <Route path="/test" element={<div>Test Page</div>} />
-    //   </Routes>
-    // </BrowserRouter>
+  
   );
 }
 

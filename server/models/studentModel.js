@@ -16,7 +16,6 @@ const studentSchema = new Schema(
     fname: String,
     fphone: String,
     friendName: String,
-    gender: String,
     laddress: String,
     paddress: String,
     otherCourse: String,
