@@ -1,15 +1,14 @@
 import React, { useState } from "react";
+
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Email:", email);
-    console.log("Password:", password);
 
-    // Add your authentication logic here
-  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+  }
 
   return (
     <div className="login-container">
@@ -42,6 +41,7 @@ function Login() {
             Login
           </button>
         </form>
+        {message && <p className="message">{message}</p>} {/* Display messages */}
         <div className="register-link">
           Don't have an account? <a href="/register">Register here</a>
         </div>

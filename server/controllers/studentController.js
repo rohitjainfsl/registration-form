@@ -5,8 +5,6 @@ import { cloudinaryUpload } from "../middlewares/cloudinaryUpload.js";
 import { sendAckEmail, sendDataByEmail } from "../services/acknowledgement.js";
 
 export async function register(req, res) {
-  // console.log(req.body);
-  // console.log(req.files);
 
   try {
     let aadharFront,
