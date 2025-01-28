@@ -21,12 +21,12 @@ app.use(
   cors({
     origin: process.env.FRONTEND_PATH,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true, 
+    credentials: true,
   })
 );
 // console.log(process.env.FRONTEND_PATH);
-app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.use("/static", express.static(join(__dirname, "uploads")));
 
 await connectToDB();
@@ -34,4 +34,5 @@ await connectToDB();
 app.listen(PORT, () => console.log("Server started at port " + PORT));
 
 app.use("/api/students", studentRouter);
-app.use("/api/login", loginRouter);
+app.use("/api/loginstudents", loginRouter);
+app.use("/api/new", loginRouter);

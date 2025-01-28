@@ -1,8 +1,5 @@
 import sgMail from "@sendgrid/mail";
-import { generatePassword } from "../services/passwordGenerator.js";
-
 //rohit@fullstacklearning.com
-const tempPassword = generatePassword()
 
 export function sendAckEmail(newData) {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -12,7 +9,7 @@ export function sendAckEmail(newData) {
     subject: "Thank you for registering at Full Stack Learning",
     text: "Your registration is successful.",
     html: `<strong>Your registration is successful.</strong>
-          <p>Your OneTime password is: <strong>${tempPassword}</strong></p>
+          <p>Your OneTime password is: <strong>${newData.password}</strong></p>
          `,
   };
   sgMail
