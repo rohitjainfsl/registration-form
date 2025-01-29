@@ -3,12 +3,32 @@ import React, { useState } from "react";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [message, setMessage] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-  }
+    try {
+      const response = await fetch("http://localhost:8081/api/loginstudents/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+      
+      if (response.ok) {
+        setMessage(data.message);
+        // Store user data or token if needed (e.g., localStorage.setItem("token", data.token))
+      } else {
+        setMessage(data.message);
+      }
+    } catch (error) {
+      setMessage("An error occurred. Please try again later.");
+    }
+  };
 
   return (
     <div className="login-container">
@@ -41,7 +61,7 @@ function Login() {
             Login
           </button>
         </form>
-        {message && <p className="message">{message}</p>} {/* Display messages */}
+        {message && <p className="message">{message}</p>} 
         <div className="register-link">
           Don't have an account? <a href="/register">Register here</a>
         </div>
