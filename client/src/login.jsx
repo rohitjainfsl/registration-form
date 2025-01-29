@@ -1,14 +1,28 @@
 import React, { useState } from "react";
+// import instance from "../utils/axiosInstance"; 
+import instance from "./axiosConfig";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [message, setMessage] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-  }
+    try {
+      const response = await instance.post("/loginstudents/login", { email, password });
+
+      if (response.status === 200) {
+        setMessage(response.data.message);
+      // navigate to another page 
+      } else {
+        setMessage(response.data.message);
+      }
+    } catch (error) {
+      setMessage(error.response?.data?.message || "An error occurred. Please try again later.");
+    }
+  };
 
   return (
     <div className="login-container">
@@ -41,7 +55,7 @@ function Login() {
             Login
           </button>
         </form>
-        {message && <p className="message">{message}</p>} {/* Display messages */}
+        {message && <p className="message">{message}</p>} 
         <div className="register-link">
           Don't have an account? <a href="/register">Register here</a>
         </div>

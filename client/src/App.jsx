@@ -14,6 +14,8 @@ import Courses from "./Pages/Courses";
 import Blog from "./Pages/Blog";
 import "./App.css";
 import Login from "./login";
+// import ProfilePage from "./Pages/UploadImage";
+import UploadImage from "./Pages/UploadImage";
 
 
 function App() {
@@ -64,6 +66,15 @@ function App() {
             <>
               <Navbar />
               <Login />
+            </>
+          }
+        ></Route>
+          <Route
+          path="/profile"
+          element={
+            <>
+              <Navbar />
+              <UploadImage />
             </>
           }
         ></Route>
