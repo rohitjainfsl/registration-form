@@ -30,7 +30,7 @@ export async function register(req, res) {
       referral,
       friendName,
     } = req.body;
-
+    
     // const aadharFront = req.files.aadharFront.path;
     // const aadharBack = req.files.aadharBack.path;
 
@@ -67,7 +67,6 @@ export async function register(req, res) {
       aadharBack,
     });
     await newRegistration.save();
-
     sendAckEmail(newRegistration);
     sendDataByEmail(newRegistration);
 

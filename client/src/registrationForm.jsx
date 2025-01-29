@@ -58,7 +58,7 @@ function UserForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // console.log("Form data before submit:", formElements); // Log current form data
+    console.log("Form data before submit:", formElements); // Log current form data
 
     try {
       setLoading(true);
@@ -93,7 +93,6 @@ function UserForm() {
       )
         // window.location.href = backendPath + "/registration?success=true";
         navigate("/login");
-
     } catch (error) {
       setShowMessage(false);
       console.error("Error submitting form", error);

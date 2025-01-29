@@ -18,22 +18,26 @@ export async function login(req, res) {
   }
 }
 
-export const changePassword = async (req, res) => {
-  const { email, password, newPassword } = req.body;
+export async function changePassword(req, res) {
+  const { email, Password, newPassword } = req.body;
 
   try {
-      const user = await studentModel.findById(email, password);
-      console.log(user)
-      if (!user || !user.validatePassword(password)) {
-          return res.status(401).json({ message: "Invalid credentials" });
-      }
+    if (!email || !Password || !newPassword) {
+      return res.status(400).json({ message: "Email, old password, and new password are required." });
+    }
 
-      user.password = newPassword;
+    const user = await studentModel.findOne({ email, password: Password });
+
+    if (!user) {
+      return res.status(400).json({ message: "Old password is incorrect." });
+    }
+
+    user.password = newPassword;
     await user.save();
-    console.log(user)
 
-      return res.status(200).json({ message: "Password changed successfully" });
+    return res.status(200).json({ message: "Password updated successfully." });
   } catch (error) {
-      return res.status(500).json({ message: "Server error", error });
+    return res.status(500).json({ message: "Error changing password.", error: error.message });
   }
-};
+}
+

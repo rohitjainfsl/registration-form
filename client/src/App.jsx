@@ -16,6 +16,7 @@ import "./App.css";
 import Login from "./login";
 // import ProfilePage from "./Pages/UploadImage";
 import UploadImage from "./Pages/UploadImage";
+import ChangePassword from "./ChangePassword";
 
 
 function App() {
@@ -75,6 +76,15 @@ function App() {
             <>
               <Navbar />
               <UploadImage />
+            </>
+          }
+        ></Route>
+          <Route
+          path="/changePassword"
+          element={
+            <>
+              <Navbar />
+              <ChangePassword />
             </>
           }
         ></Route>
