@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import instance from "./axiosConfig";
 
 function ChangePassword() {
+  const [email, setEmail] = useState("");
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -12,12 +13,15 @@ function ChangePassword() {
     e.preventDefault();
     try {
       const response = await instance.post("/loginstudents/changepassword", {
-        oldPassword,
+        email,
+        Password: oldPassword,
         newPassword,
+        firstTimesignin
       });
 
       if (response.status === 200) {
         setMessage(response.data.message);
+        response.data.firstTimesignin = false;
         setTimeout(() => {
           navigate("/"); // Redirect to login page
         }, 2000);
@@ -34,6 +38,17 @@ function ChangePassword() {
       <div className="change-password-card">
         <h3 className="change-password-title">Change Password</h3>
         <form onSubmit={handleChangePassword}>
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
           <div className="form-group">
             <label htmlFor="oldPassword">Old Password</label>
             <input
