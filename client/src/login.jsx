@@ -1,11 +1,15 @@
 import React, { useState } from "react";
 // import instance from "../utils/axiosInstance"; 
 import instance from "./axiosConfig";
+import {useNavigate} from "react-router-dom";
+
+
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,6 +20,7 @@ function Login() {
       if (response.status === 200) {
         setMessage(response.data.message);
       // navigate to another page 
+      navigate("/changePassword");
       } else {
         setMessage(response.data.message);
       }
