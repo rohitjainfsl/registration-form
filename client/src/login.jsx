@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+// import instance from "../utils/axiosInstance"; 
+import instance from "./axiosConfig";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -9,24 +11,16 @@ function Login() {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:8081/api/loginstudents/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await instance.post("/loginstudents/login", { email, password });
 
-      const data = await response.json();
-      
-      if (response.ok) {
-        setMessage(data.message);
-        // Store user data or token if needed (e.g., localStorage.setItem("token", data.token))
+      if (response.status === 200) {
+        setMessage(response.data.message);
+      // navigate to another page 
       } else {
-        setMessage(data.message);
+        setMessage(response.data.message);
       }
     } catch (error) {
-      setMessage("An error occurred. Please try again later.");
+      setMessage(error.response?.data?.message || "An error occurred. Please try again later.");
     }
   };
 
