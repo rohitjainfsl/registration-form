@@ -24,7 +24,9 @@ const studentSchema = new Schema(
     qualificationYear: String,
     referral: String,
     role: String,
-    password: { type: String, required: true, unique: true },
+    password: { type: String, unique: true },
+    newPassword:{type:String, unique:true},
+    firstTimesignin:{type:Boolean, default:true},
   },
   { timestamps: true }
 );

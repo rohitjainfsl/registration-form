@@ -30,6 +30,11 @@ export async function register(req, res) {
       referral,
       friendName,
     } = req.body;
+
+    // const existingStudent = await studentModel.findOne({ email });
+    // if (existingStudent) {
+    //   return res.status(400).json({ message: "Student already exists" });
+    // }
     
     // const aadharFront = req.files.aadharFront.path;
     // const aadharBack = req.files.aadharBack.path;
@@ -65,6 +70,7 @@ export async function register(req, res) {
       friendName,
       aadharFront,
       aadharBack,
+      firstTimesignin:true,
     });
     await newRegistration.save();
     sendAckEmail(newRegistration);
