@@ -1,5 +1,3 @@
-import express from "express";
-import mongoose from "mongoose";
 import studentModel from "../models/studentModel.js";
 import { cloudinaryUpload } from "../middlewares/cloudinaryUpload.js";
 import { sendAckEmail, sendDataByEmail } from "../services/acknowledgement.js";
@@ -70,16 +68,18 @@ export async function register(req, res) {
       friendName,
       aadharFront,
       aadharBack,
-      firstTimesignin:true,
     });
+    // console.log(newRegistration)
     await newRegistration.save();
     sendAckEmail(newRegistration);
     sendDataByEmail(newRegistration);
 
     return res.status(201).send({ message: "Registration Successful" });
   } catch (error) {
+    console.error("MongoDB Save Error: ", error);
     return res
       .status(500)
+      // console.error(error);
       .send({ message: "Error registering student ", error: error.message });
   }
 }

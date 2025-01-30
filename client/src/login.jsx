@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-// import instance from "../utils/axiosInstance"; 
+// import instance from "../utils/axiosInstance";
 import instance from "./axiosConfig";
 import { useNavigate } from "react-router-dom";
 
@@ -13,13 +13,16 @@ function Login() {
     e.preventDefault();
 
     try {
-      const response = await instance.post("/loginstudents/login", { email, password, firstTimesignin });
+      const response = await instance.post("/loginstudents/login", {
+        email,
+        password,
+      });
 
       if (response.status === 200) {
         setMessage(response.data.message);
-        
-        if (response.data.firstTimesignin === true) {
-          navigate("/changePassword"); 
+        // console.log(response.data);
+        if (response.data.user.firstTimesignin) {
+          navigate("/changePassword");
         } else {
           navigate("/");
         }
@@ -27,7 +30,10 @@ function Login() {
         setMessage(response.data.message);
       }
     } catch (error) {
-      setMessage(error.response?.data?.message || "An error occurred. Please try again later.");
+      setMessage(
+        error.response?.data?.message ||
+          "An error occurred. Please try again later."
+      );
     }
   };
 
@@ -62,7 +68,7 @@ function Login() {
             Login
           </button>
         </form>
-        {message && <p className="message">{message}</p>} 
+        {message && <p className="message">{message}</p>}
         <div className="register-link">
           Don't have an account? <a href="/register">Register here</a>
         </div>
