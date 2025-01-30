@@ -16,12 +16,11 @@ function ChangePassword() {
         email,
         Password: oldPassword,
         newPassword,
-        firstTimesignin
       });
 
       if (response.status === 200) {
         setMessage(response.data.message);
-        response.data.firstTimesignin = false;
+        response.data.user.firstTimesignin = false;
         setTimeout(() => {
           navigate("/"); // Redirect to login page
         }, 2000);

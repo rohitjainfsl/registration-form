@@ -112,7 +112,7 @@ function UserForm() {
   };
 
   const handleCheckboxChange = () => {
-    setIsSameAddress(!isSameAddress); // Toggle the checkbox state
+    setIsSameAddress(!isSameAddress); 
     if (!isSameAddress) {
       // setPermanentAddress(localAddress); // Auto-fill Permanent Address
       setFormData({ ...formElements, paddress: formElements.laddress });
