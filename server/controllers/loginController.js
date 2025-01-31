@@ -12,17 +12,19 @@ export async function login(req, res) {
     }
 
     const user = await studentModel.findOne({ email, password});
+    // console.log(user)
     if (!user) {
       return res.status(404).json({ message: "Invalid email or password." });
     }
 
+
     // user.firstTimesignin === "true";
 
     // if (firstTime) {
-    //   // user.firstTimesignin = "false"; 
+    //   user.firstTimesignin = "false"; 
     //   await user.save();
     // }
-    console.log(user);
+    // console.log(user);
     return res.status(200).json({ message: "Login successful.", user });
   } catch (error) {
     return res.status(500).json({ message: "Error during login.", error: error.message });
