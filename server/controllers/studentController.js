@@ -29,10 +29,10 @@ export async function register(req, res) {
       friendName,
     } = req.body;
 
-    // const existingStudent = await studentModel.findOne({ email });
-    // if (existingStudent) {
-    //   return res.status(400).json({ message: "Student already exists" });
-    // }
+    const existingStudent = await studentModel.findOne({ email });
+    if (existingStudent) {
+      return res.status(400).json({ message: "Student already exists" });
+    }
 
     // const aadharFront = req.files.aadharFront.path;
     // const aadharBack = req.files.aadharBack.path;
@@ -69,10 +69,10 @@ export async function register(req, res) {
       aadharFront,
       aadharBack,
     });
-    console.log(newRegistration);
+    // console.log(newRegistration);
     await newRegistration.save();
-    // sendAckEmail(newRegistration);
-    // sendDataByEmail(newRegistration);
+    sendAckEmail(newRegistration);
+    sendDataByEmail(newRegistration);
 
     return res.status(201).send({ message: "Registration Successful" });
   } catch (error) {

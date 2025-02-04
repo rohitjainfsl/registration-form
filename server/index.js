@@ -24,7 +24,7 @@ app.use(
     credentials: true,
   })
 );
-console.log(process.env.FRONTEND_PATH);
+// console.log(process.env.FRONTEND_PATH);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use("/static", express.static(join(__dirname, "uploads")));
