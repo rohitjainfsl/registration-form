@@ -35,10 +35,6 @@ export async function changePassword(req, res) {
   const { email, Password, newPassword } = req.body;
 
   try {
-    // if (!email || !Password || !newPassword) {
-    //   return res.status(400).json({ message: "Email, old password, and new password are required." });
-    // }
-
     const user = await studentModel.findOne({ email, password:Password});
 
     if (!user) {
