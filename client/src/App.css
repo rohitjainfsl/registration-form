@@ -1,9 +1,8 @@
-@import "tailwindcss";
 * {
   font-family: Poppins, "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 /* HEADER */
-/* .upper-header {
+.upper-header {
   width: 100%;
   padding: 0 10px;
   background: rgb(242, 113, 68);
@@ -385,4 +384,4 @@ nav ul li a:hover {
   .form-check-inline {
     display: block;
   }
-} */
+} 

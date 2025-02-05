@@ -14,14 +14,14 @@ function ChangePassword() {
     try {
       const response = await instance.post("/loginstudents/changePassword", {
         email,
-        password: oldPassword, // Ensure consistency with backend field names
+        password: oldPassword,
         newPassword,
       });
 
       if (response.status === 200) {
         setMessage(response.data.message);
         setTimeout(() => {
-          navigate("/"); // Redirect after successful password change
+          navigate("/"); 
         }, 2000);
       } else {
         setMessage(response.data.message);
