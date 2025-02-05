@@ -1,9 +1,9 @@
 import studentModel from "../models/studentModel.js";
 import { cloudinaryUpload } from "../middlewares/cloudinaryUpload.js";
 import { sendAckEmail, sendDataByEmail } from "../services/acknowledgement.js";
+import mongoose from "mongoose";
 
 export async function register(req, res) {
-
   try {
     let aadharFront,
       aadharBack = undefined;
@@ -29,11 +29,11 @@ export async function register(req, res) {
       friendName,
     } = req.body;
 
-    // const existingStudent = await studentModel.findOne({ email });
-    // if (existingStudent) {
-    //   return res.status(400).json({ message: "Student already exists" });
-    // }
-    
+    const existingStudent = await studentModel.findOne({ email });
+    if (existingStudent) {
+      return res.status(400).json({ message: "Student already exists" });
+    }
+
     // const aadharFront = req.files.aadharFront.path;
     // const aadharBack = req.files.aadharBack.path;
 
@@ -69,7 +69,7 @@ export async function register(req, res) {
       aadharFront,
       aadharBack,
     });
-    // console.log(newRegistration)
+    // console.log(newRegistration);
     await newRegistration.save();
     sendAckEmail(newRegistration);
     sendDataByEmail(newRegistration);
@@ -77,10 +77,12 @@ export async function register(req, res) {
     return res.status(201).send({ message: "Registration Successful" });
   } catch (error) {
     console.error("MongoDB Save Error: ", error);
-    return res
-      .status(500)
-      // console.error(error);
-      .send({ message: "Error registering student ", error: error.message });
+    return (
+      res
+        .status(500)
+        // console.error(error);
+        .send({ message: "Error registering student ", error: error.message })
+    );
   }
 }
 
