@@ -12,17 +12,16 @@ function ChangePassword() {
   const handleChangePassword = async (e) => {
     e.preventDefault();
     try {
-      const response = await instance.post("/loginstudents/changepassword", {
+      const response = await instance.post("/loginstudents/changePassword", {
         email,
-        Password: oldPassword,
+        password: oldPassword,
         newPassword,
       });
 
       if (response.status === 200) {
         setMessage(response.data.message);
-        response.data.user.firstTimesignin = false;
         setTimeout(() => {
-          navigate("/"); // Redirect to login page
+          navigate("/"); 
         }, 2000);
       } else {
         setMessage(response.data.message);

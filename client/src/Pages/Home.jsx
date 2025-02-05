@@ -2,7 +2,7 @@
 const Home = () => {
   document.title = "Full Stack Learning | Become a FSD the correct way";
   return (
-    <section className="bg-gray-900 text-black text-center py-20">
+    <section className="bg-gray-900 text-white text-center py-20">
       <div className="container mx-auto">
         <h1 className="text-5xl font-bold">Become A</h1>
         <h1 className="text-5xl font-bold">Full Stack Developer</h1>

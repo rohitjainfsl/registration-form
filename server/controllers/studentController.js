@@ -29,10 +29,10 @@ export async function register(req, res) {
       friendName,
     } = req.body;
 
-    const existingStudent = await studentModel.findOne({ email });
-    if (existingStudent) {
-      return res.status(400).json({ message: "Student already exists" });
-    }
+    // const existingStudent = await studentModel.findOne({ email });
+    // if (existingStudent) {
+    //   return res.status(400).json({ message: "Student already exists" });
+    // }
 
     // const aadharFront = req.files.aadharFront.path;
     // const aadharBack = req.files.aadharBack.path;
