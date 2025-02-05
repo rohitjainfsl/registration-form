@@ -1,13 +1,14 @@
 import { FaPhoneAlt } from "react-icons/fa";
+
 const Header = () => {
   return (
-    <section className="upper-header">
-      <div className="container">
-        <div className="gradient">
-          <p className="mb-0">
-            <a className="d-flex items-center" href="tel:918824453320">
+    <section className="bg-gradient-to-r from-blue-500 to-indigo-600 py-2">
+      <div className="container mx-auto">
+        <div className="flex justify-center items-center">
+          <p className="mb-0 text-white">
+            <a className="flex items-center space-x-2 text-white hover:underline" href="tel:918824453320">
               <FaPhoneAlt />
-              +91-8824453320
+              <span>+91-8824453320</span>
             </a>
           </p>
         </div>
