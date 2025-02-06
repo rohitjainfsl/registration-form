@@ -2,7 +2,7 @@
   font-family: Poppins, "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 /* HEADER */
-.upper-header {
+/* .upper-header {
   width: 100%;
   padding: 0 10px;
   background: rgb(242, 113, 68);
@@ -12,16 +12,16 @@
     rgba(38, 145, 191, 1) 63%
   );
   font-size: 14px;
-}
-.gradient {
+} */
+/* .gradient {
   display: flex;
   align-items: center;
   justify-content: right;
-}
-.gradient p {
+} */
+/* .gradient p {
   text-align: right;
   padding-right: 30px;
-}
+} */
 .gradient p a {
   color: white;
 }
@@ -246,6 +246,7 @@ input[type="radio"] ~ .checkmark {
   border-radius: 50%;
 }
 
+
 .checkmark {
   position: absolute;
   top: 0;
@@ -361,6 +362,24 @@ nav ul li a:hover {
 .react-datepicker-wrapper {
   display: block;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @media all and (min-width: 768px) {
   ::placeholder {
