@@ -39,7 +39,7 @@ const Modal = ({ show, onClose, onAgree}) => {
         </div>
       </div>
     </div>,
-    document.body // Render the modal at the root level
+    document.body 
   );
 };
 
