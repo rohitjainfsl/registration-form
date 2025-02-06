@@ -117,7 +117,7 @@ export function sendDataByEmail(newData) {
 
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
     const msg = {
-      to: "dheerajjangid013@gmail.com",
+      to: "rohit@fullstacklearning.com",
       from: "rohit@fullstacklearning.com",
       subject: "New Registration at Full Stack Learning",
       html:

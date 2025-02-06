@@ -3,6 +3,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.js";
 import "bootstrap/dist/js/bootstrap.js";
 import App from "./App.jsx";
-import '../src/register.css'
+
 
 createRoot(document.getElementById("root")).render(<App />);
