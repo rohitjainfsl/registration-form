@@ -7,7 +7,7 @@ const CustomNavbar = () => {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <Navbar expand="md" bg="light" variant="light" className="shadow-lg" fixed="top" style={{ minHeight: "70px", margin:"10px" }}>
+    <Navbar expand="md" bg="light" variant="light" className="shadow-lg" fixed="top" style={{ minHeight: "70px"}}>
       <Container>
         <Navbar.Brand as={Link} to="/">
           <img src={Logo} alt="Full Stack Learning" style={{ height: "60px", width: "auto" }} />
