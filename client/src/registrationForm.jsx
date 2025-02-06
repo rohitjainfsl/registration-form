@@ -5,7 +5,6 @@ import instance from "./axiosConfig.js";
 import { useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import './app.css';
 
 function UserForm() {
   // const backendPath = import.meta.env.VITE_BACKEND_PATH;
