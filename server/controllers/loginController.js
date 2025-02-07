@@ -32,10 +32,10 @@ export async function login(req, res) {
 }
 
 export async function changePassword(req, res) {
-  const { email, Password, newPassword } = req.body;
+  const { email, password, newPassword } = req.body;
 
   try {
-    const user = await studentModel.findOne({ email, password:Password});
+    const user = await studentModel.findOne({ email, password:password});
 
     if (!user) {
       return res.status(400).json({ message: "Old password is incorrect." });

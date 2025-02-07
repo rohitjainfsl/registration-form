@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { Form, Button, Container, Card, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import instance from "./axiosConfig";
+import "./styles/changePassword.css";
 
 function ChangePassword() {
   const [email, setEmail] = useState("");
@@ -21,61 +23,78 @@ function ChangePassword() {
       if (response.status === 200) {
         setMessage(response.data.message);
         setTimeout(() => {
-          navigate("/"); 
+          navigate("/");
         }, 2000);
       } else {
         setMessage(response.data.message);
       }
     } catch (error) {
-      setMessage(error.response?.data?.message || "An error occurred. Please try again.");
+      setMessage(
+        error.response?.data?.message || "An error occurred. Please try again."
+      );
     }
   };
 
   return (
-    <div className="change-password-container">
-      <div className="change-password-card">
-        <h3 className="change-password-title">Change Password</h3>
-        <form onSubmit={handleChangePassword}>
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="oldPassword">Old Password</label>
-            <input
-              type="password"
-              id="oldPassword"
-              placeholder="Enter your old password"
-              value={oldPassword}
-              onChange={(e) => setOldPassword(e.target.value)}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="newPassword">New Password</label>
-            <input
-              type="password"
-              id="newPassword"
-              placeholder="Enter your new password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              required
-            />
-          </div>
-          <button type="submit" className="change-password-button">
-            Update Password
-          </button>
-        </form>
-        {message && <p className="message">{message}</p>}
-      </div>
-    </div>
+    <Container className="d-flex justify-content-center align-items-center min-vh-100">
+      <Card className="change-password-card">
+        <Card.Body>
+          <h3 className="text-center">Change Password</h3>
+          <Form onSubmit={handleChangePassword}>
+            <Form.Group controlId="email" className="mb-3">
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </Form.Group>
+
+            <Form.Group controlId="oldPassword" className="mb-3">
+              <Form.Label>Old Password</Form.Label>
+              <Form.Control
+                className="oldPassword"
+                type="password"
+                placeholder="Enter your old password"
+                value={oldPassword}
+                onChange={(e) => setOldPassword(e.target.value)}
+                required
+              />
+            </Form.Group>
+
+            <Form.Group controlId="newPassword" className="mb-3">
+              <Form.Label>New Password</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Enter your new password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                required
+              />
+            </Form.Group>
+
+            <Button type="submit" variant="primary" className="w-100">
+              Update Password
+            </Button>
+          </Form>
+
+          {message && (
+            <Alert
+              variant={
+                message === "Password updated successfully."
+                  ? "success"
+                  : "danger"
+              }
+              className="mt-3 text-center"
+            >
+              {message}
+            </Alert>
+          )}
+        </Card.Body>
+      </Card>
+    </Container>
   );
 }
 
