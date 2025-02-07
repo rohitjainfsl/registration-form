@@ -29,14 +29,6 @@ export async function register(req, res) {
       friendName,
     } = req.body;
 
-    // const existingStudent = await studentModel.findOne({ email });
-    // if (existingStudent) {
-    //   return res.status(400).json({ message: "Student already exists" });
-    // }
-
-    // const aadharFront = req.files.aadharFront.path;
-    // const aadharBack = req.files.aadharBack.path;
-
     const cloudinaryObject = await cloudinaryUpload([
       req.files.aadharFront[0],
       req.files.aadharBack[0],
@@ -69,7 +61,7 @@ export async function register(req, res) {
       aadharFront,
       aadharBack,
     });
-    // console.log(newRegistration);
+
     await newRegistration.save();
     sendAckEmail(newRegistration);
     sendDataByEmail(newRegistration);
