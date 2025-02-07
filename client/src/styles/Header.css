@@ -1,0 +1,46 @@
+/* Header Styles */
+.header-section {
+    position:fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(45deg, rgba(242, 113, 68, 1) 63%, rgba(38, 145, 191, 1) 63%);
+    /* padding: px 0; */
+  }
+  
+  .header-container {
+    display: flex;
+    justify-content:end;
+    align-items: center;
+    font-family: poppins;
+  }
+  
+  .header-text {
+    display: flex;
+    margin-bottom: 0;
+    text-align: right;
+    /* color: black; */
+  }
+  
+  .header-link-first {
+    display: flex;
+    align-items: center;
+    color: white;
+    text-decoration: none;
+  }
+  .header-link-second {
+    margin-left: 15px;
+    display: flex;
+    align-items: center;
+    color: white;
+    text-decoration: none;
+  }
+  
+  .header-link:hover {
+    text-decoration: underline;
+  }
+  
+  .header-phone-icon {
+    margin-right: 8px;
+  }
+  
