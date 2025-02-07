@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { Form, Button, Container, Card, Alert } from "react-bootstrap";
+import { Form, Button, Container, Card, Alert, Row, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import instance from "./axiosConfig";
-import './styles/login.css'
+import './styles/login.css';
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -32,53 +32,57 @@ function Login() {
     } catch (error) {
       setMessage(
         error.response?.data?.message ||
-          "An error occurred. Please try again later."
+        "An error occurred. Please try again later."
       );
     }
   };
 
   return (
     <Container className="d-flex justify-content-center align-items-center min-vh-100">
-      <Card className="login-card">
-        <Card.Body>
-          <h3 className="text-center">Login</h3>
-          <Form onSubmit={handleSubmit}>
-            <Form.Group controlId="email" className="mb-3">
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </Form.Group>
+      <Row className="w-100 justify-content-center">
+        <Col xs={12} sm={8} md={6} lg={4}>
+          <Card className="login-card">
+            <Card.Body>
+              <h3 className="text-center">Login</h3>
+              <Form onSubmit={handleSubmit}>
+                <Form.Group controlId="email" className="mb-3">
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control
+                    type="email"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </Form.Group>
 
-            <Form.Group controlId="password" className="mb-3">
-              <Form.Label>Password</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </Form.Group>
+                <Form.Group controlId="password" className="mb-3">
+                  <Form.Label>Password</Form.Label>
+                  <Form.Control
+                    type="password"
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </Form.Group>
 
-            <Button type="submit" variant="primary" className="w-100">
-              Login
-            </Button>
-          </Form>
+                <Button type="submit" className="btn-login w-100">
+                  Login
+                </Button>
+              </Form>
 
-          {message && <Alert variant="danger" className="mt-3 text-center">{message}</Alert>}
+              {message && <Alert variant="danger" className="mt-3 text-center">{message}</Alert>}
 
-          <div className="text-center mt-3">
-            <p className="small">
-              Don't have an account? <a href="/register" className="text-primary">Register here</a>
-            </p>
-          </div>
-        </Card.Body>
-      </Card>
+              <div className="text-center mt-3">
+                <p className="small">
+                  Don't have an account? <a href="/register" className="text-primary">Register here</a>
+                </p>
+              </div>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
     </Container>
   );
 }
