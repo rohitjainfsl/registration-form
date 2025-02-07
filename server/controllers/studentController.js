@@ -29,6 +29,28 @@ export async function register(req, res) {
       friendName,
     } = req.body;
 
+    console.log(
+      name,
+      email,
+      phone,
+      dob,
+      gender,
+      fname,
+      fphone,
+      laddress,
+      paddress,
+      role,
+      qualification,
+      qualificationYear,
+      college,
+      designation,
+      company,
+      course,
+      otherCourse,
+      referral,
+      friendName
+    );
+
     // const existingStudent = await studentModel.findOne({ email });
     // if (existingStudent) {
     //   return res.status(400).json({ message: "Student already exists" });
@@ -70,7 +92,7 @@ export async function register(req, res) {
       aadharBack,
     });
     console.log("newRegistration", newRegistration);
-    
+
     await newRegistration.save();
     sendAckEmail(newRegistration);
     sendDataByEmail(newRegistration);
