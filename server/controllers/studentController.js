@@ -69,7 +69,8 @@ export async function register(req, res) {
       aadharFront,
       aadharBack,
     });
-    // console.log(newRegistration);
+    console.log("newRegistration", newRegistration);
+    
     await newRegistration.save();
     sendAckEmail(newRegistration);
     sendDataByEmail(newRegistration);
