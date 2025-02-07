@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Navbar, Nav, Container, Button } from "react-bootstrap";
 import Logo from "./assets/logo.png";
-import "./styles/Navbar.css";
+import "./styles/navbar.css";
 
 const CustomNavbar = () => {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
