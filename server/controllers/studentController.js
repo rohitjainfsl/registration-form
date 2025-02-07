@@ -4,6 +4,7 @@ import { sendAckEmail, sendDataByEmail } from "../services/acknowledgement.js";
 import mongoose from "mongoose";
 
 export async function register(req, res) {
+  console.log("Gangadhar hi shaktimaan hai");
   try {
     let aadharFront,
       aadharBack = undefined;
