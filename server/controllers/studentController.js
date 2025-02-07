@@ -4,7 +4,6 @@ import { sendAckEmail, sendDataByEmail } from "../services/acknowledgement.js";
 import mongoose from "mongoose";
 
 export async function register(req, res) {
-  console.log("Gangadhar hi shaktimaan hai");
   try {
     let aadharFront,
       aadharBack = undefined;
@@ -29,36 +28,6 @@ export async function register(req, res) {
       referral,
       friendName,
     } = req.body;
-
-    console.log(
-      name,
-      email,
-      phone,
-      dob,
-      gender,
-      fname,
-      fphone,
-      laddress,
-      paddress,
-      role,
-      qualification,
-      qualificationYear,
-      college,
-      designation,
-      company,
-      course,
-      otherCourse,
-      referral,
-      friendName
-    );
-
-    // const existingStudent = await studentModel.findOne({ email });
-    // if (existingStudent) {
-    //   return res.status(400).json({ message: "Student already exists" });
-    // }
-
-    // const aadharFront = req.files.aadharFront.path;
-    // const aadharBack = req.files.aadharBack.path;
 
     const cloudinaryObject = await cloudinaryUpload([
       req.files.aadharFront[0],
@@ -92,7 +61,6 @@ export async function register(req, res) {
       aadharFront,
       aadharBack,
     });
-    console.log("newRegistration", newRegistration);
 
     await newRegistration.save();
     sendAckEmail(newRegistration);
