@@ -14,13 +14,12 @@ import Courses from "./Pages/Courses";
 import Blog from "./Pages/Blog";
 import "./App.css";
 import Login from "./login";
-// import ProfilePage from "./Pages/UploadImage";
 import UploadImage from "./Pages/UploadImage";
 import ChangePassword from "./ChangePassword";
+import AdminLogin from "./Pages/AdminLogin";
 
 
 function App() {
-  // return <RouterProvider router={router} />;
   return (
     <BrowserRouter>
       <Routes>
@@ -94,6 +93,15 @@ function App() {
             <>
               <Navbar />
               <Blog />
+            </>
+          }
+        ></Route>
+         <Route
+          path="/admin-login"
+          element={
+            <>
+              <Navbar />
+              <AdminLogin />
             </>
           }
         ></Route>

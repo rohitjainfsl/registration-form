@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-// import Modal from "./t&m_model.jsx";
 import Modal from "./t&m_model.jsx"
 import instance from "./axiosConfig.js";
 import { useNavigate } from "react-router-dom";
@@ -7,7 +6,6 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 function UserForm() {
-  // const backendPath = import.meta.env.VITE_BACKEND_PATH;
   const navigate = useNavigate();
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -46,6 +44,7 @@ function UserForm() {
   const [loading, setLoading] = useState(false);
 
   const [DOB, setDOB] = useState("");
+
 
   useEffect(() => {
     const options = new URLSearchParams(window.location.search);
@@ -196,7 +195,7 @@ function UserForm() {
                   <div className="card-header">Personal Details</div>
                   <div className="card-body">
                     <div className="form-group row">
-                      <label htmlFor="name" className="col-sm-2 col-form-label">
+                      <label htmlFor="name" className="col-sm-2 col-form-label" >
                         Name
                       </label>
                       <div className="col-sm-10">
@@ -209,6 +208,7 @@ function UserForm() {
                           value={formElements.name}
                           onChange={handleInputChangeForm}
                           required
+                          autoFocus
                         />
                       </div>
                     </div>

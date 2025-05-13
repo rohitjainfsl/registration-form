@@ -4,7 +4,6 @@ import studentModel from "../models/studentModel.js";
 export async function login(req, res) {
   const { email, password} = req.body;
 
-  // console.log(firstTimesignin);
   console.log(req.body);
   try {
     if (!email || !password) {
@@ -50,4 +49,14 @@ export async function changePassword(req, res) {
     return res.status(500).json({ message: "Error changing password.", error: error.message });
   }
 }
+
+export async function adminLogin(req, res) {
+
+  const {email, password} = req.bady;
+
+
+  
+}
+
+
 
