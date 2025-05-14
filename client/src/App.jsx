@@ -18,6 +18,7 @@ import UploadImage from "./Pages/UploadImage";
 import ChangePassword from "./ChangePassword";
 import AdminLogin from "./Pages/AdminLogin";
 import StudentList from "./Pages/FetchStudents";
+import StudentDetails from "./Pages/StudentDetails";
 
 
 function App() {
@@ -112,6 +113,15 @@ function App() {
             <>
               <Navbar />
               <StudentList />
+            </>
+          }
+        ></Route>
+          <Route
+          path="/getStudents/:id"
+          element={
+            <>
+              <Navbar />
+              <StudentDetails />
             </>
           }
         ></Route>
