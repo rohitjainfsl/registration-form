@@ -48,7 +48,7 @@ function StudentList() {
               <td>
                 <Button
                   variant="primary"
-                  onClick={() => navigate(`/students/${student._id}`)}
+                  onClick={() => navigate(`/students/getStudents/${student._id}`)}
                 >
                   View
                 </Button>
