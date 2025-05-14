@@ -91,3 +91,26 @@ export async function fetchStudent(req, res) {
   }
 }
 
+export async function fetchStudentById(req, res) {
+  try {
+    const { id } = req.params;
+
+    // Optional: Validate MongoDB ObjectId
+    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({ message: "Invalid student ID format." });
+    }
+
+    const student = await Student.findById(id);
+
+    if (!student) {
+      return res.status(404).json({ message: "Student not found." });
+    }
+
+    res.status(200).json(student);
+  } catch (error) {
+    console.error("Error fetching student by ID:", error);
+    res.status(500).json({ message: "Server error while fetching student." });
+  }
+}
+
+
