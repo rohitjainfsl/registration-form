@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Form, Button, Container, Card, Alert, Row, Col } from "react-bootstrap";
+import { Form, Button, Container, Card, Alert, Row, Col, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import instance from "../axiosConfig";
 
@@ -7,10 +7,12 @@ function AdminLogin() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
+    const [loading, setLoading] = useState(false); 
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true); 
 
         try {
             const response = await instance.post("/new/adminLogin", { email, password }, { withCredentials: true });
@@ -25,6 +27,8 @@ function AdminLogin() {
             setMessage(
                 error.response?.data?.message || "Something went wrong. Please try again."
             );
+        } finally {
+            setLoading(false); 
         }
     };
 
@@ -35,6 +39,9 @@ function AdminLogin() {
                     <Card className="login-card">
                         <Card.Body>
                             <h3 className="text-center">Admin Login</h3>
+
+                            {message && <Alert variant="info">{message}</Alert>}
+
                             <Form onSubmit={handleSubmit}>
                                 <Form.Group controlId="email" className="mb-3">
                                     <Form.Label>Email</Form.Label>
@@ -43,6 +50,7 @@ function AdminLogin() {
                                         placeholder="Enter your email"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
+                                        disabled={loading}
                                         required
                                     />
                                 </Form.Group>
@@ -54,23 +62,22 @@ function AdminLogin() {
                                         placeholder="Enter your password"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
+                                        disabled={loading} 
                                         required
                                     />
                                 </Form.Group>
 
-                                <Button type="submit" className="btn-login w-100">
-                                    Login
+                                <Button type="submit" className="btn-login w-100" disabled={loading}>
+                                    {loading ? (
+                                        <>
+                                            <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                                            {" "}Logging in...
+                                        </>
+                                    ) : (
+                                        "Login"
+                                    )}
                                 </Button>
                             </Form>
-
-                            {message && (
-                                <Alert
-                                variant={messageType === "success" ? "success" : "danger"}
-                                    className="mt-3 text-center"
-                                >
-                                    {message}
-                                </Alert>
-                            )}
 
                             <div className="text-center mt-3">
                                 <p className="small">
