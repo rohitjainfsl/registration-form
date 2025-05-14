@@ -22,7 +22,7 @@ function StudentDetails() {
 
     if (loading) {
         return (
-            <Container className="text-center mt-4">
+             <Container className="text-center" style={{ marginTop: "10rem" }}>
                 <Spinner animation="border" />
                 <p>Loading student details...</p>
             </Container>
@@ -32,7 +32,7 @@ function StudentDetails() {
     if (!student) return <Container>No student found</Container>;
 
     return (
-        <Container className="mt-5">
+         <Container className="text-center" style={{ marginTop: "10rem" }}>
             <h3>{student.name}'s Details</h3>
             <p><strong>Email:</strong> {student.email}</p>
             <p><strong>Phone:</strong> {student.phone}</p>
