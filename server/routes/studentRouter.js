@@ -5,6 +5,6 @@ import { fileArr } from "../middlewares/multer.js";
 const studentRouter = Router();
 
 studentRouter.post("/register", fileArr, register);
-studentRouter.get("/student/:id", fetchStudent);
+studentRouter.get("/getStudents", fetchStudent);
 
 export default studentRouter;

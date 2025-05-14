@@ -1,5 +1,5 @@
 import axios from "axios";
 const instance = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_PATH + "/api",
+  baseURL: import.meta.env.VITE_BACKEND_PATH + "",
 });
 export default instance;
