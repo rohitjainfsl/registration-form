@@ -17,7 +17,7 @@ function AdminLogin() {
 
             if (response.status === 200) {
                 setMessage(response.data.message);
-                navigate("");
+                navigate("/fetch-students");
             } else {
                 setMessage(response.data.message);
             }

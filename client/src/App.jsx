@@ -98,7 +98,7 @@ function App() {
           }
         ></Route>
          <Route
-          path="/admin-login"
+          path="/admin/login"
           element={
             <>
               <Navbar />
