@@ -104,3 +104,21 @@ export const adminLogin = async (req, res) => {
 //     res.status(500).json({ message: "Server error" });
 //   }
 // };
+
+export const getToken = (req, res) => {
+  try {
+    const token = req.cookies.adminToken;
+
+    if (!token) {
+      return res.status(401).json({ message: "No token found" });
+    }
+
+    res.status(200).json({ token });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to retrieve token", error: error.message });
+  }
+};
+
+export const getData = (req, res)=> {
+  
+}
