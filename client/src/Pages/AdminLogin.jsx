@@ -17,7 +17,7 @@ function AdminLogin() {
 
             if (response.status === 200) {
                 setMessage(response.data.message);
-                navigate("/fetch-students");
+                navigate("/fetch/students");
             } else {
                 setMessage(response.data.message);
             }
@@ -65,7 +65,7 @@ function AdminLogin() {
 
                             {message && (
                                 <Alert
-                                    variant={messageType === "success" ? "success" : "danger"}
+                                variant={messageType === "success" ? "success" : "danger"}
                                     className="mt-3 text-center"
                                 >
                                     {message}

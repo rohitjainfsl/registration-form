@@ -9,7 +9,7 @@ function StudentDetails() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    instance.get(`/students/getStudents/${id}`, { withCredentials: true })
+    instance.get(`/students/getStudents/${_id}`, { withCredentials: true })
       .then(res => {
         setStudent(res.data);
         setLoading(false);

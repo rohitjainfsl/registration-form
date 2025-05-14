@@ -107,7 +107,7 @@ function App() {
           }
         ></Route>
           <Route
-          path="/fetch-students"
+          path="/fetch/students"
           element={
             <>
               <Navbar />
