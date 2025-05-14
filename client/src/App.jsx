@@ -17,6 +17,7 @@ import Login from "./login";
 import UploadImage from "./Pages/UploadImage";
 import ChangePassword from "./ChangePassword";
 import AdminLogin from "./Pages/AdminLogin";
+import StudentList from "./Pages/FetchStudents";
 
 
 function App() {
@@ -105,7 +106,17 @@ function App() {
             </>
           }
         ></Route>
-      </Routes>
+          <Route
+          path="/fetch-students"
+          element={
+            <>
+              <Navbar />
+              <StudentList />
+            </>
+          }
+        ></Route>
+      </Routes>,
+      
     </BrowserRouter>
 
   

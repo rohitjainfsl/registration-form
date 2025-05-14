@@ -78,4 +78,16 @@ export async function register(req, res) {
   }
 }
 
-export async function fetchStudent(req, res) {}
+export async function fetchStudent(req, res) {
+  try {
+    const students = await studentModel.find().sort({ createdAt: -1 });
+    return res.status(200).json(students);
+  } catch (error) {
+    console.error("Error fetching students: ", error);
+    return res.status(500).json({
+      message: "Failed to fetch student data",
+      error: error.message,
+    });
+  }
+}
+
