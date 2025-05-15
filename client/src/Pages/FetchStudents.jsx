@@ -7,7 +7,7 @@ function StudentList() {
   const [students, setStudents] = useState([]);
   const [filteredStudents, setFilteredStudents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [search, setsearch] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,13 +24,13 @@ function StudentList() {
   }, []);
   useEffect(() => {
     const filtered = students.filter(student => 
-      student.name.toLowerCase().includes(searchQuery.toLowerCase())
+      student.name.toLowerCase().includes(search.toLowerCase())
     );
     setFilteredStudents(filtered);
-  }, [searchQuery, students]);
+  }, [search, students]);
 
   const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
+    setsearch(e.target.value);
   };
 
   if (loading) {
@@ -49,14 +49,14 @@ function StudentList() {
         <InputGroup>
           <Form.Control
             placeholder="Search by student name..."
-            value={searchQuery}
+            value={search}
             onChange={handleSearch}
             aria-label="Search students"
           />
-          {searchQuery && (
+          {search && (
             <Button 
               variant="outline-secondary" 
-              onClick={() => setSearchQuery("")}
+              onClick={() => setsearch("")}
             >
               Clear
             </Button>
@@ -65,7 +65,7 @@ function StudentList() {
       </Form>
 
       {filteredStudents.length === 0 ? (
-        <p className="text-center">No students found matching "{searchQuery}"</p>
+        <p className="text-center">No students found matching "{search}"</p>
       ) : (
         <Table striped bordered hover responsive>
           <thead>
