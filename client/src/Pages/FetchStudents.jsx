@@ -23,7 +23,7 @@ function StudentList() {
         console.error("Error fetching students:", err);
         setLoading(false);
       });
-  }, []);
+  }, [students]);
 
   useEffect(() => {
     const filtered = students.filter(student => 
