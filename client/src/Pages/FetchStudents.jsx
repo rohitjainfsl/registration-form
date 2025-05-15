@@ -1,5 +1,12 @@
 import { useEffect, useContext, useState, useRef } from "react";
-import { Table, Container, Button, Spinner, Form, InputGroup } from "react-bootstrap";
+import {
+  Table,
+  Container,
+  Button,
+  Spinner,
+  Form,
+  InputGroup,
+} from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import instance from "../axiosConfig";
 import { StudentContext } from "./Context/StudentContext";
@@ -23,7 +30,8 @@ function StudentList() {
 
   useEffect(() => {
     if (!students.length) {
-      instance.get("/students/getStudents", { withCredentials: true })
+      instance
+        .get("/students/getStudents", { withCredentials: true })
         .then((res) => {
           setStudents(res.data);
           setFilteredStudents(res.data);
@@ -36,25 +44,23 @@ function StudentList() {
     }
   }, []);
 
-useEffect(() => {
-  const filtered = students.filter(student =>
-    student.name.toLowerCase().includes(search.toLowerCase())
-  );
-  setFilteredStudents(filtered);
+  useEffect(() => {
+    const filtered = students.filter((student) =>
+      student.name.toLowerCase().includes(search.toLowerCase())
+    );
+    setFilteredStudents(filtered);
 
-  if (search.trim()) {
-    setVisibleCount(10);
-  }
-}, [search]);
-
-
+    if (search.trim()) {
+      setVisibleCount(10);
+    }
+  }, [search]);
 
   useEffect(() => {
     if (!loadMoreRef.current) return;
 
     const observer = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting && visibleCount < filteredStudents.length) {
-        setVisibleCount(prev => prev + 10);
+        setVisibleCount((prev) => prev + 10);
       }
     });
 
@@ -67,16 +73,15 @@ useEffect(() => {
     };
   }, [visibleCount, filteredStudents]);
 
-
-useEffect(() => {
-  if (scrollY) {
-    setTimeout(() => {
-      window.scrollTo(0, scrollY);
-      setScrollY(0); 
-    }, 0);
-  }
-}, []);
-
+  useEffect(() => {
+    const savedY = sessionStorage.getItem("scrollY");
+    if (savedY) {
+      setTimeout(() => {
+        window.scrollTo(0, parseInt(savedY));
+        sessionStorage.removeItem("scrollY");
+      }, 0);
+    }
+  }, []);
 
   const studentsToDisplay = filteredStudents.slice(0, visibleCount);
   const hasMoreToLoad = visibleCount < filteredStudents.length;
@@ -126,7 +131,7 @@ useEffect(() => {
                 <Button
                   variant="primary"
                   onClick={() => {
-                    setScrollY(window.scrollY);
+                    sessionStorage.setItem("scrollY", window.scrollY);
                     navigate(`/getStudents/${student._id}`);
                   }}
                 >

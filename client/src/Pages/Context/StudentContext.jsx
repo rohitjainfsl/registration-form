@@ -7,7 +7,7 @@ export function StudentProvider({ children }) {
   const [students, setStudents] = useState([]);
   const [filteredStudents, setFilteredStudents] = useState([]);
   const [visibleCount, setVisibleCount] = useState(10);
-  const [scrollY, setScrollY] = useState(0);
+//   const [scrollY, setScrollY] = useState(0);
 
   return (
     <StudentContext.Provider
@@ -19,7 +19,7 @@ export function StudentProvider({ children }) {
         visibleCount,
         setVisibleCount,
         scrollY,
-        setScrollY,
+        // setScrollY,
       }}
     >
       {children}
