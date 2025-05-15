@@ -84,26 +84,26 @@ export const adminLogin = async (req, res) => {
   }
 };
 
-// export const registerAdmin = async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
+export const registerAdmin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-//     let existingAdmin = await adminModel.findOne({ email });
-//     if (existingAdmin) {
-//       return res.status(400).json({ message: "Admin already exists" });
-//     }
+    let existingAdmin = await adminModel.findOne({ email });
+    if (existingAdmin) {
+      return res.status(400).json({ message: "Admin already exists" });
+    }
 
-//     const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-//     const newAdmin = new adminModel({ email, password: hashedPassword });
-//     await newAdmin.save();
+    const newAdmin = new adminModel({ email, password: hashedPassword });
+    await newAdmin.save();
 
-//     res.status(200).json({ message: "Admin registered successfully" });
-//   } catch (error) {
-//     console.error("Registration Error:", error);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// };
+    res.status(200).json({ message: "Admin registered successfully" });
+  } catch (error) {
+    console.error("Registration Error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 
 export const getToken = (req, res) => {
   try {
