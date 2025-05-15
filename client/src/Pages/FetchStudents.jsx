@@ -19,8 +19,6 @@ function StudentList() {
     setFilteredStudents,
     visibleCount,
     setVisibleCount,
-    scrollY,
-    setScrollY,
   } = useContext(StudentContext);
 
   const [search, setSearch] = useState("");
@@ -115,6 +113,7 @@ function StudentList() {
       </Form>
 
       <Table striped bordered hover responsive>
+        {studentsToDisplay.length > 0 ? (<>
         <thead>
           <tr>
             <th>#</th>
@@ -122,25 +121,29 @@ function StudentList() {
             <th>Action</th>
           </tr>
         </thead>
-        <tbody>
-          {studentsToDisplay.map((student, index) => (
-            <tr key={student._id}>
-              <td>{index + 1}</td>
-              <td>{student.name}</td>
-              <td>
-                <Button
-                  variant="primary"
-                  onClick={() => {
-                    sessionStorage.setItem("scrollY", window.scrollY);
-                    navigate(`/getStudents/${student._id}`);
-                  }}
-                >
-                  View
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
+          <tbody>
+            {studentsToDisplay.map((student, index) => (
+              <tr key={student._id}>
+                <td>{index + 1}</td>
+                <td>{student.name}</td>
+                <td>
+                  <Button
+                    variant="primary"
+                    onClick={() => {
+                      sessionStorage.setItem("scrollY", window.scrollY);
+                      navigate(`/getStudents/${student._id}`);
+                    }}
+                  >
+                    View
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+          </>
+        ) : (
+          <h2>Student Not Found....</h2>
+        )}
       </Table>
 
       {hasMoreToLoad && (

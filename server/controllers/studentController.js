@@ -95,13 +95,6 @@ export async function fetchStudentById(req, res) {
   try {
     const { id } = req.params;
 
-    console.log(id)
-
-    // // Optional: Validate MongoDB ObjectId
-    // if (!id.match(/^[0-9a-fA-F]{24}$/)) {
-    //   return res.status(400).json({ message: "Invalid student ID format." });
-    // }
-
     const student = await studentModel.findById(id);
 
     if (!student) {
