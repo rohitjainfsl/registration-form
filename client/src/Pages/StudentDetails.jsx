@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Container, Image, Spinner, Form, Button } from "react-bootstrap";
+import { Container, Spinner, Form, Button } from "react-bootstrap";
 import instance from "../axiosConfig";
+import { getPNGUrl, getPublicIdFromUrl } from "./Cloudinary/cloudinary";
 
 function StudentDetails() {
   const { id } = useParams();
@@ -82,13 +83,35 @@ function StudentDetails() {
       <p><strong>Other Course:</strong> {student.otherCourse}</p>
       <p><strong>Referral:</strong> {student.referral}</p>
       <p><strong>Friend's Name:</strong> {student.friendName}</p>
+
+      {/* Aadhar Front Image (PNG) */}
       <p>
         <strong>Aadhar Front:</strong><br />
-        <Image src={student.aadharFront} alt="Aadhar Front" thumbnail width={150} />
+        {student.aadharFront ? (
+          <img
+            src={getPNGUrl(getPublicIdFromUrl(student.aadharFront))}
+            alt="Aadhar Front"
+            width={150}
+            style={{ border: "1px solid #ccc", borderRadius: "5px" }}
+          />
+        ) : (
+          "Not uploaded"
+        )}
       </p>
+
+      {/* Aadhar Back Image (PNG) */}
       <p>
         <strong>Aadhar Back:</strong><br />
-        <Image src={student.aadharBack} alt="Aadhar Back" thumbnail width={150} />
+        {student.aadharBack ? (
+          <img
+            src={getPNGUrl(getPublicIdFromUrl(student.aadharBack))}
+            alt="Aadhar Back"
+            width={150}
+            style={{ border: "1px solid #ccc", borderRadius: "5px" }}
+          />
+        ) : (
+          "Not uploaded"
+        )}
       </p>
 
       <hr />
@@ -127,7 +150,7 @@ function StudentDetails() {
         />
       </Form.Group>
 
-      <Button onClick={handleUpdate}>Add</Button>
+      <Button onClick={handleUpdate}>Update</Button>
 
       {message && (
         <p className="mt-3" style={{ color: message.includes("Failed") ? "red" : "green" }}>
