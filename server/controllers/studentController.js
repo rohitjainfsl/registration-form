@@ -78,9 +78,14 @@ export async function register(req, res) {
   }
 }
 
+
 export async function fetchStudent(req, res) {
   try {
-    const students = await studentModel.find().sort({ createdAt: -1 });
+    const students = await studentModel
+      .find()
+      .select('-email_check -password -salt') 
+      .sort({ createdAt: -1 });
+
     return res.status(200).json(students);
   } catch (error) {
     console.error("Error fetching students: ", error);
