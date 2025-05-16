@@ -113,4 +113,26 @@ export async function fetchStudentById(req, res) {
   }
 }
 
+export async function updateStudentDetails(req, res) {
+  try {
+    const { id } = req.params;
+    const { fees, startDate, remarks } = req.body;
+
+    const updatedStudent = await studentModel.findByIdAndUpdate(
+      id,
+      { fees, startDate, remarks },
+      { new: true }
+    );
+
+    if (!updatedStudent) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    res.status(200).json({ message: "Student updated", student: updatedStudent });
+  } catch (error) {
+    console.error("Update error:", error);
+    res.status(500).json({ message: "Update failed", error: error.message });
+  }
+}
+
 
