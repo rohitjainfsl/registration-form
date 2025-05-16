@@ -1,10 +1,9 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Navbar, Nav, Container, Button } from "react-bootstrap";
 import Logo from "./assets/logo.png";
 import "./styles/navbar.css";
 import { adminContext } from "./Pages/Context/Admincontext";
-// import instance from "./axiosConfig";
 
 const CustomNavbar = () => {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -14,10 +13,9 @@ const CustomNavbar = () => {
 
   function handleLogOut() {
     LogOut();
-    // isAuthenticated(false)
     navigate("/admin/login");
   }
-  console.log(isAuthenticated);
+  // console.log(isAuthenticated);
 
   return (
     <Navbar

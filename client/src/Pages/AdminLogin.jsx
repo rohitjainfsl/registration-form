@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import { useState, useContext} from "react";
 import { Form, Button, Container, Card, Alert, Row, Col, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import instance from "../axiosConfig";
+import { adminContext } from "./Context/Admincontext";
+
 
 function AdminLogin() {
+    const {setIsAuthenticated} = useContext(adminContext)
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
@@ -19,7 +22,9 @@ function AdminLogin() {
 
             if (response.status === 200) {
                 setMessage(response.data.message);
+                setIsAuthenticated(true)
                 navigate("/fetch/students");
+
             } else {
                 setMessage(response.data.message);
             }

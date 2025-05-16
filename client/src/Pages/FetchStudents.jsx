@@ -34,8 +34,7 @@ function StudentList() {
   } else {
     checkToken(); 
   }
-  // console.log(res.data)
-}, []);
+}, [isAuthenticated]);
 
   useEffect(() => {
     if (!students.length) {
