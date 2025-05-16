@@ -70,7 +70,7 @@ export const adminLogin = async (req, res) => {
 
     const token = jwt.sign({ adminId: admin._id }, process.env.JWT_SECRET, { expiresIn: "2h" });
 
-    res.cookie("adminToken", token, {
+    res.cookie("token", token, {
      httpOnly: true,
       secure: true,
       sameSite: "strict",
@@ -107,7 +107,7 @@ export const registerAdmin = async (req, res) => {
 
 export const getToken = (req, res) => {
   try {
-    const token = req.cookies.adminToken;
+    const token = req.cookies;
     if (!token) {
       return res.status(401).json({ message: "No token found" });
     }
@@ -122,7 +122,7 @@ export const getData = (req, res)=> {
 }
 
 export const logout = (req, res)=>{
-     const token = req.cookies.adminToken;
+     const token = req.cookies;
   try {
     res.clearCookie(token, {
       httpOnly: true,
