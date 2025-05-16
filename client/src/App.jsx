@@ -5,6 +5,7 @@ import {
   RouterProvider,
   Routes,
 } from "react-router-dom";
+import { useContext } from "react";
 import Home from "./Pages/Home";
 import UserForm from "./registrationForm";
 import About from "./Pages/About";
@@ -19,22 +20,17 @@ import ChangePassword from "./ChangePassword";
 import AdminLogin from "./Pages/AdminLogin";
 import StudentList from "./Pages/FetchStudents";
 import StudentDetails from "./Pages/StudentDetails";
+import ProtectedRoute from "./Pages/ProtectedRoute/ProtectedRoute";
+import { adminContext } from "./Pages/Context/Admincontext";
 
 
 function App() {
+  const { isAuthenticated } = useContext(adminContext);
+  // const navigate = useNavigate();
   return (
     <BrowserRouter>
       <Routes>
-        <Route
-          path="/"
-          element={
-            <>
-              <Header />
-              <Navbar />
-              <Home />
-            </>
-          }
-        ></Route>
+        <Route path="/" element={isAuthenticated ? <StudentList/>   : <Home />} />
         <Route
           path="/registration"
           element={
@@ -71,7 +67,7 @@ function App() {
             </>
           }
         ></Route>
-          <Route
+        <Route
           path="/profile"
           element={
             <>
@@ -80,7 +76,7 @@ function App() {
             </>
           }
         ></Route>
-          <Route
+        <Route
           path="/changePassword"
           element={
             <>
@@ -98,7 +94,7 @@ function App() {
             </>
           }
         ></Route>
-         <Route
+        <Route
           path="/admin/login"
           element={
             <>
@@ -107,16 +103,16 @@ function App() {
             </>
           }
         ></Route>
-          <Route
+        <Route
           path="/fetch/students"
           element={
-            <>
+            <ProtectedRoute>
               <Navbar />
               <StudentList />
-            </>
+            </ProtectedRoute>
           }
         ></Route>
-          <Route
+        <Route
           path="/getStudents/:id"
           element={
             <>
@@ -126,10 +122,10 @@ function App() {
           }
         ></Route>
       </Routes>,
-      
-    </BrowserRouter>
 
-  
+    </BrowserRouter >
+
+
   );
 }
 

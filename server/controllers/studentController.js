@@ -78,9 +78,14 @@ export async function register(req, res) {
   }
 }
 
+
 export async function fetchStudent(req, res) {
   try {
-    const students = await studentModel.find().sort({ createdAt: -1 });
+    const students = await studentModel
+      .find()
+      .select('-email_check -password -salt') 
+      .sort({ createdAt: -1 });
+
     return res.status(200).json(students);
   } catch (error) {
     console.error("Error fetching students: ", error);
@@ -95,13 +100,6 @@ export async function fetchStudentById(req, res) {
   try {
     const { id } = req.params;
 
-    console.log(id)
-
-    // // Optional: Validate MongoDB ObjectId
-    // if (!id.match(/^[0-9a-fA-F]{24}$/)) {
-    //   return res.status(400).json({ message: "Invalid student ID format." });
-    // }
-
     const student = await studentModel.findById(id);
 
     if (!student) {
@@ -112,6 +110,28 @@ export async function fetchStudentById(req, res) {
   } catch (error) {
     console.error("Error fetching student by ID:", error);
     res.status(500).json({ message: "Server error while fetching student." });
+  }
+}
+
+export async function updateStudentDetails(req, res) {
+  try {
+    const { id } = req.params;
+    const { fees, startDate, remarks } = req.body;
+
+    const updatedStudent = await studentModel.findByIdAndUpdate(
+      id,
+      { fees, startDate, remarks },
+      { new: true }
+    );
+
+    if (!updatedStudent) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    res.status(200).json({ message: "Student updated", student: updatedStudent });
+  } catch (error) {
+    console.error("Update error:", error);
+    res.status(500).json({ message: "Update failed", error: error.message });
   }
 }
 

@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@cloudinary/react": "^1.14.3",
+    "@cloudinary/url-gen": "^1.21.0",
     "@react-navigation/native": "^7.0.14",
     "axios": "^1.7.7",
     "bootstrap": "^5.3.3",

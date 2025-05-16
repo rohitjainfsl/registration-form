@@ -24,12 +24,16 @@ const studentSchema = new Schema(
     qualificationYear: String,
     referral: String,
     role: String,
-    password:String,
-    newPassword:String,
-    firstTimesignin:{type:Boolean, default:true},
+    password: String,
+    newPassword: String,
+    firstTimesignin: { type: Boolean, default: true },
+    fees: String,
+    startDate: String,
+    remarks: String,
   },
   { timestamps: true }
 );
+
 
 studentSchema.pre("save", function (next) {
   if (!this.password) {

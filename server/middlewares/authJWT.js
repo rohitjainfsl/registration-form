@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 const authMiddleware = (req, res, next) => {
   try {
-    const token = req.cookies.adminToken;
+    const token = req.cookies.token;
 
     if (!token) {
       console.log("token missing");
