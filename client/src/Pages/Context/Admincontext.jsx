@@ -1,8 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 import instance from "../../axiosConfig";
 
-
-
 export const adminContext = createContext();
 
 export function AdminProvider({ children }) {
@@ -14,22 +12,36 @@ export function AdminProvider({ children }) {
 
   useEffect(() => {
     checkToken();
-  }, [isAuthenticated]);
+  }, []);
 
-const checkToken = async () => {
+  const checkToken = async () => {
     try {
-      const res = await instance.get("/new/checkToken", {withCredentials:true});
+      const res = await instance.get("/new/checkToken", {
+        withCredentials: true,
+      });
       if (res.status === 200) {
         setIsAuthenticated(true);
         setAdminData(res.data);
       }
       // console.log(isAuthenticated)
     } catch (error) {
-      console.error(error)
+      console.error(error);
       setIsAuthenticated(false);
       setAdminData(null);
     }
   };
+  const LogOut = async () => {
+    try {
+      const res = await instance.post("/new/logout", { withCredentials: true });
+        setIsAuthenticated(false);
+        setAdminData(null);
+        // console.log(isAuthenticated)
+        console.log(res.status);
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
   return (
     <adminContext.Provider
       value={{
@@ -42,7 +54,9 @@ const checkToken = async () => {
         isAuthenticated,
         setIsAuthenticated,
         adminData,
+        setAdminData,
         checkToken,
+        LogOut,
       }}
     >
       {children}
