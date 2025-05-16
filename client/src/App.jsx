@@ -19,6 +19,7 @@ import ChangePassword from "./ChangePassword";
 import AdminLogin from "./Pages/AdminLogin";
 import StudentList from "./Pages/FetchStudents";
 import StudentDetails from "./Pages/StudentDetails";
+import ProtectedRoute from "./Pages/ProtectedRoute/ProtectedRoute";
 
 
 function App() {
@@ -110,10 +111,10 @@ function App() {
           <Route
           path="/fetch/students"
           element={
-            <>
+            <ProtectedRoute>
               <Navbar />
               <StudentList />
-            </>
+              </ProtectedRoute>
           }
         ></Route>
           <Route

@@ -9,7 +9,7 @@ import {
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import instance from "../axiosConfig";
-import { StudentContext } from "./Context/StudentContext";
+import { adminContext } from "./Context/Admincontext";
 
 function StudentList() {
   const {
@@ -18,13 +18,23 @@ function StudentList() {
     filteredStudents,
     setFilteredStudents,
     visibleCount,
-    setVisibleCount,
-  } = useContext(StudentContext);
+    setVisibleCount, 
+    isAuthenticated,
+    checkToken
+  } = useContext(adminContext);
 
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(!students.length);
   const loadMoreRef = useRef(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+  if (!isAuthenticated) {
+    navigate("/admin/login");
+  } else {
+    checkToken(); 
+  }
+}, [isAuthenticated, navigate]);
 
   useEffect(() => {
     if (!students.length) {

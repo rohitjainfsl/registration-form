@@ -1,13 +1,12 @@
 import express from "express";
 import cors from "cors";
 import "dotenv/config";
-// import mongoose from "mongoose";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
-// import path from "path";
 import studentRouter from "./routes/studentRouter.js";
 import connectToDB from "./connection.js";
 import loginRouter from "./routes/loginRouter.js";
+import cookieParser from "cookie-parser";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -16,7 +15,7 @@ const PORT = 8081;
 const app = express();
 
 // app.use(cors({ origin: process.env.FRONTEND_PATH}));
-
+app.use(cookieParser());
 app.use(
   cors({
     origin: process.env.FRONTEND_PATH,

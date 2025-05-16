@@ -71,10 +71,10 @@ export const adminLogin = async (req, res) => {
     const token = jwt.sign({ adminId: admin._id }, process.env.JWT_SECRET, { expiresIn: "2h" });
 
     res.cookie("adminToken", token, {
-      httpOnly: true, 
-      secure: process.env.NODE_ENV === "production", 
-      sameSite: "none",
-      maxAge: 2 * 60 * 60 * 1000, 
+     httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      maxAge: 2 * 60 * 60 * 1000,
     });
     console.log("user login successfully" + token);
     res.status(200).json({ message: "User login successfully" });
@@ -108,11 +108,9 @@ export const registerAdmin = async (req, res) => {
 export const getToken = (req, res) => {
   try {
     const token = req.cookies.adminToken;
-
     if (!token) {
       return res.status(401).json({ message: "No token found" });
     }
-
     res.status(200).json({ token });
   } catch (error) {
     res.status(500).json({ message: "Failed to retrieve token", error: error.message });
@@ -121,4 +119,19 @@ export const getToken = (req, res) => {
 
 export const getData = (req, res)=> {
   
+}
+
+export const logout = (req, res)=>{
+     const token = req.cookies.adminToken;
+  try {
+    res.clearCookie(token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+    })
+      return res.json({ message: "Logout successful" });
+  } catch (error) {
+     console.error(error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
 }
