@@ -26,7 +26,6 @@ const UploadImage = ({ onImageUpload }) => {
       }
     );
     widget.open();
-    // navigate('/uploadImage')
 
   };
 

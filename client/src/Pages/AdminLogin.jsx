@@ -1,4 +1,4 @@
-import { useState, useContext} from "react";
+import { useState, useContext } from "react";
 import { Form, Button, Container, Card, Alert, Row, Col, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import instance from "../axiosConfig";
@@ -6,16 +6,16 @@ import { adminContext } from "./Context/Admincontext";
 
 
 function AdminLogin() {
-    const {setIsAuthenticated} = useContext(adminContext)
+    const { setIsAuthenticated } = useContext(adminContext)
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
-    const [loading, setLoading] = useState(false); 
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true); 
+        setLoading(true);
 
         try {
             const response = await instance.post("/new/adminLogin", { email, password }, { withCredentials: true });
@@ -23,7 +23,7 @@ function AdminLogin() {
             if (response.status === 200) {
                 setMessage(response.data.message);
                 setIsAuthenticated(true)
-                navigate("/fetch/students");
+                navigate("/admin/home");
 
             } else {
                 setMessage(response.data.message);
@@ -33,7 +33,7 @@ function AdminLogin() {
                 error.response?.data?.message || "Something went wrong. Please try again."
             );
         } finally {
-            setLoading(false); 
+            setLoading(false);
         }
     };
 
@@ -67,7 +67,7 @@ function AdminLogin() {
                                         placeholder="Enter your password"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        disabled={loading} 
+                                        disabled={loading}
                                         required
                                     />
                                 </Form.Group>

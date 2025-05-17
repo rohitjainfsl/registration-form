@@ -13,7 +13,8 @@ const CustomNavbar = () => {
 
   function handleLogOut() {
     LogOut();
-    navigate("/admin/login");
+    // isAuthenticated(false)
+    navigate("/");
   }
   // console.log(isAuthenticated);
 
