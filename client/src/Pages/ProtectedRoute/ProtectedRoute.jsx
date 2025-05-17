@@ -8,7 +8,10 @@ function ProtectedRoute({ children }) {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/fetch/students");
+      navigate("/admin/home");
+    }
+    else{
+      navigate("/")
     }
   }, [isAuthenticated]);
 

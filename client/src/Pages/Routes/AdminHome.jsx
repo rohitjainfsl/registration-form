@@ -4,6 +4,7 @@ import { adminContext } from "../Context/Admincontext";
 import Header from "../Header.jsx";
 import  Navbar  from "../../Navbar.jsx"
 import Home from "../Home";
+import StudentList from "../FetchStudents.jsx";
 
 function AdminHome() {
   const { isAuthenticated } = useContext(adminContext);
@@ -11,7 +12,10 @@ function AdminHome() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/fetch/students");
+      navigate("/admin/home");
+    }
+    else{
+      navigate("/")
     }
   }, [isAuthenticated]);
 
@@ -19,7 +23,8 @@ function AdminHome() {
     <>
       <Header />
       <Navbar />
-      <Home />
+      <Home/>
+      {/* <StudentList /> */}
     </>
   );
 }
