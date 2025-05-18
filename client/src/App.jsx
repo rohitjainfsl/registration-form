@@ -10,7 +10,6 @@ import Home from "./Pages/Home";
 import UserForm from "./registrationForm";
 import About from "./Pages/About";
 import Navbar from "./Navbar";
-import Header from "./Pages/Header";
 import Courses from "./Pages/Courses";
 import Blog from "./Pages/Blog";
 import "./App.css";
@@ -24,13 +23,20 @@ import ProtectedRoute from "./Pages/ProtectedRoute/ProtectedRoute";
 import { adminContext } from "./Pages/Context/Admincontext";
 
 
+import AdminHome from "./Pages/Routes/AdminHome";
+import OutLate from "./Pages/Routes/OutLate";
+
+
+
 function App() {
   const { isAuthenticated } = useContext(adminContext);
   // const navigate = useNavigate();
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={isAuthenticated ? <StudentList/>   : <Home />} />
+
+        <Route path="/" element={isAuthenticated ? <AdminHome />   : <OutLate />} />
+
         <Route
           path="/registration"
           element={
@@ -98,13 +104,15 @@ function App() {
           path="/admin/login"
           element={
             <>
-              <Navbar />
+              {/* <Navbar /> */}
               <AdminLogin />
             </>
           }
         ></Route>
         <Route
-          path="/fetch/students"
+
+          path="/admin/home",
+
           element={
             <ProtectedRoute>
               <Navbar />

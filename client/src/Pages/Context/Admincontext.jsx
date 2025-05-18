@@ -37,6 +37,7 @@ export function AdminProvider({ children }) {
         setAdminData(null);
         // console.log(isAuthenticated)
         console.log(res.status);
+        console.log("/")
     } catch (error) {
       console.error("Logout failed:", error);
     }
