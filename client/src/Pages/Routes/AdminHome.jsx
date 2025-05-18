@@ -1,8 +1,12 @@
 import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { adminContext } from "../Context/Admincontext";
+import Header from "../Header.jsx";
+import  Navbar  from "../../Navbar.jsx"
+import Home from "../Home";
+import StudentList from "../FetchStudents.jsx";
 
-function ProtectedRoute({ children }) {
+function AdminHome() {
   const { isAuthenticated } = useContext(adminContext);
   const navigate = useNavigate();
 
@@ -15,7 +19,14 @@ function ProtectedRoute({ children }) {
     }
   }, [isAuthenticated]);
 
-  return isAuthenticated ? children : null;
+  return (
+    <>
+      <Header />
+      <Navbar />
+      <Home/>
+      {/* <StudentList /> */}
+    </>
+  );
 }
 
-export default ProtectedRoute;
+export default AdminHome;
