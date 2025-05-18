@@ -21,8 +21,11 @@ import StudentList from "./Pages/FetchStudents";
 import StudentDetails from "./Pages/StudentDetails";
 import ProtectedRoute from "./Pages/ProtectedRoute/ProtectedRoute";
 import { adminContext } from "./Pages/Context/Admincontext";
+
+
 import AdminHome from "./Pages/Routes/AdminHome";
 import OutLate from "./Pages/Routes/OutLate";
+
 
 
 function App() {
@@ -31,7 +34,9 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+
         <Route path="/" element={isAuthenticated ? <AdminHome />   : <OutLate />} />
+
         <Route
           path="/registration"
           element={
@@ -105,7 +110,9 @@ function App() {
           }
         ></Route>
         <Route
-          path="/admin/home"
+
+          path="/admin/home",
+
           element={
             <ProtectedRoute>
               <Navbar />
