@@ -12,10 +12,6 @@ const Header = () => {
               <FaPhoneAlt className="header-phone-icon" />
               <span>+91-8824453320</span>
             </a>
-            <a className="header-link-second" href="tel:918824453320">
-              <FaPhoneAlt className="header-phone-icon" />
-              <span>+91-8824453320</span>
-            </a>
           </p>
         </div>
       </Container>
