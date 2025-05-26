@@ -110,9 +110,7 @@ function App() {
           }
         ></Route>
         <Route
-
-          path="/admin/home",
-
+          path="/admin/home"
           element={
             <ProtectedRoute>
               <Navbar />
