@@ -1,21 +1,26 @@
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
 
-const authMiddleware = (req, res, next) => {
-  try {
-    const token = req.cookies.token;
+const authMiddleware = (...tokenKeys) => (req, res, next) => {
+  for (const tokenKey of tokenKeys) {
+    let token;
 
-    if (!token) {
-      console.log("token missing");
-      return res.status(401).json({ message: "No token provided" });
+    if (tokenKey === "adminToken") token = req.cookies.adminToken;
+    else if (tokenKey === "studentToken") token = req.cookies.studentToken;
+
+    if (token) {
+      try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded;
+        return next(); 
+      } catch (error) {
+        continue;
+      }
     }
-    console.log("token received");
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("Decoded user:", decoded);
-    req.user = decoded;
-    next();
-  } catch (error) {
-    return res.status(401).json({ message: "Invalid or expired token" });
   }
+
+  return res.status(401).json({ message: "Unauthorized, please log in" });
 };
 
 export default authMiddleware;
