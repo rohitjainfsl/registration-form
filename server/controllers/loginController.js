@@ -21,7 +21,6 @@ export async function login(req, res) {
     }
 
     // user.firstTimesignin === "true";
-
     // if (firstTime) {
     //   user.firstTimesignin = "false";
     //   await user.save();
@@ -78,13 +77,13 @@ export const adminLogin = async (req, res) => {
       expiresIn: "2h",
     });
 
-    res.cookie("token", token, {
+    res.cookie("adminToken", token, {
       httpOnly: true,
       secure: true,
       sameSite: "none",
       maxAge: 2 * 60 * 60 * 1000,
     });
-    console.log("user login successfully" + token);
+    // console.log("user login successfully" + token);
     res.status(200).json({ message: "User login successfully" });
   } catch (error) {
     console.error(error);
@@ -113,32 +112,62 @@ export const registerAdmin = async (req, res) => {
   }
 };
 
-export const getToken = (req, res) => {
-  try {
-    const token = req.cookies;
-    if (!token || Object.keys(token).length === 0) {
-      return res.status(401).json({ message: "No token found" });
-    }
-    res.status(200).json({ token });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to retrieve token", error: error.message });
-  }
-};
-
-export const getData = (req, res) => {};
-
 export const logout = (req, res) => {
+  const { adminToken, studentToken } = req.cookies;
+
+  let role = null;
+
+  if (adminToken) {
+    role = "admin";
+  } else if (studentToken) {
+    role = "student";
+  } else {
+    return res.status(401).json({ message: "No token found, please log in" });
+  }
+
   try {
-    res.clearCookie("token", {
+    res.clearCookie(`${role}Token`, {
       httpOnly: true,
       secure: true,
       sameSite: "strict",
     });
-    return res.status(200).json({ message: "Logout successful" });
+    return res.status(200).json({ message: "LogOut successful" });
   } catch (error) {
-    console.error(error);
     return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
+export const checkToken = (req, res)=>{
+  const {adminToken, studentToken} = req.cookies;
+  let token = null;
+  let role = null;
+  // console.log(role)
+
+  if(adminToken)
+  {
+    token = adminToken;
+    role = "admin";
+  }
+  else if(studentToken)
+  {
+    token = studentToken;
+    role = "student";
+  }
+  else{
+    return res.status(401).json({message: "No Token Found, PLEASE LOG IN"});
+  }
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    return res.status(200).json({
+      message:`${role} aunthenticated`,
+      role,
+      user: decoded,
+    });
+  } catch (error) {
+    return res.status(401).json({
+      message:"invalid", error
+    })
   }
 };

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Modal from "./t&m_model.jsx"
-import instance from "./axiosConfig.js";
+import instance from "../../axiosConfig.js";
 import { useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";

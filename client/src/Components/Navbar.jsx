@@ -1,9 +1,10 @@
 import { useState, useContext} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Navbar, Nav, Container, Button } from "react-bootstrap";
-import Logo from "./assets/logo.png";
-import "./styles/navbar.css";
-import { adminContext } from "./Pages/Context/Admincontext";
+// import Logo from "./assets/logo.png";
+import Logo from "../assets/logo.png"
+import "../styles/navbar.css";
+import { adminContext } from "../Pages/Context/Admincontext";
 
 const CustomNavbar = () => {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -13,7 +14,6 @@ const CustomNavbar = () => {
 
   function handleLogOut() {
     LogOut();
-    // isAuthenticated(false)
     navigate("/");
   }
   // console.log(isAuthenticated);
@@ -55,8 +55,8 @@ const CustomNavbar = () => {
                 Logout
               </Button>
             ) : (
-              <Button as={Link} to="/registration" className="navbar-button">
-                Login / Register
+              <Button as={Link} to="/student/login" className="navbar-button">
+                Login 
               </Button>
             )}
           </Nav>

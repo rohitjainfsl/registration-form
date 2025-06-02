@@ -8,36 +8,36 @@ export function AdminProvider({ children }) {
   const [filteredStudents, setFilteredStudents] = useState([]);
   const [visibleCount, setVisibleCount] = useState(10);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [adminData, setAdminData] = useState(null);
+  const [role, setRole] = useState(null);
 
   useEffect(() => {
     checkToken();
   }, []);
 
+
   const checkToken = async () => {
     try {
-      const res = await instance.get("/new/checkToken", {
+      const res = await instance.get("/auth/checkToken", {
         withCredentials: true,
       });
       if (res.status === 200) {
         setIsAuthenticated(true);
-        setAdminData(res.data);
+        // setRole(res.data.role);
       }
-      // console.log(isAuthenticated)
+      console.log(res.data)
+      // console.log(role)
     } catch (error) {
       console.error(error);
       setIsAuthenticated(false);
-      setAdminData(null);
+      setRole(null);
     }
   };
   const LogOut = async () => {
     try {
-      const res = await instance.post("/new/logout", { withCredentials: true });
+      const res = await instance.post("/auth/logout", { withCredentials: true });
         setIsAuthenticated(false);
-        setAdminData(null);
-        // console.log(isAuthenticated)
+        setRole(null);
         console.log(res.status);
-        console.log("/")
     } catch (error) {
       console.error("Logout failed:", error);
     }
@@ -54,8 +54,8 @@ export function AdminProvider({ children }) {
         setVisibleCount,
         isAuthenticated,
         setIsAuthenticated,
-        adminData,
-        setAdminData,
+        role,
+        setRole,
         checkToken,
         LogOut,
       }}

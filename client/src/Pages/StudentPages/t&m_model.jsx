@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './model.css';
+import '../../model.css';
 
 const Modal = ({ show, onClose, onAgree}) => {
   if (!show) return null; 

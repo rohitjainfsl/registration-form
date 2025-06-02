@@ -5,38 +5,51 @@ import {
   RouterProvider,
   Routes,
 } from "react-router-dom";
-import { useContext } from "react";
 import Home from "./Pages/Home";
-import UserForm from "./registrationForm";
-import About from "./Pages/About";
-import Navbar from "./Navbar";
+import UserForm from "./Pages/StudentPages/registrationForm";
+import About from "./Pages/About"
+import Navbar from "../src/Components/Navbar"
+import Header from "./Components/Header";
 import Courses from "./Pages/Courses";
 import Blog from "./Pages/Blog";
 import "./App.css";
 import Login from "./login";
-import UploadImage from "./Pages/UploadImage";
-import ChangePassword from "./ChangePassword";
-import AdminLogin from "./Pages/AdminLogin";
-import StudentList from "./Pages/FetchStudents";
-import StudentDetails from "./Pages/StudentDetails";
+import ChangePassword from "./Pages/StudentPages/ChangePassword";
+import AdminLogin from "./Pages/AdminPages/AdminLogin";
+import StudentList from "./Pages/AdminPages/FetchStudents";
+import StudentDetails from "./Pages/AdminPages/StudentDetails";
 import ProtectedRoute from "./Pages/ProtectedRoute/ProtectedRoute";
-import { adminContext } from "./Pages/Context/Admincontext";
-
-
-import AdminHome from "./Pages/Routes/AdminHome";
-import OutLate from "./Pages/Routes/OutLate";
+import AdminHome from "./Pages/AdminPages/AdminHome";
+import StudentLogin from "./Pages/StudentPages/StudentLogin";
+import CreateTestForm from "./Pages/AdminPages/CreateTest";
+import UpdateTest from "./Pages/AdminPages/UpdateTest";
+import ViewTest from "./Pages/AdminPages/ViewTest";
 
 
 
 function App() {
-  const { isAuthenticated } = useContext(adminContext);
-  // const navigate = useNavigate();
   return (
     <BrowserRouter>
       <Routes>
-
-        <Route path="/" element={isAuthenticated ? <AdminHome />   : <OutLate />} />
-
+        <Route
+          path="/"
+          element={
+            <>
+              <Header />
+              <Navbar />
+              <Home />
+            </>
+          }
+        ></Route>
+        <Route
+          path="/student/login"
+          element={
+            <>
+              <Navbar />
+              <StudentLogin />
+            </>
+          }
+        ></Route>
         <Route
           path="/registration"
           element={
@@ -73,16 +86,7 @@ function App() {
             </>
           }
         ></Route>
-        <Route
-          path="/profile"
-          element={
-            <>
-              <Navbar />
-              <UploadImage />
-            </>
-          }
-        ></Route>
-        <Route
+          <Route
           path="/changePassword"
           element={
             <>
@@ -100,27 +104,25 @@ function App() {
             </>
           }
         ></Route>
-        <Route
+         <Route
           path="/admin/login"
           element={
             <>
-              {/* <Navbar /> */}
+              <Navbar />
               <AdminLogin />
             </>
           }
         ></Route>
-        <Route
-
-          path="/admin/home",
-
+          <Route
+          path="/admin/fetch/students"
           element={
             <ProtectedRoute>
               <Navbar />
               <StudentList />
-            </ProtectedRoute>
+              </ProtectedRoute>
           }
         ></Route>
-        <Route
+          <Route
           path="/getStudents/:id"
           element={
             <>
@@ -129,11 +131,47 @@ function App() {
             </>
           }
         ></Route>
+         <Route
+          path="/admin/home"
+          element={
+            <>
+              <Navbar />
+              <AdminHome />
+            </>
+          }
+        ></Route>
+        <Route
+          path="/admin/create/test"
+          element={
+            <>
+              <Navbar />
+              <CreateTestForm />
+            </>
+          }
+        ></Route>
+         <Route
+          path="/admin/update/test/:id"
+          element={
+            <>
+              <Navbar />
+              <UpdateTest />
+            </>
+          }
+        ></Route>
+                <Route
+          path="/admin/view/test/:id"
+          element={
+            <>
+              <Navbar />
+              <ViewTest/>
+            </>
+          }
+        ></Route>
       </Routes>,
+      
+    </BrowserRouter>
 
-    </BrowserRouter >
-
-
+  
   );
 }
 

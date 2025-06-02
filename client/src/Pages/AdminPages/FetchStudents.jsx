@@ -8,8 +8,8 @@ import {
   InputGroup,
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import instance from "../axiosConfig";
-import { adminContext } from "./Context/Admincontext";
+import instance from "../../axiosConfig";
+import { adminContext } from "../Context/Admincontext";
 
 function StudentList() {
   const {
