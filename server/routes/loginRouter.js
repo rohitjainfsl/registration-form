@@ -4,6 +4,7 @@ import {   changePassword, adminLogin, checkToken,registerAdmin, logout, student
 const loginRouter = Router();
 
 // loginRouter.post("/loginStudents", login);
+loginRouter.post("/loginStudents", login);
 loginRouter.post("/changePassword",changePassword)
 loginRouter.post('/admin', adminLogin)
 loginRouter.post('/studentLogin', studentlogin)

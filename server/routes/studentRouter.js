@@ -7,7 +7,6 @@ import {
 } from "../controllers/studentController.js";
 import { fileArr } from "../middlewares/multer.js";
 import authMiddleware from "../middlewares/authJWT.js";
-// import { changePassword } from "../controllers/loginController.js";
 
 const studentRouter = Router();
 
@@ -19,6 +18,5 @@ studentRouter.get(
   fetchStudentById
 );
 studentRouter.put("/updateStudent/:id", updateStudentDetails);
-// studentRouter.put("/changePassword",changePassword)
 
 export default studentRouter;

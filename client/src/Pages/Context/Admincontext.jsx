@@ -23,10 +23,17 @@ export function AdminProvider({ children }) {
       
       if (res.status === 200) {
         setIsAuthenticated(true);
+<<<<<<< HEAD
         setRole(res.data.role);
       }
        console.log(res.data.role)
       console.log(role)
+=======
+        // setRole(res.data.role);
+      }
+      console.log(res.data)
+      // console.log(role)
+>>>>>>> 5799f2bc16f05f17078cc4929fe7ee195a305cda
     } catch (error) {
       console.error(error);
       setIsAuthenticated(false);
@@ -38,7 +45,10 @@ export function AdminProvider({ children }) {
       const res = await instance.post("/auth/logout", { withCredentials: true });
         setIsAuthenticated(false);
         setRole(null);
+<<<<<<< HEAD
         // console.log(isAuthenticated)
+=======
+>>>>>>> 5799f2bc16f05f17078cc4929fe7ee195a305cda
         console.log(res.status);
     } catch (error) {
       console.error("Logout failed:", error);

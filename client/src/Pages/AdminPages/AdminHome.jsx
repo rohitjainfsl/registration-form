@@ -18,7 +18,11 @@ function AdminHome() {
     async function fetchTests() {
       try {
         const res = await instance.get("/test/allTests");
+<<<<<<< HEAD
         setTests(res.data.tests); // Make sure your backend returns `tests` not `test`
+=======
+        setTests(res.data.tests); 
+>>>>>>> 5799f2bc16f05f17078cc4929fe7ee195a305cda
         console.log(res.data.tests);
       } catch (error) {
         console.error("Failed to fetch tests", error);

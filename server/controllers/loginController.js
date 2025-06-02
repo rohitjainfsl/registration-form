@@ -98,6 +98,7 @@ export const adminLogin = async (req, res) => {
       maxAge: 2 * 60 * 60 * 1000,
     });
     // console.log("user login successfully" + token);
+    // console.log("user login successfully" + token);
     res.status(200).json({ message: "User login successfully" });
   } catch (error) {
     console.error(error);
@@ -139,12 +140,26 @@ export const logout = (req, res) => {
     return res.status(401).json({ message: "No token found, please log in" });
   }
 
+  const { adminToken, studentToken } = req.cookies;
+
+  let role = null;
+
+  if (adminToken) {
+    role = "admin";
+  } else if (studentToken) {
+    role = "student";
+  } else {
+    return res.status(401).json({ message: "No token found, please log in" });
+  }
+
   try {
+    res.clearCookie(`${role}Token`, {
     res.clearCookie(`${role}Token`, {
       httpOnly: true,
       secure: true,
       sameSite: "strict",
     });
+    return res.status(200).json({ message: "LogOut successful" });
     return res.status(200).json({ message: "LogOut successful" });
   } catch (error) {
     return res.status(500).json({ error: "Internal server error" });
