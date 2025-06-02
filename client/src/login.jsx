@@ -75,11 +75,7 @@ function Login() {
 
               {message && <Alert variant="danger" className="mt-3 text-center">{message}</Alert>}
 
-              <div className="text-center mt-3">
-                <p className="small">
-                  Don't have an account? <a href="/register" className="text-primary">Register here</a>
-                </p>
-              </div>
+            
             </Card.Body>
           </Card>
         </Col>

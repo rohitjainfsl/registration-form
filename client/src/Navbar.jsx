@@ -1,69 +1,73 @@
-import { useState, useContext} from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Navbar, Nav, Container, Button } from "react-bootstrap";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import Logo from "./assets/logo.png";
-import "./styles/navbar.css";
-import { adminContext } from "./Pages/Context/Admincontext";
 
-const CustomNavbar = () => {
+const Navbar = () => {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { isAuthenticated, LogOut } = useContext(adminContext);
-  const navigate = useNavigate();
-  const isHomePage = location.pathname === "/";
-
-  function handleLogOut() {
-    LogOut();
-    // isAuthenticated(false)
-    navigate("/");
-  }
-  // console.log(isAuthenticated);
 
   return (
-    <Navbar
-      expand="md"
-      className={`custom-navbar ${isHomePage ? "home-page" : ""}`}
-      fixed="top"
-    >
-      <Container>
-        <Navbar.Brand as={Link} to="/">
-          <img src={Logo} alt="Full Stack Learning" />
-        </Navbar.Brand>
-        <Navbar.Toggle
-          aria-controls="basic-navbar-nav"
-          onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}
-        />
-        <Navbar.Collapse
-          id="basic-navbar-nav"
-          className={isMobileMenuOpen ? "show" : ""}
+    <nav className="navbar navbar-expand-lg bg py-0">
+      <div className="container">
+        <a className="navbar-brand imglogo" href="#">
+          <Link to="/">
+            <img src={Logo} alt="Full Stack Learning" />
+          </Link>
+        </a>
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
         >
-          <Nav className="ms-auto">
-            <Nav.Link as={Link} to="/">
-              Home
-            </Nav.Link>
-            <Nav.Link as={Link} to="/about">
-              About
-            </Nav.Link>
-            <Nav.Link as={Link} to="/blog">
-              Blog
-            </Nav.Link>
-            <Nav.Link as={Link} to="/contact">
-              Contact Us
-            </Nav.Link>
-            {}
-            {isAuthenticated ? (
-              <Button onClick={() => handleLogOut()} className="navbar-button">
-                Logout
-              </Button>
-            ) : (
-              <Button as={Link} to="/registration" className="navbar-button">
-                Login / Register
-              </Button>
-            )}
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+          <span>
+            <i id="bar" className="ri-menu-line"></i>
+          </span>
+        </button>
+        <div className="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul className="navbar-nav m-auto mb-2 mb-lg-0">
+            <li className="nav-item font">
+              <Link to="/" className="nav-link active" aria-current="page">
+                Home
+              </Link>
+            </li>
+            <li className="nav-item font">
+              <Link className="nav-link active" aria-current="page" to="">
+                Courses
+              </Link>
+            </li>
+            <li className="nav-item font">
+              <Link className="nav-link active" aria-current="page" to="">
+                About
+              </Link>
+            </li>
+            <li className="nav-item font">
+              <Link className="nav-link active" aria-current="page" to="#">
+                Blog
+              </Link>
+            </li>
+
+            <li className="nav-item font">
+              <Link className="nav-link active" aria-current="page" to="">
+                Contact Us
+              </Link>
+            </li>
+          </ul>
+          <form className="d-flex">
+            <Link
+              to="/registration"
+              className="btn btn-warning"
+              target="_blank"
+            >
+              Login / Register
+            </Link>
+          </form>
+        </div>
+      </div>
+    </nav>
   );
 };
 
-export default CustomNavbar;
+export default Navbar;
