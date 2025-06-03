@@ -30,6 +30,7 @@ const studentSchema = new Schema(
     fees: String,
     startDate: String,
     remarks: String,
+    // password:String,
   },
   { timestamps: true }
 );

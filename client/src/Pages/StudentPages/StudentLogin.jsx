@@ -14,7 +14,9 @@ import instance from "../../axiosConfig";
 import { adminContext } from "../Context/Admincontext";
 
 function StudentLogin() {
+
   const { setIsAuthenticated, setRole } = useContext(adminContext);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -27,25 +29,32 @@ function StudentLogin() {
 
     try {
       const response = await instance.post(
+
         "/auth/studentLogin",
+
         { email, password },
         { withCredentials: true }
       );
 
       if (response.status === 200) {
+
         const { message, token, role } = response.data;
 
         setMessage(message);
         setIsAuthenticated(true);
         setRole(role || "student"); // assume role is sent from backend or fallback
         if (response.data.firstTimesignin) navigate("/changePassword");
+
         else navigate("/student/studentpanel")
+
+        
       } else {
         setMessage(response.data.message);
       }
     } catch (error) {
       setMessage(
         error.response?.data?.message ||
+
         "Something went wrong. Please try again."
       );
     } finally {

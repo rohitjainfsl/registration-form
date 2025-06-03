@@ -14,17 +14,24 @@ function ChangePassword() {
   const handleChangePassword = async (e) => {
     e.preventDefault();
     try {
+
       const response = await instance.post("/auth/changePassword", {
+
+
         email,
         password: oldPassword,
         newPassword,
       });
+
 console.log(response);
+
 
       if (response.status === 200) {
         setMessage(response.data.message);
         setTimeout(() => {
+
           navigate("/student/studentpanel");
+
         }, 2000);
       } else {
         setMessage(response.data.message);
