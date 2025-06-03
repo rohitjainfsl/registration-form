@@ -6,8 +6,6 @@ import {
   Routes,
 } from "react-router-dom";
 import Home from "./Pages/Home";
-import About from "./Pages/About"
-
 import UserForm from "./Pages/StudentPages/registrationForm";
 import About from "./Pages/About"
 import Navbar from "../src/Components/Navbar"
@@ -129,7 +127,6 @@ function App() {
           }
         ></Route>
          <Route
-         <Route
           path="/admin/login"
           element={
             <>  
@@ -150,7 +147,7 @@ function App() {
               </ProtectedRoute>
           }
         ></Route>
-          <Route
+          
           <Route
           path="/getStudents/:id"
           element={
