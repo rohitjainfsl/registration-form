@@ -6,10 +6,8 @@ import {
   Routes,
 } from "react-router-dom";
 import Home from "./Pages/Home";
-import UserForm from "./Pages/StudentPages/registrationForm";
 import About from "./Pages/About"
-import Navbar from "../src/Components/Navbar"
-import Header from "./Components/Header";
+
 import UserForm from "./Pages/StudentPages/registrationForm";
 import About from "./Pages/About"
 import Navbar from "../src/Components/Navbar"
@@ -18,7 +16,6 @@ import Courses from "./Pages/Courses";
 import Blog from "./Pages/Blog";
 import "./App.css";
 import Login from "./login";
-import ChangePassword from "./Pages/StudentPages/ChangePassword";
 import AdminLogin from "./Pages/AdminPages/AdminLogin";
 import StudentList from "./Pages/AdminPages/FetchStudents";
 import StudentDetails from "./Pages/AdminPages/StudentDetails";
