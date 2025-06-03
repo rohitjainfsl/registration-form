@@ -128,17 +128,7 @@ export const registerAdmin = async (req, res) => {
 };
 
 export const logout = (req, res) => {
-  const { adminToken, studentToken } = req.cookies;
 
-  let role = null;
-
-  if (adminToken) {
-    role = "admin";
-  } else if (studentToken) {
-    role = "student";
-  } else {
-    return res.status(401).json({ message: "No token found, please log in" });
-  }
 
   const { adminToken, studentToken } = req.cookies;
 
@@ -159,7 +149,6 @@ export const logout = (req, res) => {
       secure: true,
       sameSite: "strict",
     });
-    return res.status(200).json({ message: "LogOut successful" });
     return res.status(200).json({ message: "LogOut successful" });
   } catch (error) {
     return res.status(500).json({ error: "Internal server error" });
