@@ -7,8 +7,8 @@ function UpdateTest() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [test, setTest] = useState(null); // original test
-  const [editableTest, setEditableTest] = useState(null); // editable copy
+  const [test, setTest] = useState(null);
+  const [editableTest, setEditableTest] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
@@ -31,7 +31,13 @@ function UpdateTest() {
 
   const handleQuestionChange = (index, field, value) => {
     const updatedQuestions = [...editableTest.questions];
-    updatedQuestions[index] = { ...updatedQuestions[index], [field]: value };
+    updatedQuestions[index] = {
+      ...updatedQuestions[index],
+      question: {
+        ...updatedQuestions[index].question,
+        [field]: value,
+      },
+    };
     setEditableTest((prev) => ({ ...prev, questions: updatedQuestions }));
   };
 
@@ -98,50 +104,69 @@ function UpdateTest() {
           <div key={idx} className="mb-4 p-3 border rounded">
             <Form.Group className="mb-2">
               <Form.Label>Question {idx + 1}</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={2}
-                value={q.questionText}
-                onChange={(e) =>
-                  handleQuestionChange(idx, "questionText", e.target.value)
-                }
-                disabled={!isEditing}
-              />
+              {isEditing ? (
+                <Form.Control
+                  as="textarea"
+                  rows={2}
+                  value={q.question?.text || ""}
+                  onChange={(e) =>
+                    handleQuestionChange(idx, "text", e.target.value)
+                  }
+                />
+              ) : q.question?.text ? (
+                <p>{q.question.text}</p>
+              ) : null}
             </Form.Group>
 
             <Form.Group className="mb-2">
               <Form.Label>Image URL</Form.Label>
-              <Form.Control
-                value={q.imageUrl || ""}
-                onChange={(e) =>
-                  handleQuestionChange(idx, "imageUrl", e.target.value)
-                }
-                disabled={!isEditing}
-              />
+              {isEditing ? (
+                <Form.Control
+                  value={q.question?.fileUrl || ""}
+                  onChange={(e) =>
+                    handleQuestionChange(idx, "fileUrl", e.target.value)
+                  }
+                />
+              ) : q.question?.fileUrl ? (
+                <img
+                  src={q.question.fileUrl}
+                  alt={`Question ${idx + 1}`}
+                  style={{ maxWidth: "100%", maxHeight: "300px" }}
+                />
+              ) : null}
             </Form.Group>
 
             {q.options.map((opt, optIdx) => (
               <Form.Group key={optIdx} className="mb-2">
                 <Form.Label>Option {optIdx + 1}</Form.Label>
-                <Form.Control
-                  value={opt}
-                  onChange={(e) =>
-                    handleOptionChange(idx, optIdx, e.target.value)
-                  }
-                  disabled={!isEditing}
-                />
+                {isEditing ? (
+                  <Form.Control
+                    value={opt}
+                    onChange={(e) =>
+                      handleOptionChange(idx, optIdx, e.target.value)
+                    }
+                  />
+                ) : (
+                  <p>{opt}</p>
+                )}
               </Form.Group>
             ))}
-
             <Form.Group className="mb-2">
               <Form.Label>Correct Answer</Form.Label>
-              <Form.Control
-                value={q.correctAnswer}
-                onChange={(e) =>
-                  handleQuestionChange(idx, "correctAnswer", e.target.value)
-                }
-                disabled={!isEditing}
-              />
+              {isEditing ? (
+                <Form.Control
+                  value={q.correct_answer}
+                  onChange={(e) =>
+                    setEditableTest((prev) => {
+                      const updated = [...prev.questions];
+                      updated[idx].correct_answer = e.target.value;
+                      return { ...prev, questions: updated };
+                    })
+                  }
+                />
+              ) : (
+                <p>{q.correct_answer}</p>
+              )}
             </Form.Group>
           </div>
         ))}
@@ -151,11 +176,10 @@ function UpdateTest() {
             variant={isEditing ? "success" : "warning"}
             onClick={async () => {
               if (isEditing) {
-                // Save changes
                 try {
                   await instance.put(`/test/update/${id}`, editableTest);
                   alert("Test updated successfully!");
-                  setTest(editableTest); // Update original copy
+                  setTest(editableTest);
                   setIsEditing(false);
                   navigate("/admin/home");
                 } catch (error) {
@@ -175,7 +199,7 @@ function UpdateTest() {
               variant="secondary"
               onClick={() => {
                 setIsEditing(false);
-                setEditableTest(test); // Reset edits
+                setEditableTest(test); 
               }}
             >
               Cancel
