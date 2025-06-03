@@ -21,7 +21,8 @@ function QuizPage() {
   useEffect(() => {
     async function startQuizAndFetchQuestions() {
       try {
-        const { data: startData } = await instance.post(`/students/start-quiz/${testId}`);
+        const { data: startData } = await instance.post(`/students/start-quiz/${testId}`, {},
+          { withCredentials: true });
         const quizAttemptId = startData.quizAttemptId;
         setQuizAttemptId(quizAttemptId); // you need to declare state for this
 
@@ -87,26 +88,26 @@ function QuizPage() {
   };
 
   const handleSubmitAnswer = async (questionId) => {
-  if (!responses[questionId] || submitting || isQuizFinished) return;
+    if (!responses[questionId] || submitting || isQuizFinished) return;
+    const selectedAnswer = responses[questionId];
+    
+    setSubmitting(true);
+    try {
+      console.log(await instance.post(`/students/submit-answer/${quizAttemptId}`, { questionId, selectedAnswer }));
 
-  const selectedAnswer = responses[questionId];
-  setSubmitting(true);
-  try {
-    await instance.post(`/submit-answer/${quizAttemptId}`, { questionId, selectedAnswer });
-
-    setTimeout(() => {
-      if (currentQuestionIndex === questions.length - 1) {
-        handleFinishQuiz();
-      } else {
-        setCurrentQuestionIndex((idx) => idx + 1);
-      }
+      setTimeout(() => {
+        if (currentQuestionIndex === questions.length - 1) {
+          handleFinishQuiz();
+        } else {
+          setCurrentQuestionIndex((idx) => idx + 1);
+        }
+        setSubmitting(false);
+      }, 500);
+    } catch (err) {
+      console.error("Submit error:", err);
       setSubmitting(false);
-    }, 500);
-  } catch (err) {
-    console.error("Submit error:", err);
-    setSubmitting(false);
-  }
-};
+    }
+  };
 
   const calculateScore = (responses) => {
     return questions.reduce((score, q) => (
@@ -120,7 +121,10 @@ function QuizPage() {
 
     try {
       const score = calculateScore(responses);
-      await instance.post(`/finish-quiz/${quizAttemptId}`, { score });
+console.log(score);
+
+   const response =   await instance.post(`/students/finish-quiz/${quizAttemptId}`, { score });
+console.log(response);
 
       showThankYouMessage();
     } catch (err) {
@@ -130,18 +134,18 @@ function QuizPage() {
     }
   };
 
- const handleTimeUp = async () => {
-  if (isQuizFinished) return;
-  setIsQuizFinished(true);
-  try {
-    const score = calculateScore(responses);
-    await instance.post(`/finish-quiz/${quizAttemptId}`, { score });
-    showThankYouMessage();
-  } catch (err) {
-    console.error("Time-up submission failed:", err);
-    alert("Error submitting after time expired.");
-  }
-};
+  const handleTimeUp = async () => {
+    if (isQuizFinished) return;
+    setIsQuizFinished(true);
+    try {
+      const score = calculateScore(responses);
+      await instance.post(`/students/finish-quiz/${quizAttemptId}`, { score });
+      showThankYouMessage();
+    } catch (err) {
+      console.error("Time-up submission failed:", err);
+      alert("Error submitting after time expired.");
+    }
+  };
 
 
   const showThankYouMessage = () => {
@@ -181,22 +185,66 @@ function QuizPage() {
 
       {currentQuestion && (
         <>
-          <p className="fs-5 fw-semibold">{currentQuestion.question}</p>
+          <div className="mb-3">
+            <p className="fs-5 fw-semibold">
+              Q{currentQuestionIndex + 1}:{" "}
+              {typeof currentQuestion.question === "object"
+                ? currentQuestion.question.text || "WHAT WILL BE THE OUTPUT"
+                : currentQuestion.question || "No question text"}
+            </p>
+
+            {/* Display question image if available */}
+            {typeof currentQuestion.question === "object" &&
+              currentQuestion.question.fileUrl && (
+                <img
+                  src={currentQuestion.question.fileUrl}
+                  alt="Question visual"
+                  className="img-fluid mb-3"
+                />
+              )}
+          </div>
+
           <Row className="mb-3">
-            {currentQuestion.options.map((opt) => (
-              <Col xs={6} className="mb-2" key={opt}>
-                <Button
-                  variant={
-                    responses[currentQuestion._id] === opt ? "primary" : "outline-secondary"
-                  }
-                  className="w-100"
-                  onClick={() => handleSelect(currentQuestion._id, opt)}
-                  disabled={isQuizFinished}
-                >
-                  {opt}
-                </Button>
-              </Col>
-            ))}
+            {currentQuestion.options.map((opt, i) => {
+              const optionText =
+                typeof opt === "object" && opt !== null
+                  ? opt.text || "No option text"
+                  : opt;
+              const optionFile = typeof opt === "object" && opt.fileUrl;
+
+              return (
+                <Col xs={12} md={6} className="mb-2" key={i}>
+                  <Button
+                    variant={
+                      responses[currentQuestion._id] === (opt.text || opt)
+                        ? "primary"
+                        : "outline-secondary"
+                    }
+                    className="w-100 text-start"
+                    onClick={() =>
+                      handleSelect(currentQuestion._id, opt.text || opt)
+                    }
+                    disabled={isQuizFinished}
+                  >
+                    {optionText}
+                    {optionFile && (
+                      <>
+                        {" "}
+                        -{" "}
+                        <a
+                          href={opt.fileUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-light text-decoration-underline"
+                        >
+                          View File
+                        </a>
+                      </>
+                    )}
+                  </Button>
+                </Col>
+              );
+            })}
           </Row>
 
           {currentQuestionIndex === questions.length - 1 &&
@@ -219,6 +267,7 @@ function QuizPage() {
           )}
         </>
       )}
+
     </Container>
   );
 }

@@ -4,6 +4,7 @@ import { sendAckEmail, sendDataByEmail } from "../services/acknowledgement.js";
 
 import mongoose from "mongoose";
 import Test from "../models/testModel.js";
+import QuizAttempt from "../models/QuizAttempt.js";
 
 export async function register(req, res) {
   try {
@@ -135,38 +136,78 @@ export async function updateStudentDetails(req, res) {
     res.status(500).json({ message: "Update failed", error: error.message });
   }
 };
+export async function startQuiz(req, res) {
+  try {
+    const token = req.user; 
+    const { testId } = req.params;
+    const user = await studentModel.findById(token.id); 
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const test = await Test.findById(testId);
+    if (!test) {
+      return res.status(404).json({ message: "Test not found" });
+    }
+
+    // Check for existing quiz attempt
+    const existingAttempt = await QuizAttempt.findOne({
+      studentId: token.id,
+      testId,
+    });
+    // if (existingAttempt) {
+    //   return res.status(400).json({ message: "You have already attempted this quiz." });
+    // }
+
+    // ✅ Create a new quiz attempt
+    const newAttempt = new QuizAttempt({
+      studentId: token.id,
+      studentName: user.name,
+      testId,
+      startTime: new Date(),
+    });
+
+    await newAttempt.save();  
+
+    res.status(201).json({
+      message: "Quiz attempt started",
+      quizAttemptId: newAttempt._id,
+    });
+  } catch (error) {
+    console.error("Error starting quiz:", error);
+    res.status(500).json({ message: "Error starting quiz", error: error.message });
+  }
+}
+
 
 export async function submitAnswer(req, res) {
-    try {
-      const { quizAttemptId } = req.params;
-      const { questionId, selectedAnswer } = req.body;
+  try {
+    const { quizAttemptId } = req.params;
+    const { questionId, selectedAnswer } = req.body;
 
-      const quizAttempt = await QuizAttempt.findById(quizAttemptId);
-      if (!quizAttempt) {
-        return res.status(404).json({ message: "Quiz attempt not found" });
-      }
-
-      // Check if the answer already exists
-      const existingResponse = quizAttempt.responses.find(
-        (resp) => resp.questionId.toString() === questionId
-      );
-
-      if (existingResponse) {
-        existingResponse.selectedAnswer = selectedAnswer;
-      } else {
-        quizAttempt.responses.push({ questionId, selectedAnswer });
-      }
-
-      await quizAttempt.save();
-
-      res.status(200).json({ message: "Answer submitted successfully" });
-    } catch (error) {
-      res
-        .status(500)
-        .json({ message: "Error submitting answer", error: error.message });
+    const quizAttempt = await QuizAttempt.findById(quizAttemptId);
+    if (!quizAttempt) {
+      return res.status(404).json({ message: "Quiz attempt not found" });
     }
-  };
 
+    const existingResponse = quizAttempt.responses.find(
+      (resp) => resp.questionId.toString() === questionId
+    );
+
+    if (existingResponse) {
+      existingResponse.selectedAnswer = selectedAnswer;
+    } else {
+      quizAttempt.responses.push({ questionId, selectedAnswer });
+    }
+
+    await quizAttempt.save(); 
+
+    res.status(200).json({ message: "Answer submitted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error submitting answer", error: error.message });
+  }
+}
 
  export async function getQuestion(req, res) {
   const { testId } = req.params;
@@ -187,56 +228,6 @@ export async function submitAnswer(req, res) {
   }
 };
 
-export async function startQuiz(req, res) {
-  try {
-    const token = req.user; 
-    const { testId } = req.params;
-    const user = await studentModel.findById(_id); 
-    console.log(token)
-    console.log(user);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    const test = await Test.findById(testId);
-    if (!test) {
-      return res.status(404).json({ message: "Test not found" });
-    }
-
-    // Check for existing quiz attempt
-    const existingAttempt = await quizAttempt.findOne({
-      studentId: token.id,
-      testId,
-    });
-    if (existingAttempt) {
-      return res
-        .status(400)
-        .json({ message: "You have already attempted this quiz." });
-    }
-
-    // Create a new quiz attempt
-    const quizAttempt = new quizAttempt({
-      studentId: token.id,
-      studentName: user.name,
-      collegeId: user.collegeRegId,
-      testId,
-      startTime: new Date(),
-    });
-
-    await quizAttempt.save();
-
-    res
-      .status(201)
-      .json({
-        message: "Quiz attempt started",
-        quizAttemptId: quizAttempt._id,
-      });
-  } catch (error) {
-    console.error("Error starting quiz:", error);
-    res
-      .status(500)
-      .json({ message: "Error starting quiz", error: error.message });
-  }
-};
 export async function finishQuiz(req, res) {
   try {
     const { quizAttemptId } = req.params;
