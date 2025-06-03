@@ -137,13 +137,10 @@ function App() {
         ></Route>
           <Route
           path="/admin/fetch/students"
-          <Route
-          path="/admin/fetch/students"
           element={
             <ProtectedRoute>
               <Navbar />
               <StudentList />
-              </ProtectedRoute>
               </ProtectedRoute>
           }
         ></Route>
