@@ -26,17 +26,6 @@ export function AdminProvider({ children }) {
 
         setRole(res.data.role);
       }
-
-      
-
-       console.log(res.data.role)
-      console.log(role)
-
-        // setRole(res.data.role);
-      }
-      console.log(res.data)
-      // console.log(role)
-
     } catch (error) {
       console.error(error);
       setIsAuthenticated(false);
