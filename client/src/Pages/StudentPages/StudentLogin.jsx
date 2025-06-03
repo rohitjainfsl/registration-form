@@ -14,11 +14,9 @@ import instance from "../../axiosConfig";
 import { adminContext } from "../Context/Admincontext";
 
 function StudentLogin() {
-<<<<<<< HEAD
+
   const { setIsAuthenticated, setRole } = useContext(adminContext);
-=======
-  const { setIsAuthenticated } = useContext(adminContext);
->>>>>>> 5799f2bc16f05f17078cc4929fe7ee195a305cda
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -31,40 +29,33 @@ function StudentLogin() {
 
     try {
       const response = await instance.post(
-<<<<<<< HEAD
+
         "/auth/studentLogin",
-=======
-        "/new/adminLogin",
->>>>>>> 5799f2bc16f05f17078cc4929fe7ee195a305cda
+
         { email, password },
         { withCredentials: true }
       );
 
       if (response.status === 200) {
-<<<<<<< HEAD
+
         const { message, token, role } = response.data;
 
         setMessage(message);
         setIsAuthenticated(true);
         setRole(role || "student"); // assume role is sent from backend or fallback
         if (response.data.firstTimesignin) navigate("/changePassword");
-        else navigate("/student/quiz")
-=======
-        setMessage(response.data.message);
-        setIsAuthenticated(true);
-        navigate("/admin/home");
->>>>>>> 5799f2bc16f05f17078cc4929fe7ee195a305cda
+
+        else navigate("/student/studentpanel")
+
+        
       } else {
         setMessage(response.data.message);
       }
     } catch (error) {
       setMessage(
         error.response?.data?.message ||
-<<<<<<< HEAD
+
         "Something went wrong. Please try again."
-=======
-          "Something went wrong. Please try again."
->>>>>>> 5799f2bc16f05f17078cc4929fe7ee195a305cda
       );
     } finally {
       setLoading(false);

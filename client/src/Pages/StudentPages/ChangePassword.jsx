@@ -14,28 +14,24 @@ function ChangePassword() {
   const handleChangePassword = async (e) => {
     e.preventDefault();
     try {
-<<<<<<< HEAD
+
       const response = await instance.post("/auth/changePassword", {
-=======
-      const response = await instance.post("/loginstudents/changePassword", {
->>>>>>> 5799f2bc16f05f17078cc4929fe7ee195a305cda
+
+
         email,
         password: oldPassword,
         newPassword,
       });
-<<<<<<< HEAD
+
 console.log(response);
-=======
->>>>>>> 5799f2bc16f05f17078cc4929fe7ee195a305cda
+
 
       if (response.status === 200) {
         setMessage(response.data.message);
         setTimeout(() => {
-<<<<<<< HEAD
-          navigate("/student/quiz");
-=======
-          navigate("/");
->>>>>>> 5799f2bc16f05f17078cc4929fe7ee195a305cda
+
+          navigate("/student/studentpanel");
+
         }, 2000);
       } else {
         setMessage(response.data.message);

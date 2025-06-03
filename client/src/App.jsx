@@ -33,6 +33,7 @@ import CreateTestForm from "./Pages/AdminPages/CreateTest";
 import UpdateTest from "./Pages/AdminPages/UpdateTest";
 import ViewTest from "./Pages/AdminPages/ViewTest";
 import StudentQuiz from "./Pages/StudentPages/StudentQuiz";
+import StudentPanel from "./Pages/StudentPages/ReleasedQuiz";
 
 
 
@@ -60,11 +61,20 @@ function App() {
           }
         ></Route>
         <Route
-          path="/student/quiz"
+          path="/student/quiz/:testId"
           element={
             <>
               <Navbar />
               <StudentQuiz />
+            </>
+          }
+        ></Route>
+         <Route
+          path="/student/studentpanel"
+          element={
+            <>
+              <Navbar />
+              <StudentPanel />
             </>
           }
         ></Route>
