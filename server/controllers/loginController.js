@@ -3,7 +3,7 @@ import studentModel from "../models/studentModel.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
-export async function login(req, res) {
+export async function studentlogin(req, res) {
   const { email, password } = req.body;
 
   console.log(req.body);
@@ -26,6 +26,19 @@ export async function login(req, res) {
     //   await user.save();
     // }
     // console.log(user);
+    const token = jwt.sign(
+  { studentId: user._id },
+  process.env.JWT_SECRET,
+  { expiresIn: "2h" }
+);
+
+res.cookie("studentToken", token, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "strict",
+  maxAge: 2 * 60 * 60 * 1000, // 2 hours
+});
+
     return res.status(200).json({ message: "Login successful.", user });
   } catch (error) {
     return res
@@ -36,6 +49,7 @@ export async function login(req, res) {
 
 export async function changePassword(req, res) {
   const { email, password, newPassword } = req.body;
+  console.log(email,password,newPassword)
 
   try {
     const user = await studentModel.findOne({ email, password: password });
@@ -47,7 +61,7 @@ export async function changePassword(req, res) {
     user.firstTimesignin = false;
     await user.save();
 
-    return res.status(200).json({ message: "Password updated successfully." });
+    return res.status(200).json({ message: "Password updated successfully.",user });
   } catch (error) {
     return res
       .status(500)
@@ -84,6 +98,7 @@ export const adminLogin = async (req, res) => {
       maxAge: 2 * 60 * 60 * 1000,
     });
     // console.log("user login successfully" + token);
+    // console.log("user login successfully" + token);
     res.status(200).json({ message: "User login successfully" });
   } catch (error) {
     console.error(error);
@@ -113,6 +128,8 @@ export const registerAdmin = async (req, res) => {
 };
 
 export const logout = (req, res) => {
+
+
   const { adminToken, studentToken } = req.cookies;
 
   let role = null;
@@ -143,6 +160,7 @@ export const checkToken = (req, res)=>{
   let token = null;
   let role = null;
   // console.log(role)
+console.log(adminToken,studentToken);
 
   if(adminToken)
   {
