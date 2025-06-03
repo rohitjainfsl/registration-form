@@ -1,9 +1,10 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect} from "react";
 import instance from "../../axiosConfig";
 
 export const adminContext = createContext();
 
 export function AdminProvider({ children }) {
+
   const [students, setStudents] = useState([]);
   const [filteredStudents, setFilteredStudents] = useState([]);
   const [visibleCount, setVisibleCount] = useState(10);
@@ -11,7 +12,7 @@ export function AdminProvider({ children }) {
   const [role, setRole] = useState(null);
 
   useEffect(() => {
-    checkToken();    
+    checkToken();   
   }, []);
 
 
@@ -23,7 +24,6 @@ export function AdminProvider({ children }) {
       
       if (res.status === 200) {
         setIsAuthenticated(true);
-
         setRole(res.data.role);
       }
     } catch (error) {
