@@ -36,6 +36,7 @@ function UpdateTest() {
         console.error("Failed to fetch test", error);
       } finally {
         setLoading(false);
+      }
     }
     fetchTest();
   }, [id]);
