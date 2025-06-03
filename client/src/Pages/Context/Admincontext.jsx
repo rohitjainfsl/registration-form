@@ -25,8 +25,7 @@ export function AdminProvider({ children }) {
         setIsAuthenticated(true);
         setRole(res.data.role);
       }
-       console.log(res.data.role)
-      console.log(role)
+      
     } catch (error) {
       console.error(error);
       setIsAuthenticated(false);

@@ -24,7 +24,7 @@ console.log(response);
       if (response.status === 200) {
         setMessage(response.data.message);
         setTimeout(() => {
-          navigate("/student/quiz");
+          navigate("/student/studentpanel");
         }, 2000);
       } else {
         setMessage(response.data.message);

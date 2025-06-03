@@ -39,7 +39,7 @@ function StudentLogin() {
         setIsAuthenticated(true);
         setRole(role || "student"); // assume role is sent from backend or fallback
         if (response.data.firstTimesignin) navigate("/changePassword");
-        else navigate("/student/quiz")
+        else navigate("/student/studentpanel")
       } else {
         setMessage(response.data.message);
       }
