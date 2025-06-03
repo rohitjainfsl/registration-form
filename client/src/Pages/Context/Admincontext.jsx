@@ -11,7 +11,7 @@ export function AdminProvider({ children }) {
   const [role, setRole] = useState(null);
 
   useEffect(() => {
-    checkToken();
+    checkToken();    
   }, []);
 
 
@@ -20,23 +20,26 @@ export function AdminProvider({ children }) {
       const res = await instance.get("/auth/checkToken", {
         withCredentials: true,
       });
+      
       if (res.status === 200) {
         setIsAuthenticated(true);
-        // setRole(res.data.role);
+
+        setRole(res.data.role);
       }
-      console.log(res.data)
-      // console.log(role)
     } catch (error) {
       console.error(error);
       setIsAuthenticated(false);
       setRole(null);
     }
-  };
+  };  
   const LogOut = async () => {
     try {
       const res = await instance.post("/auth/logout", { withCredentials: true });
         setIsAuthenticated(false);
         setRole(null);
+
+        // console.log(isAuthenticated)
+
         console.log(res.status);
     } catch (error) {
       console.error("Logout failed:", error);

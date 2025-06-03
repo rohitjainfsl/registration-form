@@ -24,6 +24,8 @@ import StudentLogin from "./Pages/StudentPages/StudentLogin";
 import CreateTestForm from "./Pages/AdminPages/CreateTest";
 import UpdateTest from "./Pages/AdminPages/UpdateTest";
 import ViewTest from "./Pages/AdminPages/ViewTest";
+import StudentQuiz from "./Pages/StudentPages/StudentQuiz";
+import StudentPanel from "./Pages/StudentPages/ReleasedQuiz";
 
 
 
@@ -50,6 +52,25 @@ function App() {
             </>
           }
         ></Route>
+        <Route
+          path="/student/quiz/:testId"
+          element={
+            <>
+              <Navbar />
+              <StudentQuiz />
+            </>
+          }
+        ></Route>
+         <Route
+          path="/student/studentpanel"
+          element={
+            <>
+              <Navbar />
+              <StudentPanel />
+            </>
+          }
+        ></Route>
+        
         <Route
           path="/registration"
           element={
@@ -86,6 +107,7 @@ function App() {
             </>
           }
         ></Route>
+          
           <Route
           path="/changePassword"
           element={
@@ -107,7 +129,7 @@ function App() {
          <Route
           path="/admin/login"
           element={
-            <>
+            <>  
               <Navbar />
               <AdminLogin />
             </>
@@ -122,12 +144,49 @@ function App() {
               </ProtectedRoute>
           }
         ></Route>
+          
           <Route
           path="/getStudents/:id"
           element={
             <>
               <Navbar />
               <StudentDetails />
+            </>
+          }
+        ></Route>
+         <Route
+          path="/admin/home"
+          element={
+            <>
+              <Navbar />
+              <AdminHome />
+            </>
+          }
+        ></Route>
+        <Route
+          path="/admin/create/test"
+          element={
+            <>
+              <Navbar />
+              <CreateTestForm />
+            </>
+          }
+        ></Route>
+         <Route
+          path="/admin/update/test/:id"
+          element={
+            <>
+              <Navbar />
+              <UpdateTest />
+            </>
+          }
+        ></Route>
+                <Route
+          path="/admin/view/test/:id"
+          element={
+            <>
+              <Navbar />
+              <ViewTest/>
             </>
           }
         ></Route>
