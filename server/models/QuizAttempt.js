@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const quizAttemptSchema = new mongoose.Schema({
   studentId: { type: mongoose.Schema.Types.ObjectId, ref: "Student", required: true },
   studentName: { type: String, required: true },
-  collegeId: { type: String, required: true },
+  collegeId: { type: String },
   testId: { type: mongoose.Schema.Types.ObjectId, ref: "Test", required: true },
   startTime: { type: Date, required: true },
   endTime: { type: Date },
