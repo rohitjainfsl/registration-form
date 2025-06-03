@@ -144,7 +144,6 @@ export const logout = (req, res) => {
 
   try {
     res.clearCookie(`${role}Token`, {
-    res.clearCookie(`${role}Token`, {
       httpOnly: true,
       secure: true,
       sameSite: "strict",
