@@ -10,12 +10,6 @@ const questionSchema = new mongoose.Schema({
   codeSnippet: { type: String },
 });
 
-questionSchema.pre('validate', function (next) {
-  if (!this.question?.text && !this.question?.fileUrl) {
-    return next(new Error('At least question text or file must be provided.'));
-  }
-  next();
-});
 
 const testSchema = new mongoose.Schema(
   {

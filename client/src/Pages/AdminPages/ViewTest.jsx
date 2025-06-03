@@ -57,7 +57,7 @@ function ViewTest() {
           // Extract question text safely
           const questionText =
             typeof q.question === "object" && q.question !== null
-              ? q.question.text || "No question text"
+              ? q.question.text || "WHAT WILL BE THE OUTPUT"
               : q.question || "No question text";
 
           return (
@@ -66,16 +66,16 @@ function ViewTest() {
                 <Card.Title>
                   Q{idx + 1}: {questionText}
                 </Card.Title>
-
-                {/* If question has fileUrl, show link */}
                 {typeof q.question === "object" && q.question?.fileUrl && (
-                  <a
-                    href={q.question.fileUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    View Question File
-                  </a>
+                  <img
+                    src={q.question.fileUrl}
+                    alt="Question related"
+                    style={{
+                      maxWidth: "100%",
+                      height: "auto",
+                      marginTop: "10px",
+                    }}
+                  />
                 )}
 
                 {q.options && q.options.length > 0 && (
@@ -89,8 +89,6 @@ function ViewTest() {
                       return (
                         <ListGroup.Item key={i}>
                           {optionText}
-
-                          {/* Show file link for option if exists */}
                           {typeof opt === "object" && opt?.fileUrl && (
                             <>
                               {" "}
