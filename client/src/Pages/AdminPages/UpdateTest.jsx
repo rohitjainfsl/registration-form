@@ -36,13 +36,6 @@ function UpdateTest() {
         console.error("Failed to fetch test", error);
       } finally {
         setLoading(false);
-
-        const res = await instance.get(`/test/test/${id}`);
-        setTest(res.data.test);
-        setEditableTest(res.data.test);
-      } catch (error) {
-        console.error("Error fetching test:", error);
-      }
     }
     fetchTest();
   }, [id]);
