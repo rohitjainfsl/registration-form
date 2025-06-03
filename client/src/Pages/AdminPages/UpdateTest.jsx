@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { Container, Form, Button, Spinner } from "react-bootstrap";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-
+import { Form, Button, Container, Row, Col } from "react-bootstrap";
 import instance from "../../axiosConfig";
 
 function UpdateTest() {
@@ -10,22 +9,17 @@ function UpdateTest() {
   const [test, setTest] = useState(null);
   const [editableTest, setEditableTest] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(true); 
 
   useEffect(() => {
     async function fetchTest() {
       try {
-        const res = await instance.get(`/test/${id}`);
-        console.log("Fetched test from backend:", res.data);
-        const data = res.data.test;
-        setTest(data);
-        setTitle(data.title);
-        setNumQuestions(data.numQuestions);
-        setDuration(data.duration);
-        setReleased(data.released || false);
-        setQuestions(data.questions || []);
-        setOptions(data.options || []);
+        setLoading(true);
+        const res = await instance.get(`/test/test/${id}`);
+        setTest(res.data.test);
+        setEditableTest(res.data.test);
       } catch (error) {
-        console.error("Failed to fetch test", error);
+        console.error("Error fetching test:", error);
       } finally {
         setLoading(false);
       }
@@ -58,14 +52,15 @@ function UpdateTest() {
       ...updatedQuestions[qIndex],
       options: updatedOptions,
     };
+    setEditableTest((prev) => ({ ...prev, questions: updatedQuestions }));
   };
 
   if (loading) {
-    return (
-      <Container className="text-center py-5">
-        <Spinner animation="border" />
-      </Container>
-    );
+    return <Container className="py-5">Loading test data...</Container>;
+  }
+
+  if (!test || !editableTest) {
+    return <Container className="py-5 text-danger">Failed to load test data.</Container>;
   }
 
   return (
@@ -163,6 +158,7 @@ function UpdateTest() {
                 )}
               </Form.Group>
             ))}
+
             <Form.Group className="mb-2">
               <Form.Label>Correct Answer</Form.Label>
               {isEditing ? (
@@ -211,7 +207,7 @@ function UpdateTest() {
               variant="secondary"
               onClick={() => {
                 setIsEditing(false);
-                setEditableTest(test); 
+                setEditableTest(test);
               }}
             >
               Cancel
