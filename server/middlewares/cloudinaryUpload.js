@@ -1,25 +1,27 @@
 import { v2 as cloudinary } from "cloudinary";
 
-export async function cloudinaryUpload(images) {
-  const results = [];
-  cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
-  });
-  for (let i = 0; i < images.length; i++) {
-    const result = await new Promise((resolve, reject) => {
-      const uploadStream = cloudinary.uploader.upload_stream(
-        (error, result) => {
-          if (error) reject(error);
-          else resolve(result);
-        }
-      );
-      // console.log(images[i]);
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
-      uploadStream.end(images[i].buffer);
-    });
-    results.push(result);
-  }
-  return results.length > 0 ? results : null;
+
+export async function cloudinaryUpload(files) {
+  return Promise.all(
+    files.map(
+      (file) =>
+        new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            { resource_type: "auto" },
+            (error, result) => {
+              if (error) return reject(error);
+              resolve(result);
+            }
+          );
+          stream.end(file.buffer);
+        })
+    )
+  );
 }
+

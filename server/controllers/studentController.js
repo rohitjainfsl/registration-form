@@ -227,17 +227,21 @@ export async function finishQuiz(req, res) {
     const { quizAttemptId } = req.params;
     const { score } = req.body;
 
+    if (typeof score !== "number") {
+      return res.status(400).json({ message: "Score must be a number" });
+    }
+
     const quizAttempt = await QuizAttempt.findById(quizAttemptId);
     if (!quizAttempt) {
       return res.status(404).json({ message: "Quiz attempt not found" });
     }
+
     quizAttempt.endTime = new Date();
     quizAttempt.score = score;
     await quizAttempt.save();
-    res.status(200).json({ message: "Quiz completed", score });
+
+    res.status(200).json({ message: "Quiz completed", quizAttempt });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error finishing quiz", error: error.message });
+    res.status(500).json({ message: "Error finishing quiz", error: error.message });
   }
-};
+}
