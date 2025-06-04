@@ -180,11 +180,11 @@ export async function startQuiz(req, res) {
   }
 }
 
-
 export async function submitAnswer(req, res) {
   try {
     const { quizAttemptId } = req.params;
-    const { questionId, selectedAnswer } = req.body;
+    const { questionId, selectedOption, selectedAnswer } = req.body;
+console.log(questionId,selectedOption,selectedAnswer  );
 
     const quizAttempt = await QuizAttempt.findById(quizAttemptId);
     if (!quizAttempt) {
@@ -192,20 +192,25 @@ export async function submitAnswer(req, res) {
     }
 
     const existingResponse = quizAttempt.responses.find(
-      (resp) => resp.questionId.toString() === questionId
+      (resp) => resp.questionId.equals(questionId)
     );
 
     if (existingResponse) {
+      existingResponse.selectedOption = selectedOption;
       existingResponse.selectedAnswer = selectedAnswer;
     } else {
-      quizAttempt.responses.push({ questionId, selectedAnswer });
+      quizAttempt.responses.push({ questionId, selectedOption, selectedAnswer });
     }
 
-    await quizAttempt.save(); 
+    await quizAttempt.save();
 
-    res.status(200).json({ message: "Answer submitted successfully" });
+    return res.status(200).json({ message: "Answer submitted successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Error submitting answer", error: error.message });
+    console.error("Submit answer error:", error);
+    return res.status(500).json({
+      message: "Error submitting answer",
+      error: error.message,
+    });
   }
 }
 
