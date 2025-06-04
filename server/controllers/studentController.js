@@ -77,7 +77,6 @@ export async function register(req, res) {
   }
 }
 
-
 export async function fetchStudent(req, res) {
   try {
     const students = await studentModel
@@ -133,34 +132,7 @@ export async function updateStudentDetails(req, res) {
     res.status(500).json({ message: "Update failed", error: error.message });
   }
 };
-// export async function updateStudentDetails(req, res) {
-//   try {
-//     const { id } = req.params;
-//     const { password, email } = req.body;
-    
-//     cosnt student = await studentModel.findOne(email);
 
-//       if(!student)
-//       {
-//         return res.status(404).json({message: "Student Not Found"})
-//       }
-
-//     const updatedStudent = await studentModel.findByIdAndUpdate(
-//       id,
-//       { password},
-//       { new: true }
-//     );
-
-//     if (!updatedStudent) {
-//       return res.status(404).json({ message: "Student not found" });
-//     }
-
-//     res.status(200).json({ message: "Student updated", student: updatedStudent });
-//   } catch (error) {
-//     console.error("Update error:", error);
-//     res.status(500).json({ message: "Update failed", error: error.message });
-//   }
-// };
 export async function submitAnswer(req, res) {
     try {
       const { quizAttemptId } = req.params;
@@ -171,7 +143,6 @@ export async function submitAnswer(req, res) {
         return res.status(404).json({ message: "Quiz attempt not found" });
       }
 
-      // Check if the answer already exists
       const existingResponse = quizAttempt.responses.find(
         (resp) => resp.questionId.toString() === questionId
       );
@@ -225,7 +196,6 @@ export async function startQuiz(req, res) {
       return res.status(404).json({ message: "Test not found" });
     }
 
-    // Check for existing quiz attempt
     const existingAttempt = await quizAttempt.findOne({
       studentId: token.id,
       testId,
@@ -236,7 +206,6 @@ export async function startQuiz(req, res) {
         .json({ message: "You have already attempted this quiz." });
     }
 
-    // Create a new quiz attempt
     const quizAttempt = new quizAttempt({
       studentId: token.id,
       studentName: user.name,

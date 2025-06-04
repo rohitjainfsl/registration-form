@@ -73,6 +73,7 @@ const CreateTestForm = () => {
 
     try {
       const res = await instance.post("/test/create", formData); 
+      console.log(formData);
       alert("Test Created Successfully!");
     } catch (err) {
       console.error("Error creating test:", err);

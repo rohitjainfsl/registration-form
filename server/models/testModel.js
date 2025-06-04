@@ -5,8 +5,8 @@ const questionSchema = new mongoose.Schema({
     text: { type: String },
     fileUrl: { type: String },
   },
-  options: { type: [String], required: true },
-  correct_answer: { type: String, required: true },
+  options: { type: [String]},
+  correct_answer: { type: String},
   codeSnippet: { type: String },
 });
 

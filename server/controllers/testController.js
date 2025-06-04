@@ -32,7 +32,6 @@ export const createTest = async (req, res) => {
       duration,
       questions: processedQuestions,
     });
-
     await newTest.save();
     res.status(201).json({ message: "Test created successfully", test: newTest });
   } catch (err) {
@@ -41,9 +40,11 @@ export const createTest = async (req, res) => {
   }
 };
 
+
+
 export const getAllTests = async (req, res) => {
   try {
-    const tests = await Test.find().sort({ createdAt: -1 }); // recent first
+    const tests = await Test.find().sort({ createdAt: -1 }); 
     res.status(200).json({ tests });
   } catch (err) {
     console.error("Error fetching tests: ", err);

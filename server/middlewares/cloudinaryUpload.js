@@ -15,12 +15,11 @@ export async function cloudinaryUpload(images) {
           else resolve(result);
         }
       );
+      // console.log(images[i]);
 
-      uploadStream.end(images[0].buffer);
+      uploadStream.end(images[i].buffer);
     });
     results.push(result);
   }
   return results.length > 0 ? results : null;
-
- 
 }

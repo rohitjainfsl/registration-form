@@ -53,7 +53,7 @@ export function sendDataByEmail(newData) {
   const dt = new Date();
   const day = getDayName[dt.getDay()];
   const date = dt.getDate();
-  const month = getMonthName[dt.getMonth() + 1];
+  const month = getMonthName[dt.getMonth()];
   const year = dt.getFullYear();
   const hour = dt.getHours();
   const min = dt.getMinutes();

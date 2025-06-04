@@ -58,7 +58,7 @@ function UserForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form data before submit:", formElements); // Log current form data
+    console.log("Form data before submit:", formElements);
 
     try {
       setLoading(true);
@@ -91,8 +91,7 @@ function UserForm() {
         response.status === 201 &&
         response.data.message === "Registration Successful"
       )
-        // window.location.href = backendPath + "/registration?success=true";
-        navigate("/login");
+        navigate("/student/login");
     } catch (error) {
       setShowMessage(false);
       console.error("Error submitting form", error);
@@ -114,10 +113,8 @@ function UserForm() {
   const handleCheckboxChange = () => {
     setIsSameAddress(!isSameAddress); 
     if (!isSameAddress) {
-      // setPermanentAddress(localAddress); // Auto-fill Permanent Address
       setFormData({ ...formElements, paddress: formElements.laddress });
     } else {
-      // setPermanentAddress(""); // Clear Permanent Address if checkbox is unchecked
       setFormData({ ...formElements, paddress: "" });
     }
   };
