@@ -134,36 +134,6 @@ export async function updateStudentDetails(req, res) {
   }
 };
 
-export async function submitAnswer(req, res) {
-    try {
-      const { quizAttemptId } = req.params;
-      const { questionId, selectedAnswer } = req.body;
-
-      const quizAttempt = await QuizAttempt.findById(quizAttemptId);
-      if (!quizAttempt) {
-        return res.status(404).json({ message: "Quiz attempt not found" });
-      }
-
-      const existingResponse = quizAttempt.responses.find(
-        (resp) => resp.questionId.toString() === questionId
-      );
-
-      if (existingResponse) {
-        existingResponse.selectedAnswer = selectedAnswer;
-      } else {
-        quizAttempt.responses.push({ questionId, selectedAnswer });
-      }
-
-      await quizAttempt.save();
-
-      res.status(200).json({ message: "Answer submitted successfully" });
-    } catch (error) {
-      res
-        .status(500)
-        .json({ message: "Error submitting answer", error: error.message });
-    }
-  };
-
 
  export async function getQuestion(req, res) {
   const { testId } = req.params;
@@ -222,6 +192,41 @@ export async function startQuiz(req, res) {
     res.status(500).json({ message: "Error starting quiz", error: error.message });
   }
 }
+
+export async function submitAnswer(req, res) {
+  try {
+    const { quizAttemptId } = req.params;
+    const { questionId, selectedOption, selectedAnswer } = req.body;
+console.log(questionId,selectedOption,selectedAnswer  );
+
+    const quizAttempt = await QuizAttempt.findById(quizAttemptId);
+    if (!quizAttempt) {
+      return res.status(404).json({ message: "Quiz attempt not found" });
+    }
+
+    const existingResponse = quizAttempt.responses.find(
+      (resp) => resp.questionId.equals(questionId)
+    );
+
+    if (existingResponse) {
+      existingResponse.selectedOption = selectedOption;
+      existingResponse.selectedAnswer = selectedAnswer;
+    } else {
+      quizAttempt.responses.push({ questionId, selectedOption, selectedAnswer });
+    }
+
+    await quizAttempt.save();
+
+    return res.status(200).json({ message: "Answer submitted successfully" });
+  } catch (error) {
+    console.error("Submit answer error:", error);
+    return res.status(500).json({
+      message: "Error submitting answer",
+      error: error.message,
+    });
+  }
+}
+
 export async function finishQuiz(req, res) {
   try {
     const { quizAttemptId } = req.params;
@@ -244,4 +249,5 @@ export async function finishQuiz(req, res) {
   } catch (error) {
     res.status(500).json({ message: "Error finishing quiz", error: error.message });
   }
-}
+};
+

@@ -7,6 +7,7 @@ export const createTest = async (req, res) => {
     const { title, numQuestions, duration } = req.body;
     const questions = JSON.parse(req.body.questions); 
 
+
     const questionImagesMap = {};
 
     if (req.files && req.files.length > 0) {

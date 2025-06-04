@@ -43,7 +43,6 @@ export async function studentlogin(req, res) {
 }
 export async function changePassword(req, res) {
   const { email, password, newPassword } = req.body;
-  console.log(email,password,newPassword)
 
   try {
     const user = await studentModel.findOne({ email, password: password });
@@ -91,6 +90,7 @@ export const adminLogin = async (req, res) => {
       sameSite: "none",
       maxAge: 2 * 60 * 60 * 1000,
     });
+
     res.status(200).json({ message: "User login successfully" });
   } catch (error) {
     console.error(error);
