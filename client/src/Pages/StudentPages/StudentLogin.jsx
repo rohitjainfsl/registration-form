@@ -75,6 +75,7 @@ function StudentLogin() {
                     onChange={(e) => setEmail(e.target.value)}
                     disabled={loading}
                     required
+                    autoFocus
                   />
                 </Form.Group>
 

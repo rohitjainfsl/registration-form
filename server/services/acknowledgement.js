@@ -7,7 +7,7 @@ export function sendAckEmail(newData) {
   console.log(process.env.SENDGRID_API_KEY);
   const msg = {
     to: newData.email,
-    from: "rohit@fullstacklearning.com",
+    from:"rohit@fullstacklearning.com",
     subject: "Thank you for registering at Full Stack Learning",
     text: "Your registration is successful.",
     html: `<strong>Your registration is successful.</strong>

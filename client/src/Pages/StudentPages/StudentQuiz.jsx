@@ -5,7 +5,6 @@ import instance from "../../axiosConfig";
 
 function QuizPage() {
   const { testId } = useParams();
-  console.log("testId:", testId)
   const navigate = useNavigate();
   const [quizAttemptId, setQuizAttemptId] = useState(null);
   const [questions, setQuestions] = useState([]);
@@ -21,9 +20,10 @@ function QuizPage() {
   useEffect(() => {
     async function startQuizAndFetchQuestions() {
       try {
-        const { data: startData } = await instance.post(`/students/start-quiz/${testId}`);
+        const { data: startData } = await instance.post(`/students/start-quiz/${testId}`, {},
+          { withCredentials: true });
         const quizAttemptId = startData.quizAttemptId;
-        setQuizAttemptId(quizAttemptId); // you need to declare state for this
+        setQuizAttemptId(quizAttemptId); 
 
         const { data: questionData } = await instance.get(`/students/get-questions/${testId}`);
         const shuffledQuestions = [...questionData.questions].sort(() => Math.random() - 0.5);
@@ -34,7 +34,7 @@ function QuizPage() {
         console.error("Error starting quiz or fetching questions:", err);
       } finally {
         setLoading(false);
-      }
+      } 
     }
 
     startQuizAndFetchQuestions();
@@ -76,23 +76,33 @@ function QuizPage() {
   }, [timeLeft, isQuizFinished]);
 
   const formatTime = (secs) => {
-    const m = Math.floor(secs / 60);
-    const s = secs % 60;
-    return `${m}:${s.toString().padStart(2, "0")}`;
+  const m = Math.floor(secs / 60);
+const s = secs % 60;
+return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
 
-  const handleSelect = (qid, ans) => {
-    if (isQuizFinished) return;
-    setResponses((prev) => ({ ...prev, [qid]: ans }));
-  };
+ const handleSelect = (qid, answerText, optionLetter) => {
+  if (isQuizFinished) return;
+  setResponses((prev) => ({
+    ...prev,
+    [qid]: { selectedAnswer: answerText, selectedOption: optionLetter },
+  }));
+};
+
 
   const handleSubmitAnswer = async (questionId) => {
-  if (!responses[questionId] || submitting || isQuizFinished) return;
+  const response = responses[questionId];
+  if (!response || submitting || isQuizFinished) return;
 
-  const selectedAnswer = responses[questionId];
+  const { selectedAnswer, selectedOption } = response;
+
   setSubmitting(true);
   try {
-    await instance.post(`/submit-answer/${quizAttemptId}`, { questionId, selectedAnswer });
+    await instance.post(`/students/submit-answer/${quizAttemptId}`, {
+      questionId,
+      selectedAnswer,
+      selectedOption,
+    });
 
     setTimeout(() => {
       if (currentQuestionIndex === questions.length - 1) {
@@ -108,45 +118,64 @@ function QuizPage() {
   }
 };
 
-  const calculateScore = (responses) => {
-    return questions.reduce((score, q) => (
-      responses[q._id] === q.correct_answer ? score + 1 : score
-    ), 0);
-  };
 
-  const handleFinishQuiz = async () => {
-    if (isQuizFinished) return;
-    setIsQuizFinished(true);
+const calculateScore = (responses) => {
+  return questions.reduce((score, q) => {
+    const response = responses[q._id];
+    return response && response.selectedAnswer === q.correct_answer
+      ? score + 1
+      : score;
+  }, 0);
+};
 
-    try {
-      const score = calculateScore(responses);
-      await instance.post(`/finish-quiz/${quizAttemptId}`, { score });
 
-      showThankYouMessage();
-    } catch (err) {
-      console.error("Finish error:", err);
-      setIsQuizFinished(false);
-      alert("Error finishing quiz.");
-    }
-  };
-
- const handleTimeUp = async () => {
+const handleFinishQuiz = async () => {
   if (isQuizFinished) return;
   setIsQuizFinished(true);
+
   try {
+    const currentQuestion = questions[currentQuestionIndex];
+    const lastResponse = responses[currentQuestion._id];
+
+    // Submit last answer if not submitted yet
+    if (lastResponse) {
+      await instance.post(`/students/submit-answer/${quizAttemptId}`, {
+        questionId: currentQuestion._id,
+        selectedAnswer: lastResponse.selectedAnswer,
+        selectedOption: lastResponse.selectedOption,
+      });
+    }
+
     const score = calculateScore(responses);
-    await instance.post(`/finish-quiz/${quizAttemptId}`, { score });
+   const response =  await instance.post(`/students/finish-quiz/${quizAttemptId}`, { score });
+   console.log(response);
+   
     showThankYouMessage();
   } catch (err) {
-    console.error("Time-up submission failed:", err);
-    alert("Error submitting after time expired.");
+    console.error("Finish error:", err);
+    setIsQuizFinished(false);
+    alert("Error finishing quiz.");
   }
 };
+
+  const handleTimeUp = async () => {
+    if (isQuizFinished) return;
+    setIsQuizFinished(true);
+    try {
+      
+      const score = calculateScore(responses);
+      await instance.post(`/students/finish-quiz/${quizAttemptId}`, { score });
+      showThankYouMessage();
+    } catch (err) {
+      console.error("Time-up submission failed:", err);
+      alert("Error submitting after time expired.");
+    }
+  };
 
 
   const showThankYouMessage = () => {
     setShowThankYou(true);
-    setTimeout(() => navigate("/login"), 5000);
+    setTimeout(() => navigate("/student/studentpanel"), 5000);
   };
 
   if (loading) {
@@ -160,7 +189,7 @@ function QuizPage() {
 
   if (showThankYou) {
     return (
-      <Container className="text-center my-5">
+      <Container className="text-center " style={{marginTop:"100px"}}>
         <Alert variant="success" className="fs-4 fw-bold">
           Thank you for attempting the quiz!
         </Alert>
@@ -181,44 +210,91 @@ function QuizPage() {
 
       {currentQuestion && (
         <>
-          <p className="fs-5 fw-semibold">{currentQuestion.question}</p>
-          <Row className="mb-3">
-            {currentQuestion.options.map((opt) => (
-              <Col xs={6} className="mb-2" key={opt}>
-                <Button
-                  variant={
-                    responses[currentQuestion._id] === opt ? "primary" : "outline-secondary"
-                  }
-                  className="w-100"
-                  onClick={() => handleSelect(currentQuestion._id, opt)}
-                  disabled={isQuizFinished}
-                >
-                  {opt}
-                </Button>
-              </Col>
-            ))}
-          </Row>
+          <div className="mb-3">
+            <p className="fs-5 fw-semibold">
+              Q{currentQuestionIndex + 1}:{" "}
+              {typeof currentQuestion.question === "object"
+                ? currentQuestion.question.text || "WHAT WILL BE THE OUTPUT"
+                : currentQuestion.question || "No question text"}
+            </p>
 
-          {currentQuestionIndex === questions.length - 1 &&
-            responses[currentQuestion._id] ? (
-            <Button
-              variant="danger"
-              onClick={handleFinishQuiz}
-              disabled={isQuizFinished || submitting}
-            >
-              Finish Quiz
-            </Button>
-          ) : (
-            <Button
-              variant="success"
-              onClick={() => handleSubmitAnswer(currentQuestion._id)}
-              disabled={!responses[currentQuestion._id] || isQuizFinished || submitting}
-            >
-              {submitting ? "Submitting..." : "Submit Answer"}
-            </Button>
+            {/* Display question image if available */}
+            {typeof currentQuestion.question === "object" &&
+              currentQuestion.question.fileUrl && (
+                <img
+                  src={currentQuestion.question.fileUrl}
+                  alt="Question visual"
+                  className="img-fluid mb-3"
+                />
+              )}
+          </div>
+<Row className="mb-3">
+  {currentQuestion.options.map((opt, i) => {
+    const optionText = typeof opt === "object" && opt !== null
+      ? opt.text || "No option text"
+      : opt;
+    const optionFile = typeof opt === "object" && opt.fileUrl;
+
+    return (
+      <Col xs={12} md={6} className="mb-2" key={i}>
+        <Button
+          variant={
+            responses[currentQuestion._id]?.selectedAnswer === optionText
+              ? "primary"
+              : "outline-secondary"
+          }
+          className="w-100 text-start"
+          onClick={() =>
+            handleSelect(
+              currentQuestion._id,
+              optionText,
+              String.fromCharCode(65 + i)
+            )
+          }
+          disabled={isQuizFinished}
+        >
+          {String.fromCharCode(65 + i)}. {optionText}
+          {optionFile && (
+            <>
+              {" - "}
+              <a
+                href={opt.fileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-light text-decoration-underline"
+              >
+                View File
+              </a>
+            </>
+          )}
+        </Button>
+      </Col>
+    );
+  })}
+</Row>
+
+{currentQuestionIndex === questions.length - 1 &&
+ responses[currentQuestion._id]?.selectedAnswer ? (
+  <Button
+    variant="danger"
+    onClick={handleFinishQuiz}
+    disabled={isQuizFinished || submitting}
+  >
+    {submitting ? "Submitting..." : "Finish Quiz"}
+  </Button>
+) : (
+  <Button
+    variant="success"
+    onClick={() => handleSubmitAnswer(currentQuestion._id)}
+    disabled={!responses[currentQuestion._id]?.selectedAnswer || isQuizFinished || submitting}
+  >
+    {submitting ? "Submitting..." : "Submit Answer"}
+  </Button>
+
           )}
         </>
       )}
+
     </Container>
   );
 }

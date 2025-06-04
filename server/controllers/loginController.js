@@ -6,7 +6,6 @@ import bcrypt from "bcrypt";
 export async function studentlogin(req, res) {
   const { email, password } = req.body;
 
-  console.log(req.body);
   try {
     if (!email || !password) {
       return res
@@ -15,38 +14,33 @@ export async function studentlogin(req, res) {
     }
 
     const user = await studentModel.findOne({ email, password });
-    // console.log(user)
+    
     if (!user) {
       return res.status(404).json({ message: "Invalid email or password." });
     }
-
-    // user.firstTimesignin === "true";
-    // if (firstTime) {
-    //   user.firstTimesignin = "false";
-    //   await user.save();
-    // }
-    // console.log(user);
+    
     const token = jwt.sign(
-  { studentId: user._id },
-  process.env.JWT_SECRET,
-  { expiresIn: "2h" }
-);
+      { id: user._id, role: "student" },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
 
-res.cookie("studentToken", token, {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "strict",
-  maxAge: 2 * 60 * 60 * 1000, // 2 hours
-});
+
+    res.cookie("studentToken", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Strict",
+      maxAge: 2 * 60 * 60 * 1000, // 2 hours
+    });
 
     return res.status(200).json({ message: "Login successful.", user });
   } catch (error) {
+    console.error("Login error:", error);
     return res
       .status(500)
       .json({ message: "Error during login.", error: error.message });
   }
 }
-
 export async function changePassword(req, res) {
   const { email, password, newPassword } = req.body;
   console.log(email,password,newPassword)
