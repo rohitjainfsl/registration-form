@@ -7,6 +7,7 @@ export const createTest = async (req, res) => {
     const { title, numQuestions, duration } = req.body;
     const questions = JSON.parse(req.body.questions); 
 
+
     let questionImages = [];
 
     if (req.files?.questionimage) {
@@ -14,7 +15,7 @@ export const createTest = async (req, res) => {
     }
 
     const processedQuestions = questions.map((q, index) => {
-      const imageUrl = questionImages[index]?.secure_url || null;
+      const imageUrl = questionImages[index]?.secure_url || null;0
 
       return {
         question: {
@@ -26,6 +27,8 @@ export const createTest = async (req, res) => {
         codeSnippet: q.codeSnippet || null,
       };
     });
+    console.log(processedQuestions);
+    
 
     const newTest = new Test({
       title,
