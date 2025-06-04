@@ -197,7 +197,6 @@ export async function startQuiz(req, res) {
     if (!test) {
       return res.status(404).json({ message: "Test not found" });
     }
-    // Check for existing quiz attempt
     const existingAttempt = await QuizAttempt.findOne({
       studentId: token.id,
       testId,
@@ -223,60 +222,6 @@ export async function startQuiz(req, res) {
     res.status(500).json({ message: "Error starting quiz", error: error.message });
   }
 }
-
-export async function submitAnswer(req, res) {
-  try {
-    const { quizAttemptId } = req.params;
-    const { questionId, selectedOption, selectedAnswer } = req.body;
-console.log(questionId,selectedOption,selectedAnswer  );
-
-    const quizAttempt = await QuizAttempt.findById(quizAttemptId);
-    if (!quizAttempt) {
-      return res.status(404).json({ message: "Quiz attempt not found" });
-    }
-
-    const existingResponse = quizAttempt.responses.find(
-      (resp) => resp.questionId.equals(questionId)
-    );
-
-    if (existingResponse) {
-      existingResponse.selectedOption = selectedOption;
-      existingResponse.selectedAnswer = selectedAnswer;
-    } else {
-      quizAttempt.responses.push({ questionId, selectedOption, selectedAnswer });
-    }
-
-    await quizAttempt.save();
-
-    return res.status(200).json({ message: "Answer submitted successfully" });
-  } catch (error) {
-    console.error("Submit answer error:", error);
-    return res.status(500).json({
-      message: "Error submitting answer",
-      error: error.message,
-    });
-  }
-}
-
- export async function getQuestion(req, res) {
-  const { testId } = req.params;
-
-  try {
-    const test = await Test.findById(testId).populate("questions");
-    if (!test) {
-      return res.status(404).json({ message: "Test not found" });
-    }
-
-    res
-      .status(200)
-      .json({ questions: test.questions, duration: test.duration });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error retrieving questions", error: error.message });
-  }
-};
-
 export async function finishQuiz(req, res) {
   try {
     const { quizAttemptId } = req.params;
