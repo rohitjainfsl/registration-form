@@ -167,7 +167,6 @@ export async function startQuiz(req, res) {
     if (!test) {
       return res.status(404).json({ message: "Test not found" });
     }
-    // Check for existing quiz attempt
     const existingAttempt = await QuizAttempt.findOne({
       studentId: token.id,
       testId,
@@ -227,8 +226,6 @@ console.log(questionId,selectedOption,selectedAnswer  );
     });
   }
 }
-
-
 
 export async function finishQuiz(req, res) {
   try {
