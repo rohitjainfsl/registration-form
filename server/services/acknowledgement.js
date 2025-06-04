@@ -8,7 +8,7 @@ export function sendAckEmail(newData) {
   const msg = {
     to: newData.email,
     // from: "rohit@fullstacklearning.com",
-    from:"dheerajjangid013@gmail.com",
+    from:"rohit@fullstacklearning.com",
     subject: "Thank you for registering at Full Stack Learning",
     text: "Your registration is successful.",
     html: `<strong>Your registration is successful.</strong>
