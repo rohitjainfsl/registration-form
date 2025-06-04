@@ -1,6 +1,7 @@
 import studentModel from "../models/studentModel.js";
 import { cloudinaryUpload } from "../middlewares/cloudinaryUpload.js";
 import { sendAckEmail, sendDataByEmail } from "../services/acknowledgement.js";
+
 import mongoose from "mongoose";
 import Test from "../models/testModel.js";
 import QuizAttempt from "../models/QuizAttempt.js";
@@ -39,7 +40,6 @@ export async function register(req, res) {
       aadharFront = cloudinaryObject[0].secure_url;
       aadharBack = cloudinaryObject[1].secure_url;
     }
-
     const newRegistration = new studentModel({
       name,
       email,

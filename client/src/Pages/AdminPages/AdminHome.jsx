@@ -1,12 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Container,
-  Button,
-  Row,
-  Col,
-  Table,
-  Form
-} from "react-bootstrap";
+import { Container, Button, Row, Col, Table, Form } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import instance from "../../axiosConfig";
   
@@ -18,7 +11,7 @@ function AdminHome() {
     async function fetchTests() {
       try {
         const res = await instance.get("/test/allTests");
-        setTests(res.data.tests); // Make sure your backend returns `tests` not `test`
+        setTests(res.data.tests);
         console.log(res.data.tests);
       } catch (error) {
         console.error("Failed to fetch tests", error);
@@ -43,11 +36,19 @@ function AdminHome() {
       console.error("Failed to update release status", error);
     }
   };
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this test?")) return;
 
+    try {
+      await instance.delete(`/test/delete/${id}`);
+      setTests((prev) => prev.filter((t) => t._id !== id));
+    } catch (error) {
+      console.error("Failed to delete test", error);
+    }
+  };
   return (
-    <Container className="py-4">
+    <Container className="py-4" style={{marginTop:"100px"}}>
       <h1 className="mb-4">Admin Dashboard</h1>
-
       <Row className="mb-4">
         <Col xs="auto">
           <Button as={Link} to="/admin/create/test" variant="primary">
@@ -95,10 +96,15 @@ function AdminHome() {
                   </Button>
                   <Button
                     variant="info"
+                    className="me-2"
                     onClick={() => navigate(`/admin/view/test/${test._id}`)}
                   >
                     View
                   </Button>
+                  <Button
+                    variant="danger"
+                    onClick={() => handleDelete(test._id)}
+                  >Delete</Button>
                 </td>
               </tr>
             ))

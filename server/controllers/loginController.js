@@ -24,7 +24,7 @@ export async function studentlogin(req, res) {
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
-    // console.log("id:",token);
+
 
     res.cookie("studentToken", token, {
       httpOnly: true,
@@ -92,6 +92,7 @@ export const adminLogin = async (req, res) => {
       maxAge: 2 * 60 * 60 * 1000,
     });
     // console.log("user login successfully" + token);
+    // console.log("user login successfully" + token);
     res.status(200).json({ message: "User login successfully" });
   } catch (error) {
     console.error(error);
@@ -121,6 +122,8 @@ export const registerAdmin = async (req, res) => {
 };
 
 export const logout = (req, res) => {
+
+
   const { adminToken, studentToken } = req.cookies;
 
   let role = null;
