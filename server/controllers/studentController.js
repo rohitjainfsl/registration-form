@@ -134,36 +134,6 @@ export async function updateStudentDetails(req, res) {
   }
 };
 
-export async function submitAnswer(req, res) {
-    try {
-      const { quizAttemptId } = req.params;
-      const { questionId, selectedAnswer } = req.body;
-
-      const quizAttempt = await QuizAttempt.findById(quizAttemptId);
-      if (!quizAttempt) {
-        return res.status(404).json({ message: "Quiz attempt not found" });
-      }
-
-      const existingResponse = quizAttempt.responses.find(
-        (resp) => resp.questionId.toString() === questionId
-      );
-
-      if (existingResponse) {
-        existingResponse.selectedAnswer = selectedAnswer;
-      } else {
-        quizAttempt.responses.push({ questionId, selectedAnswer });
-      }
-
-      await quizAttempt.save();
-
-      res.status(200).json({ message: "Answer submitted successfully" });
-    } catch (error) {
-      res
-        .status(500)
-        .json({ message: "Error submitting answer", error: error.message });
-    }
-  };
-
 
  export async function getQuestion(req, res) {
   const { testId } = req.params;
@@ -258,24 +228,7 @@ console.log(questionId,selectedOption,selectedAnswer  );
   }
 }
 
- export async function getQuestion(req, res) {
-  const { testId } = req.params;
 
-  try {
-    const test = await Test.findById(testId).populate("questions");
-    if (!test) {
-      return res.status(404).json({ message: "Test not found" });
-    }
-
-    res
-      .status(200)
-      .json({ questions: test.questions, duration: test.duration });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error retrieving questions", error: error.message });
-  }
-};
 
 export async function finishQuiz(req, res) {
   try {
