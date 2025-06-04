@@ -64,7 +64,8 @@ function StudentDetails() {
 
   return (
     <Container style={{ marginTop: "5rem" }}>
-      <h3 className="text-center mb-4">{student.name}'s Details</h3>
+      <h3 className="text-center mb-4" style={{marginTop:"100px"}}>
+      {student.name}'s Details</h3>
       <p><strong>Email:</strong> {student.email}</p>
       <p><strong>Phone:</strong> {student.phone}</p>
       <p><strong>DOB:</strong> {student.dob}</p>

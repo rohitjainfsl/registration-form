@@ -8,3 +8,4 @@ export const fileArr = upload.fields([
   { name: "aadharBack", maxCount: 1 },
   {name:"questionimage", maxCount:50},
 ]);
+
