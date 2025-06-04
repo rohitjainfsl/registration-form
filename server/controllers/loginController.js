@@ -24,7 +24,7 @@ export async function studentlogin(req, res) {
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
-    console.log("id:",token);
+    
 
     res.cookie("studentToken", token, {
       httpOnly: true,
