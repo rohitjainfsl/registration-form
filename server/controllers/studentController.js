@@ -1,8 +1,6 @@
 import studentModel from "../models/studentModel.js";
 import { cloudinaryUpload } from "../middlewares/cloudinaryUpload.js";
 import { sendAckEmail, sendDataByEmail } from "../services/acknowledgement.js";
-
-import mongoose from "mongoose";
 import Test from "../models/testModel.js";
 
 export async function register(req, res) {
@@ -135,7 +133,34 @@ export async function updateStudentDetails(req, res) {
     res.status(500).json({ message: "Update failed", error: error.message });
   }
 };
+// export async function updateStudentDetails(req, res) {
+//   try {
+//     const { id } = req.params;
+//     const { password, email } = req.body;
+    
+//     cosnt student = await studentModel.findOne(email);
 
+//       if(!student)
+//       {
+//         return res.status(404).json({message: "Student Not Found"})
+//       }
+
+//     const updatedStudent = await studentModel.findByIdAndUpdate(
+//       id,
+//       { password},
+//       { new: true }
+//     );
+
+//     if (!updatedStudent) {
+//       return res.status(404).json({ message: "Student not found" });
+//     }
+
+//     res.status(200).json({ message: "Student updated", student: updatedStudent });
+//   } catch (error) {
+//     console.error("Update error:", error);
+//     res.status(500).json({ message: "Update failed", error: error.message });
+//   }
+// };
 export async function submitAnswer(req, res) {
     try {
       const { quizAttemptId } = req.params;
@@ -192,8 +217,6 @@ export async function startQuiz(req, res) {
     const token = req.user; 
     const { testId } = req.params;
     const user = await studentModel.findById(_id); 
-    console.log(token)
-    console.log(user);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -246,13 +269,9 @@ export async function finishQuiz(req, res) {
     if (!quizAttempt) {
       return res.status(404).json({ message: "Quiz attempt not found" });
     }
-
-    // quizAttempt.endTime = new Date();
-    // quizAttempt.score = score;
     quizAttempt.endTime = new Date();
     quizAttempt.score = score;
     await quizAttempt.save();
-
     res.status(200).json({ message: "Quiz completed", score });
   } catch (error) {
     res
