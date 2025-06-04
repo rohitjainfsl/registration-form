@@ -10,7 +10,7 @@ router.post('/create',
   createTest
 );
 router.get('/test/:id',authMiddleware("adminToken"), getTestById);
-router.get('/allTests', authMiddleware("adminToken"),getAllTests);
+router.get('/allTests', authMiddleware("adminToken", "studentToken"),getAllTests);
 router.put('/update',authMiddleware("adminToken"), updateTest )
 router.put("/update/:id", authMiddleware("adminToken"),updateTestReleaseStatus);
 router.delete("/delete/:id",authMiddleware("adminToken"), deleteTest)

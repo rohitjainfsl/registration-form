@@ -22,7 +22,7 @@ export function AdminProvider({ children }) {
         withCredentials: true,
       });
       
-      if (res.status === 200) {
+      if (res.status === 200) {   
         setIsAuthenticated(true);
         setRole(res.data.role);
       }
