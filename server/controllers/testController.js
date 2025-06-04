@@ -8,43 +8,42 @@ export const createTest = async (req, res) => {
     const questions = JSON.parse(req.body.questions); 
 
 
-    let questionImages = [];
+    const questionImagesMap = {};
 
-    if (req.files?.questionimage) {
-      questionImages = await cloudinaryUpload(req.files.questionimage); 
+    if (req.files && req.files.length > 0) {
+      for (const file of req.files) {
+        if (file.fieldname.startsWith("questionimage_")) {
+          const index = parseInt(file.fieldname.split("_")[1], 10);
+          const [result] = await cloudinaryUpload([file]);
+          questionImagesMap[index] = result.secure_url;
+        }
+      }
     }
+    const processedQuestions = questions.map((q, index) => ({
+      question: {
+        text: q.text || null,
+        fileUrl: questionImagesMap[index] || null,
+      },
+      options: q.options,
+      correct_answer: q.correct_answer,
+      codeSnippet: q.codeSnippet || null,
+    }));
 
-    const processedQuestions = questions.map((q, index) => {
-      const imageUrl = questionImages[index]?.secure_url || null;0
-
-      return {
-        question: {
-          text: q.text || null,
-          fileUrl: imageUrl,
-        },
-        options: q.options,
-        correct_answer: q.correct_answer,
-        codeSnippet: q.codeSnippet || null,
-      };
-    });
-    console.log(processedQuestions);
-    
-
-    const newTest = new Test({
+    const test = new Test({
       title,
       numQuestions,
       duration,
       questions: processedQuestions,
     });
-    await newTest.save();
-    res.status(201).json({ message: "Test created successfully", test: newTest });
-  } catch (err) {
-    console.error("Test creation failed: ", err);
-    res.status(500).json({ error: "Test creation failed", details: err.message });
+
+    await test.save();
+
+    res.status(201).json({ message: "Test created successfully", test });
+  } catch (error) {
+    console.error("Error creating test:", error);
+    res.status(500).json({ message: "Failed to create test" });
   }
 };
-
-
 
 export const getAllTests = async (req, res) => {
   try {
