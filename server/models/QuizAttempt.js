@@ -11,6 +11,7 @@ const quizAttemptSchema = new mongoose.Schema({
   responses: [
     {
       questionId: { type: mongoose.Schema.Types.ObjectId, ref: "Question" },
+      selectedOption: { type: String, enum: ['A', 'B', 'C', 'D'] },
       selectedAnswer: String,
     },
   ],

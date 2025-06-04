@@ -1,3 +1,4 @@
+
 import Test from "../models/testModel.js";
 import { cloudinaryUpload } from "../middlewares/cloudinaryUpload.js";
 
@@ -110,3 +111,16 @@ export const updateTestReleaseStatus = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export const deleteTest = async (req, res)=> {
+  try {
+    const deletedTest = await Test.findByIdAndDelete(req.params.id);
+    if (!deletedTest) {
+      return res.status(404).json({ message: "Test not found" });
+    }
+    res.status(200).json({ message: "Test deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting test:", error);
+    res.status(500).json({ message: "Failed to delete test", error: error.message });
+  }
+}
