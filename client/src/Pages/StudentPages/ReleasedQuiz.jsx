@@ -32,7 +32,10 @@ function StudentPanel() {
 
   return (
     <Container className="py-4" style={{marginTop:"100px"}}>
-      <h2 className="mb-4">Available Tests</h2>
+    <div className="d-flex align-items-center justify-content-between mb-3">
+  <h2 className="mb-0">Available Tests</h2>
+  <button className="btn btn-warning">Result</button>
+</div>
 
       <Table striped bordered hover responsive>
         <thead>
