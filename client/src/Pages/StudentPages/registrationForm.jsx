@@ -4,7 +4,7 @@ import instance from "../../axiosConfig.js";
 import { useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import Loader from "../Loader/loader.jsx";
+import Loader from "../Loader/Loader.jsx";
 
 function UserForm() {
   const navigate = useNavigate();
