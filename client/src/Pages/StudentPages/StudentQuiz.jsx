@@ -17,13 +17,11 @@ function QuizPage() {
   const [submitting, setSubmitting] = useState(false);
   const [showThankYou, setShowThankYou] = useState(false);
   
-  // Refs to access latest state in event handlers
   const isQuizFinishedRef = useRef(false);
   const quizAttemptIdRef = useRef(null);
   const responsesRef = useRef({});
   const questionsRef = useRef([]);
 
-  // Update refs when state changes
   useEffect(() => {
     isQuizFinishedRef.current = isQuizFinished;
   }, [isQuizFinished]);
@@ -63,7 +61,6 @@ function QuizPage() {
     startQuizAndFetchQuestions();
   }, [testId]);
 
-  // Calculate score function that uses refs
   const calculateScoreFromRefs = useCallback(() => {
     let score = 0;
     questionsRef.current.forEach((q) => {
@@ -74,20 +71,17 @@ function QuizPage() {
     return score;
   }, []);
 
-  // Silent finish function for auto-finish scenarios
   const finishQuizSilently = useCallback(async () => {
     if (isQuizFinishedRef.current || !quizAttemptIdRef.current) return;
     
     try {
       const score = calculateScoreFromRefs();
       
-      // Use navigator.sendBeacon for reliable submission during page unload
       if (navigator.sendBeacon) {
         const data = JSON.stringify({ score });
         const url = `${instance.defaults.baseURL}/students/finishQuiz/${quizAttemptIdRef.current}`;
         navigator.sendBeacon(url, new Blob([data], { type: 'application/json' }));
       } else {
-        // Fallback for browsers that don't support sendBeacon
         await fetch(`${instance.defaults.baseURL}/students/finishQuiz/${quizAttemptIdRef.current}`, {
           method: 'POST',
           headers: {
@@ -104,7 +98,6 @@ function QuizPage() {
     }
   }, [calculateScoreFromRefs]);
 
-  // Event handlers using useCallback to prevent recreation
   const handleBeforeUnload = useCallback((event) => {
     if (!isQuizFinishedRef.current && quizAttemptIdRef.current) {
       event.preventDefault();
@@ -121,7 +114,71 @@ function QuizPage() {
 
   const handleVisibilityChange = useCallback(() => {
     if (document.visibilityState === 'hidden' && !isQuizFinishedRef.current && quizAttemptIdRef.current) {
+      console.log('Tab switched or window minimized - finishing quiz');
       finishQuizSilently();
+    }
+  }, [finishQuizSilently]);
+
+  const handleWindowBlur = useCallback(() => {
+    if (!isQuizFinishedRef.current && quizAttemptIdRef.current) {
+      console.log('Window lost focus - finishing quiz');
+      finishQuizSilently();
+    }
+  }, [finishQuizSilently]);
+
+  const handleWindowFocus = useCallback(() => {
+    if (isQuizFinishedRef.current) {
+      console.log('Quiz was already finished due to tab switching');
+    }
+  }, []);
+
+  const handleDevToolsOpen = useCallback(() => {
+    if (!isQuizFinishedRef.current && quizAttemptIdRef.current) {
+      const threshold = 160; // Threshold for detecting devtools
+      if (window.outerHeight - window.innerHeight > threshold || 
+          window.outerWidth - window.innerWidth > threshold) {
+        console.log('Developer tools detected - finishing quiz');
+        finishQuizSilently();
+      }
+    }
+  }, [finishQuizSilently]);
+
+  const handleContextMenu = useCallback((event) => {
+    if (!isQuizFinishedRef.current && quizAttemptIdRef.current) {
+      event.preventDefault();
+      return false;
+    }
+  }, []);
+
+  const handleKeyDown = useCallback((event) => {
+    if (!isQuizFinishedRef.current && quizAttemptIdRef.current) {
+      const forbiddenKeys = [
+        'F12', 
+        'I', 
+        'U', 
+        'S', 
+        'A',
+        'C', 
+        'V', 
+        'R', 
+        'F5' 
+      ];
+
+      const isCtrlPressed = event.ctrlKey || event.metaKey;
+      const isShiftPressed = event.shiftKey;
+      
+      if (
+        event.key === 'F12' ||
+        (isCtrlPressed && isShiftPressed && event.key === 'I') ||
+        (isCtrlPressed && event.key === 'U') ||
+        (isCtrlPressed && forbiddenKeys.includes(event.key)) ||
+        event.key === 'F5'
+      ) {
+        event.preventDefault();
+        console.log('Forbidden key combination detected - finishing quiz');
+        finishQuizSilently();
+        return false;
+      }
     }
   }, [finishQuizSilently]);
 
@@ -132,36 +189,43 @@ function QuizPage() {
       
       if (confirmLeave) {
         finishQuizSilently();
-        // Allow navigation after a brief delay
         setTimeout(() => {
           window.history.back();
         }, 100);
       } else {
-        // Push state again to prevent navigation
         window.history.pushState(null, null, window.location.pathname);
       }
     }
   }, [finishQuizSilently]);
 
-  // Setup event listeners
   useEffect(() => {
-    // Add event listeners
     window.addEventListener('beforeunload', handleBeforeUnload);
     window.addEventListener('unload', handleUnload);
     window.addEventListener('popstate', handlePopState);
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    
-    // Push state to handle back button
+    window.addEventListener('blur', handleWindowBlur);
+    window.addEventListener('focus', handleWindowFocus);
+    window.addEventListener('resize', handleDevToolsOpen);
+    document.addEventListener('contextmenu', handleContextMenu);
+    document.addEventListener('keydown', handleKeyDown);
     window.history.pushState(null, null, window.location.pathname);
+    const resizeObserver = new ResizeObserver(handleDevToolsOpen);
+    resizeObserver.observe(document.body);
 
-    // Cleanup function
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
       window.removeEventListener('unload', handleUnload);
       window.removeEventListener('popstate', handlePopState);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('blur', handleWindowBlur);
+      window.removeEventListener('focus', handleWindowFocus);
+      window.removeEventListener('resize', handleDevToolsOpen);
+      document.removeEventListener('contextmenu', handleContextMenu);
+      document.removeEventListener('keydown', handleKeyDown);
+      resizeObserver.disconnect();
     };
-  }, [handleBeforeUnload, handleUnload, handlePopState, handleVisibilityChange]);
+  }, [handleBeforeUnload, handleUnload, handlePopState, handleVisibilityChange, 
+      handleWindowBlur, handleWindowFocus, handleDevToolsOpen, handleContextMenu, handleKeyDown]);
 
   useEffect(() => {
     if (timeLeft <= 0 || isQuizFinished) return;
@@ -301,6 +365,15 @@ function QuizPage() {
 
   return (
     <Container className="py-4" style={{ marginTop: "80px" }}>
+      <Alert variant="warning" className="mb-3">
+        <Alert.Heading>⚠️ Quiz Security Notice</Alert.Heading>
+        <p className="mb-0">
+          <strong>Important:</strong> This quiz is monitored for integrity. 
+          Switching tabs, opening new windows, using developer tools, or attempting to copy content 
+          will automatically submit your quiz with the current score.
+        </p>
+      </Alert>
+
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h3>Quiz</h3>
         <span className={`fw-bold ${timeLeft <= 300 ? "text-danger" : ""}`}>
