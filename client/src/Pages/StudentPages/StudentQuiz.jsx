@@ -299,6 +299,7 @@ function QuizPage() {
   const [isQuizFinished, setIsQuizFinished] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [showThankYou, setShowThankYou] = useState(false);
+<<<<<<< HEAD
   
   // Refs to access latest state in event handlers
   const isQuizFinishedRef = useRef(false);
@@ -322,6 +323,10 @@ function QuizPage() {
   useEffect(() => {
     questionsRef.current = questions;
   }, [questions]);
+=======
+  const [quizAttemptDocId, setQuizAttemptDocId] = useState(null);
+  
+>>>>>>> c7abe57b214c3958f948d6fc919f6e020c3a6316
 
   useEffect(() => {
     async function startQuizAndFetchQuestions() {
@@ -548,7 +553,8 @@ function QuizPage() {
     setIsQuizFinished(true);
     try {
       const score = calculateScore(responses);
-      await instance.post(`/students/finish-quiz/${quizAttemptId}`, { score });
+      // Fixed: Changed from finish-quiz to finishQuiz to match the backend route
+      await instance.post(`/students/finishQuiz/${quizAttemptId}`, { score });
       showThankYouMessage();
     } catch (err) {
       console.error("Time-up submission failed:", err);

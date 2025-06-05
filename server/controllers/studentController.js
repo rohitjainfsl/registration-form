@@ -125,8 +125,7 @@ export async function updateStudentDetails(req, res) {
   }
 };
 
-
- export async function getQuestion(req, res) {
+export async function getQuestion(req, res) {
   const { testId } = req.params;
 
   try {
@@ -147,9 +146,10 @@ export async function updateStudentDetails(req, res) {
 
 export async function startQuiz(req, res) {
   try {
-    const token = req.user; 
+    const token = req.user;
     const { testId } = req.params;
-    const user = await studentModel.findById(token.id); 
+
+    const user = await studentModel.findById(token.id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -158,26 +158,48 @@ export async function startQuiz(req, res) {
     if (!test) {
       return res.status(404).json({ message: "Test not found" });
     }
-    const existingAttempt = await QuizAttempt.findOne({
-      studentId: token.id,
-      testId,
-    });
-    // if (existingAttempt) {
-    //   return res.status(400).json({ message: "You have already attempted this quiz." });
-    // }
-    const newAttempt = new QuizAttempt({
-      studentId: token.id,
-      studentName: user.name,
+
+    const studentId = token.id;
+    const newAttempt = {
       testId,
       startTime: new Date(),
-    });
+      responses: [] // Initialize empty responses array for this attempt
+    };
 
-    await newAttempt.save();  
+    let quizAttemptDoc = await QuizAttempt.findOne({ studentId });
 
-    res.status(201).json({
-      message: "Quiz attempt started",
-      quizAttemptId: newAttempt._id,
-    });
+    if (quizAttemptDoc) {
+      const alreadyAttempted = quizAttemptDoc.attempts.some(
+        (attempt) => attempt.testId.toString() === testId
+      );
+      if (alreadyAttempted) {
+        return res.status(400).json({ message: "You have already attempted this quiz." });
+      }
+
+      quizAttemptDoc.attempts.push(newAttempt);
+      await quizAttemptDoc.save();
+
+      const latestAttemptId = quizAttemptDoc.attempts[quizAttemptDoc.attempts.length - 1]._id;
+
+      return res.status(201).json({
+        message: "Quiz attempt started",
+        quizAttemptId: latestAttemptId,
+      });
+    } else {
+      const newQuizAttemptDoc = new QuizAttempt({
+        studentId,
+        studentName: user.name,
+        collegeId: user.collegeId,
+        attempts: [newAttempt],
+      });
+
+      await newQuizAttemptDoc.save();
+
+      return res.status(201).json({
+        message: "Quiz attempt started",
+        quizAttemptId: newQuizAttemptDoc.attempts[0]._id,
+      });
+    }
   } catch (error) {
     console.error("Error starting quiz:", error);
     res.status(500).json({ message: "Error starting quiz", error: error.message });
@@ -188,25 +210,38 @@ export async function submitAnswer(req, res) {
   try {
     const { quizAttemptId } = req.params;
     const { questionId, selectedOption, selectedAnswer } = req.body;
-console.log(questionId,selectedOption,selectedAnswer  );
+    console.log(questionId, selectedOption, selectedAnswer);
 
-    const quizAttempt = await QuizAttempt.findById(quizAttemptId);
-    if (!quizAttempt) {
+    // Find the document containing the attempt
+    const quizAttemptDoc = await QuizAttempt.findOne({
+      "attempts._id": quizAttemptId,
+    });
+
+    if (!quizAttemptDoc) {
       return res.status(404).json({ message: "Quiz attempt not found" });
     }
 
-    const existingResponse = quizAttempt.responses.find(
+    // Find the specific attempt
+    const attempt = quizAttemptDoc.attempts.id(quizAttemptId);
+    if (!attempt) {
+      return res.status(404).json({ message: "Attempt not found" });
+    }
+
+    // Check if response already exists for this question
+    const existingResponseIndex = attempt.responses.findIndex(
       (resp) => resp.questionId.equals(questionId)
     );
 
-    if (existingResponse) {
-      existingResponse.selectedOption = selectedOption;
-      existingResponse.selectedAnswer = selectedAnswer;
+    if (existingResponseIndex !== -1) {
+      // Update existing response
+      attempt.responses[existingResponseIndex].selectedOption = selectedOption;
+      attempt.responses[existingResponseIndex].selectedAnswer = selectedAnswer;
     } else {
-      quizAttempt.responses.push({ questionId, selectedOption, selectedAnswer });
+      // Add new response
+      attempt.responses.push({ questionId, selectedOption, selectedAnswer });
     }
 
-    await quizAttempt.save();
+    await quizAttemptDoc.save();
 
     return res.status(200).json({ message: "Answer submitted successfully" });
   } catch (error) {
@@ -227,18 +262,35 @@ export async function finishQuiz(req, res) {
       return res.status(400).json({ message: "Score must be a number" });
     }
 
-    const quizAttempt = await QuizAttempt.findById(quizAttemptId);
-    if (!quizAttempt) {
+    // Find the document containing the attempt
+    const quizAttemptDoc = await QuizAttempt.findOne({
+      "attempts._id": quizAttemptId,
+    });
+
+    if (!quizAttemptDoc) {
       return res.status(404).json({ message: "Quiz attempt not found" });
     }
 
-    quizAttempt.endTime = new Date();
-    quizAttempt.score = score;
-    await quizAttempt.save();
+    // Find the specific attempt
+    const attempt = quizAttemptDoc.attempts.id(quizAttemptId);
 
-    res.status(200).json({ message: "Quiz completed", quizAttempt });
+    if (!attempt) {
+      return res.status(404).json({ message: "Attempt not found" });
+    }
+
+    // Check if quiz is already finished
+    if (attempt.endTime) {
+      return res.status(400).json({ message: "Quiz already completed" });
+    }
+
+    attempt.endTime = new Date();
+    attempt.score = score;
+
+    await quizAttemptDoc.save();
+
+    return res.status(200).json({ message: "Quiz completed", attempt });
   } catch (error) {
-    res.status(500).json({ message: "Error finishing quiz", error: error.message });
+    console.error("Error finishing quiz:", error);
+    return res.status(500).json({ message: "Error finishing quiz", error: error.message });
   }
-};
-
+}
