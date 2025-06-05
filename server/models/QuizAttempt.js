@@ -17,10 +17,6 @@ const attemptSchema = new mongoose.Schema({
   timestamps: true // Add timestamps to track when attempts are created/updated
 });
 
-<<<<<<< HEAD
-
-export default mongoose.model("QuizAttempt", quizAttemptSchema);
-=======
 const quizAttemptSchema = new mongoose.Schema({
   studentId: { type: mongoose.Schema.Types.ObjectId, ref: "Student", required: true, unique: true },
   studentName: { type: String, required: true },
@@ -36,4 +32,3 @@ quizAttemptSchema.index({ "attempts.testId": 1 });
 quizAttemptSchema.index({ "attempts._id": 1 });
 
 export default mongoose.model("QuizAttempt", quizAttemptSchema);
->>>>>>> c7abe57b214c3958f948d6fc919f6e020c3a6316
