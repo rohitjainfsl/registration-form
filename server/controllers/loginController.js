@@ -29,7 +29,7 @@ export async function studentlogin(req, res) {
     res.cookie("studentToken", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: "none",
       maxAge: 2 * 60 * 60 * 1000, 
     });
 
@@ -151,7 +151,6 @@ export const checkToken = (req, res)=>{
   const {adminToken, studentToken} = req.cookies;
   let token = null;
   let role = null;
-  // console.log(role)
 console.log(adminToken,studentToken);
 
   if(adminToken)

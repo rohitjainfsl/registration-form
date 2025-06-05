@@ -6,8 +6,11 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-
 export async function cloudinaryUpload(files) {
+  if (!files || !Array.isArray(files)) {
+    throw new Error("Files must be an array");
+  }
+
   return Promise.all(
     files.map(
       (file) =>
@@ -16,7 +19,7 @@ export async function cloudinaryUpload(files) {
             { resource_type: "auto" },
             (error, result) => {
               if (error) return reject(error);
-              resolve(result);
+              resolve({ fieldname: file.fieldname, ...result });
             }
           );
           stream.end(file.buffer);
@@ -24,4 +27,3 @@ export async function cloudinaryUpload(files) {
     )
   );
 }
-

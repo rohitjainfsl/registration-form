@@ -6,38 +6,30 @@ import QuizAttempt from "../models/QuizAttempt.js";
 
 export async function register(req, res) {
   try {
-    let aadharFront,
-      aadharBack = undefined;
+
+    let aadharFront = "", aadharBack = "";
+
     const {
-      name,
-      email,
-      phone,
-      dob,
-      gender,
-      fname,
-      fphone,
-      laddress,
-      paddress,
-      role,
-      qualification,
-      qualificationYear,
-      college,
-      designation,
-      company,
-      course,
-      otherCourse,
-      referral,
-      friendName,
+      name, email, phone, dob, gender, fname, fphone,
+      laddress, paddress, role, qualification,
+      qualificationYear, college, designation,
+      company, course, otherCourse, referral, friendName
     } = req.body;
 
-    const cloudinaryObject = await cloudinaryUpload([
-      req.files.aadharFront[0],
-      req.files.aadharBack[0],
-    ]);
-    if (cloudinaryObject) {
-      aadharFront = cloudinaryObject[0].secure_url;
-      aadharBack = cloudinaryObject[1].secure_url;
-    }
+    const aadharFiles = req.files.filter(
+      (file) => file.fieldname === "aadharFront" || file.fieldname === "aadharBack"
+    );
+
+    const cloudinaryObject = await cloudinaryUpload(aadharFiles);
+
+    cloudinaryObject.forEach((uploaded) => {
+      if (uploaded.fieldname === "aadharFront") {
+        aadharFront = uploaded.secure_url;
+      } else if (uploaded.fieldname === "aadharBack") {
+        aadharBack = uploaded.secure_url;
+      }
+    });
+
     const newRegistration = new studentModel({
       name,
       email,
@@ -63,18 +55,17 @@ export async function register(req, res) {
     });
 
     await newRegistration.save();
+
     sendAckEmail(newRegistration);
     sendDataByEmail(newRegistration);
 
     return res.status(201).send({ message: "Registration Successful" });
   } catch (error) {
-    console.error("MongoDB Save Error: ", error);
-    return (
-      res
-        .status(500)
-        // console.error(error);
-        .send({ message: "Error registering student ", error: error.message })
-    );
+    console.error("Registration error:", error);
+    return res.status(500).send({
+      message: "Error registering student",
+      error: error.message,
+    });
   }
 }
 
