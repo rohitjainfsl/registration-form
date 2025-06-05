@@ -280,3 +280,116 @@
 
 // export default QuizPage;
 
+import { useEffect } from "react";
+import { Container } from "react-bootstrap";
+import "../../styles/Loader.css";
+
+function Loader() {
+  useEffect(() => {
+    const logoContainer = document.querySelector(".logo-container");
+    const logoMain = document.querySelector(".logo-main");
+
+    // Mouse parallax
+    const handleMouseMove = (e) => {
+      const rect = logoContainer.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const deltaX = (e.clientX - centerX) / 20;
+      const deltaY = (e.clientY - centerY) / 20;
+      logoContainer.style.transform = `perspective(1000px) rotateY(${deltaX}deg) rotateX(${-deltaY}deg)`;
+    };
+
+    const handleMouseLeave = () => {
+      logoContainer.style.transform = `perspective(1000px) rotateY(0deg) rotateX(0deg)`;
+    };
+
+    const handleClickRipple = (e) => {
+      const ripple = document.createElement("div");
+      const rect = logoContainer.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      ripple.style.cssText = `
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%);
+        left: ${x - 10}px;
+        top: ${y - 10}px;
+        pointer-events: none;
+        animation: rippleEffect 1s ease-out forwards;
+        z-index: 10;
+      `;
+      logoContainer.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 1000);
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseleave", handleMouseLeave);
+    logoContainer.addEventListener("click", handleClickRipple);
+
+    // Animation sequence
+    let sequenceIndex = 0;
+    const sequences = ["pulse", "rotate", "bounce", "glow"];
+
+    const interval = setInterval(() => {
+      logoMain.style.animation = `${sequences[sequenceIndex]} 2s ease-in-out`;
+      sequenceIndex = (sequenceIndex + 1) % sequences.length;
+    }, 8000);
+
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseleave", handleMouseLeave);
+      logoContainer.removeEventListener("click", handleClickRipple);
+      clearInterval(interval);
+    };
+  }, []);
+
+  return (
+    <Container className="d-flex justify-content-center align-items-center vh-100">
+      <div className="logo-container">
+        <div className="logo-wrapper">
+          <div className="logo-part logo-shadow">
+            <img
+              src="https://res.cloudinary.com/dhawap1lt/image/upload/v1749100806/logo_xsdyvb.png"
+              alt="Logo"
+              className="logo-image"
+              style={{ filter: "blur(8px) brightness(0.3)" }}
+            />
+          </div>
+          <div className="logo-part logo-glow">
+            <img
+              src="https://res.cloudinary.com/dhawap1lt/image/upload/v1749100806/logo_xsdyvb.png"
+              alt="Logo"
+              className="logo-image"
+              style={{ filter: "blur(20px) brightness(2)" }}
+            />
+          </div>
+          <div className="logo-part logo-reflection">
+            <img
+              src="https://res.cloudinary.com/dhawap1lt/image/upload/v1749100806/logo_xsdyvb.png"
+              alt="Logo"
+              className="logo-image"
+              style={{ filter: "brightness(0.8) contrast(1.2)" }}
+            />
+          </div>
+          <div className="logo-part logo-main">
+            <img
+              src="https://res.cloudinary.com/dhawap1lt/image/upload/v1749100806/logo_xsdyvb.png"
+              alt="Logo"
+              className="logo-image"
+            />
+          </div>
+        </div>
+
+        {/* Particles */}
+        {[...Array(6)].map((_, i) => (
+          <div className="particle" key={i}></div>
+        ))}
+      </div>
+    </Container>
+  );
+}
+
+export default Loader;

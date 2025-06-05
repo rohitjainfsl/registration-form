@@ -137,7 +137,6 @@ function QuizPage() {
       const threshold = 160; // Threshold for detecting devtools
       if (window.outerHeight - window.innerHeight > threshold || 
           window.outerWidth - window.innerWidth > threshold) {
-        console.log('Developer tools detected - finishing quiz');
         finishQuizSilently();
       }
     }
@@ -175,7 +174,6 @@ function QuizPage() {
         event.key === 'F5'
       ) {
         event.preventDefault();
-        console.log('Forbidden key combination detected - finishing quiz');
         finishQuizSilently();
         return false;
       }
