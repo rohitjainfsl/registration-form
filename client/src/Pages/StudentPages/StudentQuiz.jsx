@@ -16,6 +16,8 @@ function QuizPage() {
   const [isQuizFinished, setIsQuizFinished] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [showThankYou, setShowThankYou] = useState(false);
+  const [quizAttemptDocId, setQuizAttemptDocId] = useState(null);
+  
 
   useEffect(() => {
     async function startQuizAndFetchQuestions() {
@@ -71,7 +73,6 @@ function QuizPage() {
     }));
   };
 
-
   const handleSubmitAnswer = async (questionId) => {
     const response = responses[questionId];
     if (!response || submitting || isQuizFinished) return;
@@ -100,16 +101,15 @@ function QuizPage() {
     }
   };
 
-const calculateScore = (responses) => {
-  let Score = 0;
-  questions.forEach((q) => {
-    const response = responses[q._id];
-    const isCorrect = response && response.selectedOption === q.correct_answer;
-    if (isCorrect) Score++;
-  });
-  return Score;
-};
-
+  const calculateScore = (responses) => {
+    let Score = 0;
+    questions.forEach((q) => {
+      const response = responses[q._id];
+      const isCorrect = response && response.selectedOption === q.correct_answer;
+      if (isCorrect) Score++;
+    });
+    return Score;
+  };
 
   const handleFinishQuiz = async () => {
     if (isQuizFinished) return;
@@ -143,16 +143,15 @@ const calculateScore = (responses) => {
     if (isQuizFinished) return;
     setIsQuizFinished(true);
     try {
-
       const score = calculateScore(responses);
-      await instance.post(`/students/finish-quiz/${quizAttemptId}`, { score });
+      // Fixed: Changed from finish-quiz to finishQuiz to match the backend route
+      await instance.post(`/students/finishQuiz/${quizAttemptId}`, { score });
       showThankYouMessage();
     } catch (err) {
       console.error("Time-up submission failed:", err);
       alert("Error submitting after time expired.");
     }
   };
-
 
   const showThankYouMessage = () => {
     setShowThankYou(true);
@@ -271,11 +270,9 @@ const calculateScore = (responses) => {
             >
               {submitting ? "Submitting..." : "Submit Answer"}
             </Button>
-
           )}
         </>
       )}
-
     </Container>
   );
 }
