@@ -1,13 +1,12 @@
 import sgMail from "@sendgrid/mail";
 import "dotenv/config";
-//rohit@fullstacklearning.com
+
 
 export function sendAckEmail(newData) {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
   console.log(process.env.SENDGRID_API_KEY);
   const msg = {
     to: newData.email,
-    // from: "rohit@fullstacklearning.com",
     from:"rohit@fullstacklearning.com",
     subject: "Thank you for registering at Full Stack Learning",
     text: "Your registration is successful.",
@@ -15,6 +14,7 @@ export function sendAckEmail(newData) {
           <p>Your OneTime password is: <strong>${newData.password}</strong></p>
          `,
   };
+  console.log(newData.email);
   sgMail
     .send(msg)
     .then(() => {
@@ -53,7 +53,7 @@ export function sendDataByEmail(newData) {
   const dt = new Date();
   const day = getDayName[dt.getDay()];
   const date = dt.getDate();
-  const month = getMonthName[dt.getMonth() + 1];
+  const month = getMonthName[dt.getMonth()];
   const year = dt.getFullYear();
   const hour = dt.getHours();
   const min = dt.getMinutes();

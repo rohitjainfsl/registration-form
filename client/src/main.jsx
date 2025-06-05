@@ -7,9 +7,7 @@ import App from "./App.jsx";
 import { AdminProvider } from "./Pages/Context/Admincontext.jsx";
 
 createRoot(document.getElementById("root")).render(
-  <AdminProvider>
     <AdminProvider>
     <App />
     </AdminProvider>
-  </AdminProvider>
 );

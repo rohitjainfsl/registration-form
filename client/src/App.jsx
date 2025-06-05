@@ -134,82 +134,89 @@ function App() {
           <Route
           path="/getStudents/:id"
           element={
+            <ProtectedRoute>
             <>
               <Navbar />
               <StudentDetails />
             </>
+            </ProtectedRoute>
           }
         ></Route>
          <Route
           path="/admin/home"
           element={
+            <ProtectedRoute>
             <>
               <Navbar />
               <AdminHome />
             </>
+            </ProtectedRoute>
           }
         ></Route>
         <Route
           path="/admin/create/test"
           element={
+            <ProtectedRoute>
             <>
               <Navbar />
               <CreateTestForm />
             </>
-          }
-        ></Route>
-         <Route
-          path="/admin/update/test/:id"
-          element={
-            <>
-              <Navbar />
-              <UpdateTest />
-            </>
+            </ProtectedRoute>
           }
         ></Route>
                 <Route
           path="/admin/view/test/:id"
           element={
+            <ProtectedRoute>
             <>
               <Navbar />
               <ViewTest/>
             </>
+            </ProtectedRoute>
           }
         ></Route>
          <Route
           path="/admin/home"
           element={
+            <ProtectedRoute>
             <>
               <Navbar />
               <AdminHome />
             </>
+            </ProtectedRoute>
           }
         ></Route>
         <Route
           path="/admin/create/test"
           element={
+            <ProtectedRoute>
             <>
               <Navbar />
               <CreateTestForm />
             </>
+            </ProtectedRoute>
           }
         ></Route>
          <Route
           path="/admin/update/test/:id"
           element={
+            <ProtectedRoute>
             <>
               <Navbar />
               <UpdateTest />
             </>
+            </ProtectedRoute>
           }
         ></Route>
                 <Route
           path="/admin/view/test/:id"
           element={
+          <ProtectedRoute>
             <>
               <Navbar />
               <ViewTest/>
             </>
+            </ProtectedRoute>
           }
         ></Route>
       </Routes>,
@@ -221,3 +228,6 @@ function App() {
 }
 
 export default App;
+
+
+

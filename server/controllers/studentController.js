@@ -1,8 +1,6 @@
 import studentModel from "../models/studentModel.js";
 import { cloudinaryUpload } from "../middlewares/cloudinaryUpload.js";
 import { sendAckEmail, sendDataByEmail } from "../services/acknowledgement.js";
-
-import mongoose from "mongoose";
 import Test from "../models/testModel.js";
 import QuizAttempt from "../models/QuizAttempt.js";
 
@@ -80,7 +78,6 @@ export async function register(req, res) {
   }
 }
 
-
 export async function fetchStudent(req, res) {
   try {
     const students = await studentModel
@@ -136,12 +133,32 @@ export async function updateStudentDetails(req, res) {
     res.status(500).json({ message: "Update failed", error: error.message });
   }
 };
+
+
+ export async function getQuestion(req, res) {
+  const { testId } = req.params;
+
+  try {
+    const test = await Test.findById(testId).populate("questions");
+    if (!test) {
+      return res.status(404).json({ message: "Test not found" });
+    }
+
+    res
+      .status(200)
+      .json({ questions: test.questions, duration: test.duration });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error retrieving questions", error: error.message });
+  }
+};
+
 export async function startQuiz(req, res) {
   try {
     const token = req.user; 
     const { testId } = req.params;
     const user = await studentModel.findById(token.id); 
-
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -150,8 +167,6 @@ export async function startQuiz(req, res) {
     if (!test) {
       return res.status(404).json({ message: "Test not found" });
     }
-
-    // Check for existing quiz attempt
     const existingAttempt = await QuizAttempt.findOne({
       studentId: token.id,
       testId,
@@ -159,8 +174,6 @@ export async function startQuiz(req, res) {
     // if (existingAttempt) {
     //   return res.status(400).json({ message: "You have already attempted this quiz." });
     // }
-
-    // ✅ Create a new quiz attempt
     const newAttempt = new QuizAttempt({
       studentId: token.id,
       studentName: user.name,
@@ -214,45 +227,27 @@ console.log(questionId,selectedOption,selectedAnswer  );
   }
 }
 
- export async function getQuestion(req, res) {
-  const { testId } = req.params;
-
-  try {
-    const test = await Test.findById(testId).populate("questions");
-    if (!test) {
-      return res.status(404).json({ message: "Test not found" });
-    }
-
-    res
-      .status(200)
-      .json({ questions: test.questions, duration: test.duration });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error retrieving questions", error: error.message });
-  }
-};
-
 export async function finishQuiz(req, res) {
   try {
     const { quizAttemptId } = req.params;
     const { score } = req.body;
+
+    if (typeof score !== "number") {
+      return res.status(400).json({ message: "Score must be a number" });
+    }
 
     const quizAttempt = await QuizAttempt.findById(quizAttemptId);
     if (!quizAttempt) {
       return res.status(404).json({ message: "Quiz attempt not found" });
     }
 
-    // quizAttempt.endTime = new Date();
-    // quizAttempt.score = score;
     quizAttempt.endTime = new Date();
     quizAttempt.score = score;
     await quizAttempt.save();
 
-    res.status(200).json({ message: "Quiz completed", score });
+    res.status(200).json({ message: "Quiz completed", quizAttempt });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error finishing quiz", error: error.message });
+    res.status(500).json({ message: "Error finishing quiz", error: error.message });
   }
 };
+

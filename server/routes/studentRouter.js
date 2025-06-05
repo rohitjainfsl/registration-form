@@ -25,7 +25,7 @@ studentRouter.put("/updateStudent/:id", updateStudentDetails);
 
 studentRouter.get("/get-questions/:testId",authMiddleware("studentToken"),getQuestion)
 studentRouter.post("/start-quiz/:testId" ,authMiddleware("studentToken"),startQuiz)
-studentRouter.post("/finish-quiz/:quizAttemptId", authMiddleware("studentToken"),finishQuiz)
+studentRouter.post("/finishQuiz/:quizAttemptId", authMiddleware("studentToken"),finishQuiz)
 studentRouter.post("/submit-answer/:quizAttemptId",
   authMiddleware("studentToken"),submitAnswer)
 

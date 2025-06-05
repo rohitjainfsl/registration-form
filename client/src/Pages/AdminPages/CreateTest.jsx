@@ -48,37 +48,72 @@ const CreateTestForm = () => {
     setQuestions(updated);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
 
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("numQuestions", numQuestions);
-    formData.append("duration", duration);
+  //   const formData = new FormData();
+  //   formData.append("title", title);
+  //   formData.append("numQuestions", numQuestions);
+  //   formData.append("duration", duration);
 
-    const qData = questions.map((q) => ({
-      text: q.text,
-      options: q.options,
-      correct_answer: q.correct_answer,
-      codeSnippet: q.codeSnippet,
-    }));
+  //   const qData = questions.map((q) => ({
+  //     text: q.text,
+  //     options: q.options,
+  //     correct_answer: q.correct_answer,
+  //     codeSnippet: q.codeSnippet,
+  //   }));
 
-    formData.append("questions", JSON.stringify(qData));
+  //   formData.append("questions", JSON.stringify(qData));
 
-    questions.forEach((q, index) => {
-      if (q.file) {
-        formData.append("questionimage", q.file); 
-      }
-    });
+  //   questions.forEach((q, index) => {
+  //     if (q.file) {
+  //       formData.append("questionimage", q.file); 
+  //     }
+  //   });
 
-    try {
-      const res = await instance.post("/test/create", formData); 
-      alert("Test Created Successfully!");
-    } catch (err) {
-      console.error("Error creating test:", err);
-      alert("Error creating test");
+  //   try {
+  //     const res = await instance.post("/test/create", formData); 
+  //     console.log(formData);
+  //     alert("Test Created Successfully!");
+  //   } catch (err) {
+  //     console.error("Error creating test:", err);
+  //     alert("Error creating test");
+  //   }
+  // };
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData();
+  formData.append("title", title);
+  formData.append("numQuestions", numQuestions);
+  formData.append("duration", duration);
+
+  // Only add text and options to questions
+  const qData = questions.map((q) => ({
+    text: q.text || null,
+    options: q.options,
+    correct_answer: q.correct_answer,
+    codeSnippet: q.codeSnippet || null,
+  }));
+
+  formData.append("questions", JSON.stringify(qData));
+
+  questions.forEach((q, index) => {
+    if (q.file) {
+      formData.append(`questionimage_${index}`, q.file);
     }
-  };
+  });
+
+  try {
+    const res = await instance.post("/test/create", formData);
+    alert("Test Created Successfully!");
+  } catch (err) {
+    console.error("Error creating test:", err);
+    alert("Error creating test");
+  }
+};
+
 
   return (
     <Container style={{marginTop:"120px"}}>
