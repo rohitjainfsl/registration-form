@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Container, Button, Spinner, Alert, Row, Col } from "react-bootstrap";
 import instance from "../../axiosConfig";
@@ -16,8 +16,29 @@ function QuizPage() {
   const [isQuizFinished, setIsQuizFinished] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [showThankYou, setShowThankYou] = useState(false);
-  const [quizAttemptDocId, setQuizAttemptDocId] = useState(null);
   
+  // Refs to access latest state in event handlers
+  const isQuizFinishedRef = useRef(false);
+  const quizAttemptIdRef = useRef(null);
+  const responsesRef = useRef({});
+  const questionsRef = useRef([]);
+
+  // Update refs when state changes
+  useEffect(() => {
+    isQuizFinishedRef.current = isQuizFinished;
+  }, [isQuizFinished]);
+
+  useEffect(() => {
+    quizAttemptIdRef.current = quizAttemptId;
+  }, [quizAttemptId]);
+
+  useEffect(() => {
+    responsesRef.current = responses;
+  }, [responses]);
+
+  useEffect(() => {
+    questionsRef.current = questions;
+  }, [questions]);
 
   useEffect(() => {
     async function startQuizAndFetchQuestions() {
@@ -41,6 +62,106 @@ function QuizPage() {
 
     startQuizAndFetchQuestions();
   }, [testId]);
+
+  // Calculate score function that uses refs
+  const calculateScoreFromRefs = useCallback(() => {
+    let score = 0;
+    questionsRef.current.forEach((q) => {
+      const response = responsesRef.current[q._id];
+      const isCorrect = response && response.selectedOption === q.correct_answer;
+      if (isCorrect) score++;
+    });
+    return score;
+  }, []);
+
+  // Silent finish function for auto-finish scenarios
+  const finishQuizSilently = useCallback(async () => {
+    if (isQuizFinishedRef.current || !quizAttemptIdRef.current) return;
+    
+    try {
+      const score = calculateScoreFromRefs();
+      
+      // Use navigator.sendBeacon for reliable submission during page unload
+      if (navigator.sendBeacon) {
+        const data = JSON.stringify({ score });
+        const url = `${instance.defaults.baseURL}/students/finishQuiz/${quizAttemptIdRef.current}`;
+        navigator.sendBeacon(url, new Blob([data], { type: 'application/json' }));
+      } else {
+        // Fallback for browsers that don't support sendBeacon
+        await fetch(`${instance.defaults.baseURL}/students/finishQuiz/${quizAttemptIdRef.current}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ score }),
+          keepalive: true
+        });
+      }
+      
+      isQuizFinishedRef.current = true;
+    } catch (err) {
+      console.error("Silent finish error:", err);
+    }
+  }, [calculateScoreFromRefs]);
+
+  // Event handlers using useCallback to prevent recreation
+  const handleBeforeUnload = useCallback((event) => {
+    if (!isQuizFinishedRef.current && quizAttemptIdRef.current) {
+      event.preventDefault();
+      event.returnValue = 'You have an active quiz. Are you sure you want to leave?';
+      finishQuizSilently();
+    }
+  }, [finishQuizSilently]);
+
+  const handleUnload = useCallback(() => {
+    if (!isQuizFinishedRef.current && quizAttemptIdRef.current) {
+      finishQuizSilently();
+    }
+  }, [finishQuizSilently]);
+
+  const handleVisibilityChange = useCallback(() => {
+    if (document.visibilityState === 'hidden' && !isQuizFinishedRef.current && quizAttemptIdRef.current) {
+      finishQuizSilently();
+    }
+  }, [finishQuizSilently]);
+
+  const handlePopState = useCallback((event) => {
+    if (!isQuizFinishedRef.current && quizAttemptIdRef.current) {
+      event.preventDefault();
+      const confirmLeave = window.confirm('You have an active quiz. Leaving will automatically submit your quiz. Do you want to continue?');
+      
+      if (confirmLeave) {
+        finishQuizSilently();
+        // Allow navigation after a brief delay
+        setTimeout(() => {
+          window.history.back();
+        }, 100);
+      } else {
+        // Push state again to prevent navigation
+        window.history.pushState(null, null, window.location.pathname);
+      }
+    }
+  }, [finishQuizSilently]);
+
+  // Setup event listeners
+  useEffect(() => {
+    // Add event listeners
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('unload', handleUnload);
+    window.addEventListener('popstate', handlePopState);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    // Push state to handle back button
+    window.history.pushState(null, null, window.location.pathname);
+
+    // Cleanup function
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('unload', handleUnload);
+      window.removeEventListener('popstate', handlePopState);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [handleBeforeUnload, handleUnload, handlePopState, handleVisibilityChange]);
 
   useEffect(() => {
     if (timeLeft <= 0 || isQuizFinished) return;
@@ -144,8 +265,7 @@ function QuizPage() {
     setIsQuizFinished(true);
     try {
       const score = calculateScore(responses);
-      // Fixed: Changed from finish-quiz to finishQuiz to match the backend route
-      await instance.post(`/students/finishQuiz/${quizAttemptId}`, { score });
+      await instance.post(`/students/finish-quiz/${quizAttemptId}`, { score });
       showThankYouMessage();
     } catch (err) {
       console.error("Time-up submission failed:", err);
