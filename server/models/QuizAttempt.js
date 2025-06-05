@@ -17,4 +17,5 @@ const quizAttemptSchema = new mongoose.Schema({
   ],
 });
 
+
 export default mongoose.model("QuizAttempt", quizAttemptSchema);
