@@ -138,17 +138,14 @@ function UserForm() {
     }));
   };
 
-  const handleFileChangeForm = (e, imageKey) => {
-    setFormData({ ...formElements, [e.target.name]: e.target.files[0] });
-    const reader = new FileReader();
-    reader.onload = () => {
-      setAadharDisplay((prev) => ({
-        ...prev,
-        [imageKey]: reader.result,
-      }));
-    };
-    reader.readAsDataURL(e.target.files[0]);
-  };
+ const handleFileChangeForm = (e, side) => {
+  const file = e.target.files[0];
+  setFormData((prev) => ({
+    ...prev,
+    [side === "front" ? "aadharFront" : "aadharBack"]: file,
+  }));
+};
+
 
   return (
     <>
@@ -335,25 +332,11 @@ function UserForm() {
                       </label>
                       <div className="col-sm-10 row">
                         <div className="col-sm-6">
-                          <input
-                            type="file"
-                            className="form-control"
-                            id="aadharFront"
-                            name="aadharFront"
-                            onChange={(e) => handleFileChangeForm(e, "front")}
-                            required
-                          />
+                         <input type="file" id="aadharFront" name="aadharFront" onChange={(e) => handleFileChangeForm(e, "front")} />
                         </div>
 
                         <div className="col-sm-6">
-                          <input
-                            type="file"
-                            className="form-control"
-                            id="aadharBack"
-                            name="aadharBack"
-                            onChange={(e) => handleFileChangeForm(e, "back")}
-                            required
-                          />
+                          <input type="file" id="aadharBack" name="aadharBack" onChange={(e) => handleFileChangeForm(e, "back")} />
                         </div>
                       </div>
                     </div>

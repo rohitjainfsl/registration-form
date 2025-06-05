@@ -151,7 +151,6 @@ export const checkToken = (req, res)=>{
   const {adminToken, studentToken} = req.cookies;
   let token = null;
   let role = null;
-  // console.log(role)
 console.log(adminToken,studentToken);
 
   if(adminToken)
