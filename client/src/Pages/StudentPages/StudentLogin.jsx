@@ -14,7 +14,12 @@ import instance from "../../axiosConfig";
 import { adminContext } from "../Context/Admincontext";
 
 function StudentLogin() {
-  const { setIsAuthenticated, setRole } = useContext(adminContext);
+  const {
+  setIsAuthenticated,
+  setRole,
+  firstTimeSignin,
+  setFirstTimeSignin,
+} = useContext(adminContext);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,17 +38,25 @@ function StudentLogin() {
         { email, password },
         { withCredentials: true }
       );
+      console.log(response);
+      
 
       if (response.status === 200) {
-        const { message,role} = response.data;
 
-        setMessage(message);
-        setIsAuthenticated(true);
-        setRole(role || "student");
-        console.log(response.data.firstTimesignin)
-        if (response.data.firstTimesignin) navigate("/changePassword");
-        else navigate("/student/studentpanel");
-      } else {
+  const { message, role, firstTimeSignin } = response.data;
+
+  setMessage(message);
+  setIsAuthenticated(true);
+  setRole("student");
+  setFirstTimeSignin(firstTimeSignin); // update context
+  console.log(firstTimeSignin);
+  
+  localStorage.setItem("firstTimesignin", firstTimeSignin); // optional
+
+  if (firstTimeSignin) navigate("/student/changePassword");
+  else navigate("/student/studentpanel");
+} else {
+
         setMessage(response.data.message);
       }
     } catch (error) {

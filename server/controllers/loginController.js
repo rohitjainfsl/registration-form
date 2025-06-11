@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
 export async function studentlogin(req, res) {
-  const { email, password } = req.body;
+  const { email, password,role,firstTimesignin } = req.body;
 
   try {
     if (!email || !password) {
@@ -14,7 +14,8 @@ export async function studentlogin(req, res) {
     }
 
     const user = await studentModel.findOne({ email, password });
-    
+    // console.log(user.role);
+  
     if (!user) {
       return res.status(404).json({ message: "Invalid email or password." });
     }
@@ -33,7 +34,11 @@ export async function studentlogin(req, res) {
       maxAge: 2 * 60 * 60 * 1000, 
     });
 
-    return res.status(200).json({ message: "Login successful.", user });
+   return res.status(200).json({
+  message: "Login successful",
+  role: user.role,
+  firstTimeSignin: user.firstTimeSignin // must be Boolean
+});
   } catch (error) {
     console.error("Login error:", error);
     return res
@@ -151,7 +156,7 @@ export const checkToken = (req, res)=>{
   const {adminToken, studentToken} = req.cookies;
   let token = null;
   let role = null;
-console.log(adminToken,studentToken);
+// console.log(adminToken,studentToken);
 
   if(adminToken)
   {

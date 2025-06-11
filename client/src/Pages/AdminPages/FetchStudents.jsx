@@ -27,6 +27,8 @@ function StudentList() {
   const [loading, setLoading] = useState(!students.length);
   const loadMoreRef = useRef(null);
   const navigate = useNavigate();
+  const [selectedStudents, setSelectedStudents] = useState([]);
+
 
   useEffect(() => {
   if (!isAuthenticated) {
@@ -91,6 +93,26 @@ function StudentList() {
     }
   }, []);
 
+  const handleSelect = (id) => {
+  setSelectedStudents((prev) =>
+    prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]
+  );
+};
+const handleDeleteSelected = async () => {
+  if (!window.confirm("Are you sure you want to delete selected students?")) return;
+
+  try {
+    await instance.post("/students/deleteMany", { ids: selectedStudents }, { withCredentials: true });
+    const updated = students.filter((s) => !selectedStudents.includes(s._id));
+    setStudents(updated);
+    setFilteredStudents(updated);
+    setSelectedStudents([]);
+  } catch (error) {
+    console.error("Error deleting students:", error);
+  }
+};
+
+
   const studentsToDisplay = filteredStudents.slice(0, visibleCount);
   const hasMoreToLoad = visibleCount < filteredStudents.length;
 
@@ -119,42 +141,56 @@ function StudentList() {
               Clear
             </Button>
           )}
+          
         </InputGroup>
       </Form>
+{selectedStudents.length > 0 && (
+  <div className="mb-3">
+    <Button variant="danger" onClick={handleDeleteSelected}>
+      Delete Selected ({selectedStudents.length})
+    </Button>
+  </div>
+)}
+   <Table striped bordered hover responsive>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Name</th>
+      <th>Action</th>
+      <th>Select</th>
+    </tr>
+  </thead>
+  <tbody>
+    {studentsToDisplay.map((student, index) => (
+      <tr key={student._id}>
+        <td>{index + 1}</td>
+        <td>{student.name}</td>
+        <td>
+          <Button
+            variant="primary"
+            onClick={() => {
+              sessionStorage.setItem("scrollY", window.scrollY);
+              navigate(`/getStudents/${student._id}`);
+            }}
+          >
+            View
+          </Button>
+        </td>
+        <td>
+          <Form.Check
+            type="checkbox"
+            checked={selectedStudents.includes(student._id)}
+            onChange={() => handleSelect(student._id)}
+          />
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</Table>
 
-      <Table striped bordered hover responsive>
-        {studentsToDisplay.length > 0 ? (<>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-          <tbody>
-            {studentsToDisplay.map((student, index) => (
-              <tr key={student._id}>
-                <td>{index + 1}</td>
-                <td>{student.name}</td>
-                <td>
-                  <Button
-                    variant="primary"
-                    onClick={() => {
-                      sessionStorage.setItem("scrollY", window.scrollY);
-                      navigate(`/getStudents/${student._id}`);
-                    }}
-                  >
-                    View
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-          </>
-        ) : (
-          <h2>Student Not Found....</h2>
-        )}
-      </Table>
+
+
+
 
       {hasMoreToLoad && (
         <div ref={loadMoreRef} className="text-center my-3">

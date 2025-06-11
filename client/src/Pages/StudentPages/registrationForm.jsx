@@ -31,7 +31,6 @@ function UserForm() {
     fphone: "",
     laddress: "",
     paddress: "",
-    role: "",
     qualification: "",
     qualificationYear: "",
     college: "",
@@ -75,7 +74,6 @@ function UserForm() {
       frm.append("fphone", formElements.fphone);
       frm.append("laddress", formElements.laddress);
       frm.append("paddress", formElements.paddress);
-      frm.append("role", formElements.role);
       frm.append("qualification", formElements.qualification);
       frm.append("qualificationYear", formElements.qualificationYear);
       frm.append("college", formElements.college);

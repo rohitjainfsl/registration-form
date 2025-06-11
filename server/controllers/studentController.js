@@ -53,6 +53,7 @@ export async function register(req, res) {
       friendName,
       aadharFront,
       aadharBack,
+      firstTimeSignin: true,
     });
 
     await newRegistration.save();
@@ -61,6 +62,7 @@ export async function register(req, res) {
     sendDataByEmail(newRegistration);
 
     return res.status(201).send({ message: "Registration Successful" });
+    
   } catch (error) {
     console.error("Registration error:", error);
     return res.status(500).send({
@@ -296,6 +298,27 @@ export async function finishQuiz(req, res) {
   }
 }
 
+
+export async function deleteManyStudents(req, res) {
+  const { ids } = req.body;
+
+  if (!Array.isArray(ids) || ids.length === 0) {
+    return res.status(400).json({ message: "No student IDs provided for deletion." });
+  }
+
+  try {
+    const result = await studentModel.deleteMany({ _id: { $in: ids } });
+
+    return res.status(200).json({
+      message: `${result.deletedCount} student(s) deleted successfully.`,
+    });
+  } catch (err) {
+    console.error("Error deleting students:", err);
+    return res.status(500).json({ message: "Failed to delete students", error: err.message });
+  }
+}
+
+
 export async function getAllScore(req, res) {
   try {
     const students = await attemptQuiz.find()
@@ -364,3 +387,4 @@ export async function getScoresByTest(req, res) {
     });
   }
 }
+
