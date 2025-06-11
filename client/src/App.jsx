@@ -23,7 +23,10 @@ import UpdateTest from "./Pages/AdminPages/UpdateTest";
 import ViewTest from "./Pages/AdminPages/ViewTest";
 import StudentQuiz from "./Pages/StudentPages/StudentQuiz";
 import StudentPanel from "./Pages/StudentPages/ReleasedQuiz";
+
 import ResultPage from "./Pages/StudentPages/ResultPage";
+
+import Privacy from "./privacy";
 
 
 function App() {
@@ -110,6 +113,15 @@ function App() {
             <>
               <Navbar />
               <Blog />
+            </>
+          }
+        ></Route>
+        <Route
+          path="/privacy-policy"
+          element={
+            <>
+              <Navbar />
+              <Privacy />
             </>
           }
         ></Route>
