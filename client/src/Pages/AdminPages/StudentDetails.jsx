@@ -12,6 +12,7 @@ function StudentDetails() {
   const [startDate, setStartDate] = useState("");
   const [remarks, setRemarks] = useState("");
   const [message, setMessage] = useState("");
+  
 
   useEffect(() => {
     instance
@@ -72,18 +73,18 @@ function StudentDetails() {
       <p><strong>Gender:</strong> {student.gender}</p>
       <p><strong>Father's Name:</strong> {student.fname}</p>
       <p><strong>Father's Phone:</strong> {student.fphone}</p>
-      <p><strong>Local Address:</strong> {student.laddress}</p>
-      <p><strong>Permanent Address:</strong> {student.paddress}</p>
+      <p><strong>Local Address:</strong> {student.laddress || student.localAdd}</p>
+      <p><strong>Permanent Address:</strong> {student.paddress || student.permAdd}</p>
       <p><strong>Role:</strong> {student.role}</p>
       <p><strong>Qualification:</strong> {student.qualification}</p>
-      <p><strong>Qualification Year:</strong> {student.qualificationYear}</p>
+      <p><strong>Qualification Year:</strong> {student.qualificationYear || student.batch}</p>
       <p><strong>College:</strong> {student.college}</p>
       <p><strong>Designation:</strong> {student.designation}</p>
       <p><strong>Company:</strong> {student.company}</p>
       <p><strong>Course:</strong> {student.course}</p>
       <p><strong>Other Course:</strong> {student.otherCourse}</p>
       <p><strong>Referral:</strong> {student.referral}</p>
-      <p><strong>Friend's Name:</strong> {student.friendName}</p>
+      <p><strong>Friend's Name:</strong> {student.friendName || student.friend_name}</p>
 
       {/* Aadhar Front Image (PNG) */}
       <p>
