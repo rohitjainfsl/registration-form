@@ -29,12 +29,15 @@ function StudentPanel() {
   const handleStartTest = (testId) => {
     navigate(`/student/quiz/${testId}`);
   };
-
+  const goToResultPage = () => {
+    navigate("/student/result"); 
+  };
   return (
     <Container className="py-4" style={{marginTop:"100px"}}>
     <div className="d-flex align-items-center justify-content-between mb-3">
   <h2 className="mb-0">Available Tests</h2>
-  <button className="btn btn-warning">Result</button>
+   <button className="btn btn-warning" onClick={goToResultPage}>Result</button>
+
 </div>
 
       <Table striped bordered hover responsive>
@@ -55,7 +58,7 @@ function StudentPanel() {
                 <td>{test.duration}</td>
                 <td>
                   <Button
-                    variant="primary"
+                    variant="btn btn-warning"
                     onClick={() => handleStartTest(test._id)}
                   >
                     Start

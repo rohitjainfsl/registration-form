@@ -10,11 +10,12 @@ export function AdminProvider({ children }) {
   const [visibleCount, setVisibleCount] = useState(10);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [role, setRole] = useState(null);
+  const [firstTimeSignin, setFirstTimeSignin] = useState(false);
+
 
   useEffect(() => {
     checkToken();   
   }, []);
-
 
   const checkToken = async () => {
     try {
@@ -25,6 +26,7 @@ export function AdminProvider({ children }) {
       if (res.status === 200) {   
         setIsAuthenticated(true);
         setRole(res.data.role);
+        setFirstTimeSignin(res.data.firstTimeSignin || false);
       }
     } catch (error) {
       console.error(error);
@@ -61,6 +63,9 @@ export function AdminProvider({ children }) {
         setRole,
         checkToken,
         LogOut,
+        firstTimeSignin,
+        setFirstTimeSignin,
+
       }}
     >
       {children}

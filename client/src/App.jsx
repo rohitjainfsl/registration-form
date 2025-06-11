@@ -23,6 +23,7 @@ import UpdateTest from "./Pages/AdminPages/UpdateTest";
 import ViewTest from "./Pages/AdminPages/ViewTest";
 import StudentQuiz from "./Pages/StudentPages/StudentQuiz";
 import StudentPanel from "./Pages/StudentPages/ReleasedQuiz";
+import ResultPage from "./Pages/StudentPages/ResultPage";
 
 
 function App() {
@@ -95,7 +96,7 @@ function App() {
           }
         ></Route>
           <Route
-          path="/changePassword"
+          path="/student/changePassword"
           element={
             <>
               <Navbar />
@@ -219,6 +220,18 @@ function App() {
             </ProtectedRoute>
           }
         ></Route>
+        <Route
+          path="/student/result"
+          element={
+        
+            <>
+              <Navbar />
+              <ResultPage/>
+            </>
+           
+          }
+        ></Route>
+
       </Routes>,
       
     </BrowserRouter>

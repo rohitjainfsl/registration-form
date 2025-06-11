@@ -7,7 +7,8 @@ import {
   submitAnswer,
   getQuestion,
   startQuiz, 
-  finishQuiz
+  finishQuiz,
+  deleteManyStudents
 } from "../controllers/studentController.js";
 import { fileArr } from "../middlewares/multer.js";
 import authMiddleware from "../middlewares/authJWT.js";
@@ -28,5 +29,6 @@ studentRouter.post("/start-quiz/:testId" ,authMiddleware("studentToken"),startQu
 studentRouter.post("/finishQuiz/:quizAttemptId", authMiddleware("studentToken"),finishQuiz)
 studentRouter.post("/submit-answer/:quizAttemptId",
   authMiddleware("studentToken"),submitAnswer)
+  studentRouter.post("/deleteMany",authMiddleware("adminToken"),deleteManyStudents )
 
 export default studentRouter;
