@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { Container, Button, Row, Col, Table, Form } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import instance from "../../axiosConfig";
   
 function AdminHome() {
   const [tests, setTests] = useState([]);
   const navigate = useNavigate();
+
+  
 
   useEffect(() => {
     async function fetchTests() {
@@ -60,6 +62,11 @@ function AdminHome() {
             View Student Details
           </Button>
         </Col>
+        <Col xs="auto">
+    <Button as={Link} to="/admin/tests" variant="dark">
+      View Student Results
+    </Button>
+  </Col>
       </Row>
 
       <Table striped bordered hover responsive>

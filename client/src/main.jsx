@@ -5,6 +5,8 @@ import "bootstrap/dist/js/bootstrap.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 import App from "./App.jsx";
 import { AdminProvider } from "./Pages/Context/Admincontext.jsx";
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 createRoot(document.getElementById("root")).render(
     <AdminProvider>
