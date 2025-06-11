@@ -29,7 +29,7 @@ export async function studentlogin(req, res) {
     res.cookie("studentToken", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "none",
+      sameSite: "strict",
       maxAge: 2 * 60 * 60 * 1000, 
     });
 
@@ -87,7 +87,7 @@ export const adminLogin = async (req, res) => {
     res.cookie("adminToken", token, {
       httpOnly: true,
       secure: true,
-      sameSite: "none",
+      sameSite: "strict",
       maxAge: 2 * 60 * 60 * 1000,
     });
 
@@ -138,7 +138,7 @@ export const logout = (req, res) => {
     res.clearCookie(`${role}Token`, {
       httpOnly: true,
       secure: true,
-      sameSite: "none",
+      sameSite: "strict",
     });
     return res.status(200).json({ message: "LogOut successful" });
   } catch (error) {

@@ -35,11 +35,12 @@ function StudentLogin() {
       );
 
       if (response.status === 200) {
-        const { message, token, role } = response.data;
+        const { message,role} = response.data;
 
         setMessage(message);
         setIsAuthenticated(true);
         setRole(role || "student");
+        console.log(response.data.firstTimesignin)
         if (response.data.firstTimesignin) navigate("/changePassword");
         else navigate("/student/studentpanel");
       } else {
