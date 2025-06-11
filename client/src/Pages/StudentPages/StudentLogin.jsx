@@ -42,6 +42,7 @@ function StudentLogin() {
       
 
       if (response.status === 200) {
+
   const { message, role, firstTimeSignin } = response.data;
 
   setMessage(message);
@@ -55,6 +56,7 @@ function StudentLogin() {
   if (firstTimeSignin) navigate("/student/changePassword");
   else navigate("/student/studentpanel");
 } else {
+
         setMessage(response.data.message);
       }
     } catch (error) {

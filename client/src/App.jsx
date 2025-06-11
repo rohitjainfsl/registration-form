@@ -27,6 +27,7 @@ import StudentPanel from "./Pages/StudentPages/ReleasedQuiz";
 import ResultPage from "./Pages/StudentPages/ResultPage";
 
 import Privacy from "./privacy";
+import ScoreList from "./Pages/AdminPages/ScoreList";
 
 
 function App() {
@@ -131,6 +132,15 @@ function App() {
             <>  
               <Navbar />
               <AdminLogin />
+            </>
+          }
+        ></Route>
+                <Route
+          path="/admin/scorelist"
+          element={
+            <>  
+              <Navbar />
+              <ScoreList />
             </>
           }
         ></Route>
