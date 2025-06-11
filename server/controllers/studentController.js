@@ -2,7 +2,8 @@ import studentModel from "../models/studentModel.js";
 import { cloudinaryUpload } from "../middlewares/cloudinaryUpload.js";
 import { sendAckEmail, sendDataByEmail } from "../services/acknowledgement.js";
 import Test from "../models/testModel.js";
-import QuizAttempt from "../models/QuizAttempt.js";
+import attemptQuiz from "../models/QuizAttempt.js";
+import mongoose from "mongoose";
 
 export async function register(req, res) {
   try {
@@ -292,5 +293,74 @@ export async function finishQuiz(req, res) {
   } catch (error) {
     console.error("Error finishing quiz:", error);
     return res.status(500).json({ message: "Error finishing quiz", error: error.message });
+  }
+}
+
+export async function getAllScore(req, res) {
+  try {
+    const students = await attemptQuiz.find()
+    return res.status(200).json(students);
+  } catch (error) {
+    console.error("Error fetching students: ", error);
+    return res.status(500).json({
+      message: "Failed to fetch student data",
+      error: error.message,
+    });
+  }
+}
+export async function getScoresByTest(req, res) {
+  try {
+    const { testId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(testId)) {
+      return res.status(400).json({ message: "Invalid Test ID format!" });
+    }
+
+    // Fixed aggregation pipeline
+    const students = await attemptQuiz.aggregate([
+      {
+        $match: {
+          "attempts.testId": new mongoose.Types.ObjectId(testId)
+        }
+      },
+      {
+        $unwind: "$attempts"
+      },
+      {
+        $match: {
+          "attempts.testId": new mongoose.Types.ObjectId(testId)
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          studentId: "$studentId",
+          studentName: "$studentName",
+          collegeId: "$collegeId",
+          score: "$attempts.score",
+          startTime: "$attempts.startTime",
+          endTime: "$attempts.endTime",
+          testId: "$attempts.testId"
+        }
+      },
+      {
+        $sort: { score: -1 } // Sort by score descending, adjust as needed
+      }
+    ]);
+    
+    
+    if (students.length === 0) {
+      return res.status(404).json({ message: "No students found for this test!" });
+    }
+    
+    
+    console.log(`Found ${students.length} students for test ${testId}`);
+    return res.status(200).json(students);
+  } catch (error) {
+    console.error("Error fetching test scores:", error);
+    return res.status(500).json({
+      message: "Failed to fetch scores for the test",
+      error: error.message,
+    });
   }
 }

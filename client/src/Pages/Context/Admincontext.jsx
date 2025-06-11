@@ -32,6 +32,8 @@ export function AdminProvider({ children }) {
       setRole(null);
     }
   };  
+
+  
   const LogOut = async () => {
     try {
       const res = await instance.post("/auth/logout", { withCredentials: true });
