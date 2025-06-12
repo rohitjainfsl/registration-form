@@ -2,6 +2,7 @@ import adminModel from "../models/adminModel.js";
 import studentModel from "../models/studentModel.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import "dotenv/config";
 
 export async function studentlogin(req, res) {
   const { email, password,role,firstTimesignin } = req.body;
@@ -30,14 +31,14 @@ export async function studentlogin(req, res) {
     res.cookie("studentToken", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: process.env.SAMESITE,
       maxAge: 2 * 60 * 60 * 1000, 
     });
 
    return res.status(200).json({
   message: "Login successful",
   role: user.role,
-  firstTimeSignin: user.firstTimeSignin // must be Boolean
+  firstTimeSignin: user.firstTimesignin // must be Boolean
 });
   } catch (error) {
     console.error("Login error:", error);
@@ -92,7 +93,7 @@ export const adminLogin = async (req, res) => {
     res.cookie("adminToken", token, {
       httpOnly: true,
       secure: true,
-      sameSite: "strict",
+      sameSite: process.env.SAMESITE,
       maxAge: 2 * 60 * 60 * 1000,
     });
 
@@ -143,7 +144,7 @@ export const logout = (req, res) => {
     res.clearCookie(`${role}Token`, {
       httpOnly: true,
       secure: true,
-      sameSite: "strict",
+      sameSite: process.env.SAMESITE,
     });
     return res.status(200).json({ message: "LogOut successful" });
   } catch (error) {
@@ -178,6 +179,7 @@ export const checkToken = (req, res)=>{
       message:`${role} aunthenticated`,
       role,
       user: decoded,
+      firstTimeSignin:student.firstTimeSignin,
     });
   } catch (error) {
     return res.status(401).json({
