@@ -26,7 +26,7 @@ import StudentPanel from "./Pages/StudentPages/ReleasedQuiz";
 
 import ResultPage from "./Pages/StudentPages/ResultPage";
 
-import Privacy from "./privacy";
+import Privacy from "./Privacy";
 import ScoreList from "./Pages/AdminPages/ScoreList";
 
 
