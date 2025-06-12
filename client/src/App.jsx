@@ -25,8 +25,8 @@ import StudentQuiz from "./Pages/StudentPages/StudentQuiz";
 import StudentPanel from "./Pages/StudentPages/ReleasedQuiz";
 
 import ResultPage from "./Pages/StudentPages/ResultPage";
+import Privacy from "./Privacy";
 import TestScores from "./Pages/AdminPages/TestScores"
-import Privacy from "./privacy";
 import ScoreList from "./Pages/AdminPages/ScoreList";
 import AllTests from  "./Pages/AdminPages/AllTests"
 
