@@ -43,7 +43,7 @@ function StudentLogin() {
 
       if (response.status === 200) {
 
-  const { message, role, firstTimeSignin } = response.data;
+  const { message} = response.data;
 
   setMessage(message);
   setIsAuthenticated(true);
