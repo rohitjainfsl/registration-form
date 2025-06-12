@@ -2,8 +2,11 @@ import adminModel from "../models/adminModel.js";
 import studentModel from "../models/studentModel.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import "dotenv/config";
+
 
 export async function studentlogin(req, res) {
+  dotenv.config()
   const { email, password,role,firstTimesignin } = req.body;
 
   try {
@@ -26,44 +29,43 @@ export async function studentlogin(req, res) {
       { expiresIn: "1d" }
     );
 
-
     res.cookie("studentToken", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: `process.env.${SAMESITE}`,
       maxAge: 2 * 60 * 60 * 1000, 
     });
-
-   return res.status(200).json({
-  message: "Login successful",
-  role: user.role,
-  firstTimeSignin: user.firstTimeSignin // must be Boolean
-});
+    
+    return res.status(200).json({
+      message: "Login successful",
+      role: user.role,
+      firstTimeSignin: user.firstTimesignin // must be Boolean
+    });
   } catch (error) {
     console.error("Login error:", error);
     return res
-      .status(500)
-      .json({ message: "Error during login.", error: error.message });
+    .status(500)
+    .json({ message: "Error during login.", error: error.message });
   }
 }
 export async function changePassword(req, res) {
   const { email, password, newPassword } = req.body;
-
+  
   try {
     const user = await studentModel.findOne({ email, password: password });
-
+    
     if (!user) {
       return res.status(400).json({ message: "Old password is incorrect." });
     }
     user.password = newPassword;
     user.firstTimesignin = false;
     await user.save();
-
+    
     return res.status(200).json({ message: "Password updated successfully.",user });
   } catch (error) {
     return res
-      .status(500)
-      .json({ message: "Error changing password.", error: error.message });
+    .status(500)
+    .json({ message: "Error changing password.", error: error.message });
   }
 }
 
@@ -73,7 +75,7 @@ export const adminLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
     const admin = await adminModel.findOne({ email });
-
+    
     if (!admin) {
       return res
         .status(404)
@@ -92,7 +94,7 @@ export const adminLogin = async (req, res) => {
     res.cookie("adminToken", token, {
       httpOnly: true,
       secure: true,
-      sameSite: "strict",
+      sameSite: process.env.SAMESITE,
       maxAge: 2 * 60 * 60 * 1000,
     });
 
@@ -143,7 +145,7 @@ export const logout = (req, res) => {
     res.clearCookie(`${role}Token`, {
       httpOnly: true,
       secure: true,
-      sameSite: "strict",
+      sameSite: process.env.SAMESITE,
     });
     return res.status(200).json({ message: "LogOut successful" });
   } catch (error) {
@@ -156,7 +158,7 @@ export const checkToken = (req, res)=>{
   const {adminToken, studentToken} = req.cookies;
   let token = null;
   let role = null;
-// console.log(adminToken,studentToken);
+      // console.log(process.env.SAMESITE)
 
   if(adminToken)
   {
@@ -178,10 +180,12 @@ export const checkToken = (req, res)=>{
       message:`${role} aunthenticated`,
       role,
       user: decoded,
+      // firstTimeSignin:student.firstTimeSignin,
     });
   } catch (error) {
     return res.status(401).json({
       message:"invalid", error
     })
+
   }
 };
