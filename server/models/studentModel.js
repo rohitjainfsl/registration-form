@@ -30,11 +30,9 @@ const studentSchema = new Schema(
     fees: String,
     startDate: String,
     remarks: String,
-    // password:String,
   },
   { timestamps: true }
 );
-
 
 studentSchema.pre("save", function (next) {
   if (!this.password) {

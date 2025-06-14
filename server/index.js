@@ -15,7 +15,6 @@ const __dirname = dirname(__filename);
 const PORT = 8081;
 const app = express();
 
-// app.use(cors({ origin: process.env.FRONTEND_PATH}));
 app.use(cookieParser());
 app.use(
   cors({

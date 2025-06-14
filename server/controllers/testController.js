@@ -1,12 +1,10 @@
-
 import Test from "../models/testModel.js";
 import { cloudinaryUpload } from "../middlewares/cloudinaryUpload.js";
 
 export const createTest = async (req, res) => {
   try {
     const { title, numQuestions, duration } = req.body;
-    const questions = JSON.parse(req.body.questions); 
-
+    const questions = JSON.parse(req.body.questions);
 
     const questionImagesMap = {};
 
@@ -47,17 +45,19 @@ export const createTest = async (req, res) => {
 
 export const getAllTests = async (req, res) => {
   try {
-    const tests = await Test.find().sort({ createdAt: -1 }); 
+    const tests = await Test.find().sort({ createdAt: -1 });
     res.status(200).json({ tests });
   } catch (err) {
     console.error("Error fetching tests: ", err);
-    res.status(500).json({ message: "Failed to fetch tests", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Failed to fetch tests", error: err.message });
   }
 };
 
 export const getTestById = async (req, res) => {
   try {
-    const testId = req.params.id; 
+    const testId = req.params.id;
 
     const test = await Test.findById(testId);
 
@@ -68,14 +68,17 @@ export const getTestById = async (req, res) => {
     res.status(200).json({ test });
   } catch (err) {
     console.error("Error fetching test: ", err);
-    res.status(500).json({ message: "Failed to fetch test", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Failed to fetch test", error: err.message });
   }
 };
 
 export const updateTest = async (req, res) => {
   try {
     const testId = req.params.id;
-    const { title, numQuestions, duration, questions, options, released } = req.body;
+    const { title, numQuestions, duration, questions, options, released } =
+      req.body;
 
     const updatedTest = await Test.findByIdAndUpdate(
       testId,
@@ -87,13 +90,16 @@ export const updateTest = async (req, res) => {
       return res.status(404).json({ message: "Test not found" });
     }
 
-    res.status(200).json({ message: "Test updated successfully", test: updatedTest });
+    res
+      .status(200)
+      .json({ message: "Test updated successfully", test: updatedTest });
   } catch (err) {
     console.error("Error updating test:", err);
-    res.status(500).json({ message: "Failed to update test", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Failed to update test", error: err.message });
   }
 };
-
 
 export const updateTestReleaseStatus = async (req, res) => {
   try {
@@ -115,7 +121,7 @@ export const updateTestReleaseStatus = async (req, res) => {
   }
 };
 
-export const deleteTest = async (req, res)=> {
+export const deleteTest = async (req, res) => {
   try {
     const deletedTest = await Test.findByIdAndDelete(req.params.id);
     if (!deletedTest) {
@@ -124,7 +130,8 @@ export const deleteTest = async (req, res)=> {
     res.status(200).json({ message: "Test deleted successfully" });
   } catch (error) {
     console.error("Error deleting test:", error);
-    res.status(500).json({ message: "Failed to delete test", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Failed to delete test", error: error.message });
   }
-}
-
+};

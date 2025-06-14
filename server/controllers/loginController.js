@@ -4,10 +4,9 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import "dotenv/config";
 
-
 export async function studentlogin(req, res) {
-  dotenv.config()
-  const { email, password,role,firstTimesignin } = req.body;
+  dotenv.config();
+  const { email, password, role, firstTimesignin } = req.body;
 
   try {
     if (!email || !password) {
@@ -17,12 +16,11 @@ export async function studentlogin(req, res) {
     }
 
     const user = await studentModel.findOne({ email, password });
-    // console.log(user.role);
-  
+
     if (!user) {
       return res.status(404).json({ message: "Invalid email or password." });
     }
-    
+
     const token = jwt.sign(
       { id: user._id, role: "student" },
       process.env.JWT_SECRET,
@@ -33,49 +31,51 @@ export async function studentlogin(req, res) {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: `process.env.${SAMESITE}`,
-      maxAge: 2 * 60 * 60 * 1000, 
+      maxAge: 2 * 60 * 60 * 1000,
     });
-    
+
     return res.status(200).json({
       message: "Login successful",
       role: user.role,
-      firstTimeSignin: user.firstTimesignin // must be Boolean
+      firstTimeSignin: user.firstTimesignin, // must be Boolean
     });
   } catch (error) {
     console.error("Login error:", error);
     return res
-    .status(500)
-    .json({ message: "Error during login.", error: error.message });
+      .status(500)
+      .json({ message: "Error during login.", error: error.message });
   }
 }
+
 export async function changePassword(req, res) {
   const { email, password, newPassword } = req.body;
-  
+
   try {
     const user = await studentModel.findOne({ email, password: password });
-    
+
     if (!user) {
       return res.status(400).json({ message: "Old password is incorrect." });
     }
     user.password = newPassword;
     user.firstTimesignin = false;
     await user.save();
-    
-    return res.status(200).json({ message: "Password updated successfully.",user });
+
+    return res
+      .status(200)
+      .json({ message: "Password updated successfully.", user });
   } catch (error) {
     return res
-    .status(500)
-    .json({ message: "Error changing password.", error: error.message });
+      .status(500)
+      .json({ message: "Error changing password.", error: error.message });
   }
 }
 
-// login
-
+// ADMIN LOGIN
 export const adminLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
     const admin = await adminModel.findOne({ email });
-    
+
     if (!admin) {
       return res
         .status(404)
@@ -127,8 +127,6 @@ export const registerAdmin = async (req, res) => {
 };
 
 export const logout = (req, res) => {
-
-
   const { adminToken, studentToken } = req.cookies;
 
   let role = null;
@@ -153,39 +151,34 @@ export const logout = (req, res) => {
   }
 };
 
-
-export const checkToken = (req, res)=>{
-  const {adminToken, studentToken} = req.cookies;
+export const checkToken = (req, res) => {
+  const { adminToken, studentToken } = req.cookies;
   let token = null;
   let role = null;
-      // console.log(process.env.SAMESITE)
+  // console.log(process.env.SAMESITE)
 
-  if(adminToken)
-  {
+  if (adminToken) {
     token = adminToken;
     role = "admin";
-  }
-  else if(studentToken)
-  {
+  } else if (studentToken) {
     token = studentToken;
     role = "student";
-  }
-  else{
-    return res.status(401).json({message: "No Token Found, PLEASE LOG IN"});
+  } else {
+    return res.status(401).json({ message: "No Token Found, PLEASE LOG IN" });
   }
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     return res.status(200).json({
-      message:`${role} aunthenticated`,
+      message: `${role} aunthenticated`,
       role,
       user: decoded,
       // firstTimeSignin:student.firstTimeSignin,
     });
   } catch (error) {
     return res.status(401).json({
-      message:"invalid", error
-    })
-
+      message: "invalid",
+      error,
+    });
   }
 };

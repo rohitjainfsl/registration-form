@@ -1,15 +1,14 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const questionSchema = new mongoose.Schema({
   question: {
     text: { type: String },
     fileUrl: { type: String },
   },
-  options: { type: [String]},
-  correct_answer: { type: String},
+  options: { type: [String] },
+  correct_answer: { type: String },
   codeSnippet: { type: String },
 });
-
 
 const testSchema = new mongoose.Schema(
   {
@@ -22,4 +21,4 @@ const testSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model('Test', testSchema);
+export default mongoose.model("Test", testSchema);
