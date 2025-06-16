@@ -10,7 +10,8 @@ import {
   finishQuiz,
   deleteManyStudents,
   getScoresByTest,
-  getAllScore
+  getAllScore,
+  StudenAnswer
 
 } from "../controllers/studentController.js";
 import { fileArr } from "../middlewares/multer.js";
@@ -29,6 +30,7 @@ studentRouter.post("/deleteMany",authMiddleware("adminToken"),deleteManyStudents
 studentRouter.post("/submit-answer/:quizAttemptId",authMiddleware("studentToken"),submitAnswer)
 studentRouter.get("/score/test/:testId", getScoresByTest);
 studentRouter.get("/score",getAllScore)
+studentRouter.get("/admin/test/:testId/student/:studentId/answers",authMiddleware("adminToken", "studentToken"),StudenAnswer)
 
 
 export default studentRouter;

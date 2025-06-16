@@ -7,10 +7,11 @@ const attemptSchema = new Schema({
   score: { type: Number, default: 0 },
   responses: [
     {
-      questionId: { type: Schema.Types.ObjectId, ref: "Question"},
-      selectedOption: { type: String, enum: ['A', 'B', 'C', 'D']},
-      selectedAnswer: { type: String},
-      _id: false 
+      questionId: { type: Schema.Types.ObjectId, ref: "Question" },
+      selectedOption: { type: String, enum: ['A', 'B', 'C', 'D'] },
+      selectedAnswer: { type: String },
+      correct_answer:  { type: Schema.Types.ObjectId, ref: "Question" },
+      _id: false
     }
   ]
 }, {
@@ -18,14 +19,14 @@ const attemptSchema = new Schema({
 });
 
 const quizAttemptSchema = new Schema({
-  studentId: { type: Schema.Types.ObjectId, ref: "Student"},
-  studentName: { type: String},
+  studentId: { type: Schema.Types.ObjectId, ref: "Student" },
+  studentName: { type: String },
   attempts: [attemptSchema]
 }, {
   timestamps: true
 });
 
-quizAttemptSchema.index({ studentId: 1 }, { unique: true }); 
+quizAttemptSchema.index({ studentId: 1 }, { unique: true });
 quizAttemptSchema.index({ "attempts.testId": 1 });
 quizAttemptSchema.index({ "attempts._id": 1 });
 

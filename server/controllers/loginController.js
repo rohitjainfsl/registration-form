@@ -2,11 +2,11 @@ import adminModel from "../models/adminModel.js";
 import studentModel from "../models/studentModel.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import "dotenv/config";
+import dotenv from "dotenv";
+dotenv.config();
 
 
 export async function studentlogin(req, res) {
-  dotenv.config()
   const { email, password,role,firstTimesignin } = req.body;
 
   try {
@@ -32,7 +32,7 @@ export async function studentlogin(req, res) {
     res.cookie("studentToken", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: `process.env.${SAMESITE}`,
+      sameSite: process.env.SAMESITE,
       maxAge: 2 * 60 * 60 * 1000, 
     });
     
