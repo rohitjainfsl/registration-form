@@ -6,8 +6,7 @@ import "dotenv/config";
 
 
 export async function studentlogin(req, res) {
-  dotenv.config()
-  const { email, password,role,firstTimesignin } = req.body;
+  const { email, password} = req.body;
 
   try {
     if (!email || !password) {
@@ -17,7 +16,6 @@ export async function studentlogin(req, res) {
     }
 
     const user = await studentModel.findOne({ email, password });
-    // console.log(user.role);
   
     if (!user) {
       return res.status(404).json({ message: "Invalid email or password." });
@@ -32,14 +30,14 @@ export async function studentlogin(req, res) {
     res.cookie("studentToken", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: `process.env.${SAMESITE}`,
+      sameSite:process.env.SAMESITE,
       maxAge: 2 * 60 * 60 * 1000, 
     });
     
     return res.status(200).json({
       message: "Login successful",
       role: user.role,
-      firstTimeSignin: user.firstTimesignin // must be Boolean
+      firstTimeSignin: user.firstTimesignin 
     });
   } catch (error) {
     console.error("Login error:", error);

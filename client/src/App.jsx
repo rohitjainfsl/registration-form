@@ -23,11 +23,11 @@ import UpdateTest from "./Pages/AdminPages/UpdateTest";
 import ViewTest from "./Pages/AdminPages/ViewTest";
 import StudentQuiz from "./Pages/StudentPages/StudentQuiz";
 import StudentPanel from "./Pages/StudentPages/ReleasedQuiz";
-
 import ResultPage from "./Pages/StudentPages/ResultPage";
 
 import Privacy from "./Privacy";
 import ScoreList from "./Pages/AdminPages/ScoreList";
+import TestScoresPage from "./Pages/AdminPages/TestScore";
 
 
 function App() {
@@ -172,6 +172,17 @@ function App() {
             <>
               <Navbar />
               <AdminHome />
+            </>
+            </ProtectedRoute>
+          }
+        ></Route>
+               <Route
+          path="/admin/testScore/:id"
+          element={
+            <ProtectedRoute>
+            <>
+              <Navbar />
+              <TestScoresPage />
             </>
             </ProtectedRoute>
           }
