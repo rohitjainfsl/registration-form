@@ -98,9 +98,6 @@ function AdminHome() {
           </Button>
         </Col>
         <Col xs="auto">
-    <Button as={Link} to="/admin/tests" variant="dark">
-      View Student Results
-    </Button>
   </Col>
       </Row>
 

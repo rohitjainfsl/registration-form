@@ -28,7 +28,6 @@ import Privacy from "./Privacy";
 import ScoreList from "./Pages/AdminPages/ScoreList";
 import TestScoresPage from "./Pages/AdminPages/TestScore";
 
-
 function App() {
   return (
     <BrowserRouter>
