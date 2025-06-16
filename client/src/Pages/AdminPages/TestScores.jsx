@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate, Link } from "react-router-dom";
+
 import Breadcrumbs from "../../Components/Breadcrumbs"; 
+
 import instance from "../../axiosConfig";
 
 
@@ -21,7 +23,7 @@ export default function TestScores() {
       });
 
     // Fetch test title for breadcrumb
-    axios.get(`/test/getTestById/${testId}`)
+    instance.get(`/test/getTestById/${testId}`)
       .then(res => setTestTitle(res.data.title))
       .catch(err => {
         console.error("Error fetching test title:", err);
@@ -56,6 +58,7 @@ export default function TestScores() {
               <th>Score</th>
               <th>Start Time</th>
               <th>End Time</th>
+              <th>StudentAnswer</th>
             </tr>
           </thead>
           <tbody>
@@ -67,6 +70,12 @@ export default function TestScores() {
                 <td>{student.score}</td>
                 <td>{new Date(student.startTime).toLocaleString()}</td>
                 <td>{new Date(student.endTime).toLocaleString()}</td>
+                <td><button
+                  className="btn btn-primary btn-sm"
+                    onClick={() => navigate(`/admin/test/${testId}/student/${student.studentId}`)}
+                  >
+                    View Answer
+                  </button></td>
               </tr>
             ))}
           </tbody>

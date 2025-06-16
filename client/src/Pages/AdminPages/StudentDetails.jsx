@@ -12,7 +12,7 @@ function StudentDetails() {
   const [startDate, setStartDate] = useState("");
   const [remarks, setRemarks] = useState("");
   const [message, setMessage] = useState("");
-  
+
 
   useEffect(() => {
     instance
@@ -45,6 +45,9 @@ function StudentDetails() {
           startDate,
           remarks,
         }));
+        setFees("");
+        setStartDate("");
+        setRemarks("");
       })
       .catch((err) => {
         console.error("Update error", err);
@@ -65,8 +68,8 @@ function StudentDetails() {
 
   return (
     <Container style={{ marginTop: "5rem" }}>
-      <h3 className="text-center mb-4" style={{marginTop:"100px"}}>
-      {student.name}'s Details</h3>
+      <h3 className="text-center mb-4" style={{ marginTop: "100px" }}>
+        {student.name}'s Details</h3>
       <p><strong>Email:</strong> {student.email}</p>
       <p><strong>Phone:</strong> {student.phone}</p>
       <p><strong>DOB:</strong> {student.dob}</p>
@@ -85,6 +88,10 @@ function StudentDetails() {
       <p><strong>Other Course:</strong> {student.otherCourse}</p>
       <p><strong>Referral:</strong> {student.referral}</p>
       <p><strong>Friend's Name:</strong> {student.friendName || student.friend_name}</p>
+      <p><strong>Registration Date:</strong> {new Date(student.createdAt).toLocaleDateString('en-GB')}</p>
+
+
+
 
       {/* Aadhar Front Image (PNG) */}
       <p>

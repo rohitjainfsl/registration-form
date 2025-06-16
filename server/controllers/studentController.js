@@ -5,6 +5,8 @@ import Test from "../models/testModel.js";
 import attemptQuiz from "../models/QuizAttempt.js";
 import mongoose from "mongoose";
 
+
+
 export async function register(req, res) {
   try {
 
@@ -209,44 +211,62 @@ export async function startQuiz(req, res) {
   }
 }
 
+
 export async function submitAnswer(req, res) {
   try {
-    const { quizAttemptId } = req.params;
+    const { quizAttemptId, testId } = req.params;
     const { questionId, selectedOption, selectedAnswer } = req.body;
-    console.log(questionId, selectedOption, selectedAnswer);
 
-    // Find the document containing the attempt
+    const test = await Test.findById(testId);
+    if (!test) return res.status(404).json({ message: "Test not found" });
+
+    const question = test.questions.find(q =>
+      q._id.toString() === questionId.toString()
+    );
+
+    if (!question) return res.status(404).json({ message: "Question not found" });
+
+    const correctAnswer = question.correct_answer;
+    console.log(correctAnswer);
+    
+
+    // Find quiz attempt document
     const quizAttemptDoc = await QuizAttempt.findOne({
       "attempts._id": quizAttemptId,
     });
 
-    if (!quizAttemptDoc) {
+    if (!quizAttemptDoc)
       return res.status(404).json({ message: "Quiz attempt not found" });
-    }
 
-    // Find the specific attempt
+    // Locate the specific attempt
     const attempt = quizAttemptDoc.attempts.id(quizAttemptId);
-    if (!attempt) {
+    if (!attempt)
       return res.status(404).json({ message: "Attempt not found" });
-    }
 
-    // Check if response already exists for this question
+    // Check if response already exists
     const existingResponseIndex = attempt.responses.findIndex(
-      (resp) => resp.questionId.equals(questionId)
+      (resp) => resp.questionId.toString() === questionId.toString()
     );
 
     if (existingResponseIndex !== -1) {
       // Update existing response
       attempt.responses[existingResponseIndex].selectedOption = selectedOption;
       attempt.responses[existingResponseIndex].selectedAnswer = selectedAnswer;
+      attempt.responses[existingResponseIndex].correct_answer = correctAnswer;
     } else {
-      // Add new response
-      attempt.responses.push({ questionId, selectedOption, selectedAnswer });
+      // Add new response with correct answer
+      attempt.responses.push({
+        questionId,
+        selectedOption,
+        selectedAnswer,
+        correct_answer: correctAnswer,
+      });
     }
 
     await quizAttemptDoc.save();
 
     return res.status(200).json({ message: "Answer submitted successfully" });
+
   } catch (error) {
     console.error("Submit answer error:", error);
     return res.status(500).json({
@@ -255,6 +275,7 @@ export async function submitAnswer(req, res) {
     });
   }
 }
+
 
 export async function finishQuiz(req, res) {
   try {
@@ -266,7 +287,7 @@ export async function finishQuiz(req, res) {
     }
 
     // Find the document containing the attempt
-    const quizAttemptDoc = await QuizAttempt.findOne({
+    const quizAttemptDoc = await attemptQuiz.findOne({
       "attempts._id": quizAttemptId,
     });
 
@@ -280,7 +301,6 @@ export async function finishQuiz(req, res) {
     if (!attempt) {
       return res.status(404).json({ message: "Attempt not found" });
     }
-
     // Check if quiz is already finished
     if (attempt.endTime) {
       return res.status(400).json({ message: "Quiz already completed" });
@@ -377,7 +397,7 @@ export async function getScoresByTest(req, res) {
     }
     
     
-    console.log(`Found ${students.length} students for test ${testId}`);
+    // console.log(`Found ${students.length} students for test ${testId}`);
     return res.status(200).json(students);
   } catch (error) {
     console.error("Error fetching test scores:", error);
@@ -388,3 +408,63 @@ export async function getScoresByTest(req, res) {
   }
 }
 
+
+export async function StudenAnswer(req, res) {
+  try {
+    const { testId, studentId } = req.params;
+
+    // Step 1: Find student's quiz attempt
+    const studentAttemptDoc = await attemptQuiz.findOne({ studentId });
+    if (!studentAttemptDoc)
+      return res.status(404).json({ error: "Student not found" });
+
+    // Step 2: Find the specific test attempt
+    const testAttempt = studentAttemptDoc.attempts.find(
+      (a) => a.testId.toString() === testId
+    );
+    if (!testAttempt)
+      return res.status(404).json({ error: "Test attempt not found" });
+
+    // Step 3: Fetch questions used in the test
+    const questionIds = testAttempt.responses.map((r) => r.questionId);
+    const questions = await attemptQuiz.find({ _id: { $in: questionIds } }).lean();
+
+    // Step 4: Get test title
+    const test = await Test.findById(testId).lean();
+
+    // Step 5: Build answer report
+    const answers = testAttempt.responses.map((response) => {
+      const question = questions.find(
+        (q) => attemptQuiz._id.toString() === response.testid.toString()
+      );
+      console.log(question);
+      
+      return {
+        question: {
+          text: question?.text || "Question not found",
+          options: question?.options || [],
+        },
+        selectedOption: response.selectedOption,  
+        selectedAnswer: response.selectedAnswer,
+        correctAnswer: question?.correctOption || "Not available"
+      };
+    });
+
+    // Step 6: Send response
+    return res.json({
+      student: {
+        id: studentId,
+        name: studentAttemptDoc.studentName,
+      },
+      test: {
+        id: testId,
+        title: test?.title || "Untitled Test",
+      },
+      answers,
+    });
+
+  } catch (err) {
+    console.error("Error fetching student answers:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}

@@ -28,6 +28,8 @@ function StudentList() {
   const loadMoreRef = useRef(null);
   const navigate = useNavigate();
   const [selectedStudents, setSelectedStudents] = useState([]);
+  const [sortBy, setSortBy] = useState("name");
+
 
 
   useEffect(() => {
@@ -115,6 +117,35 @@ const handleDeleteSelected = async () => {
 
   const studentsToDisplay = filteredStudents.slice(0, visibleCount);
   const hasMoreToLoad = visibleCount < filteredStudents.length;
+  useEffect(() => {
+  let filtered = students.filter((student) =>
+    student.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  switch (sortBy) {
+    case "name":
+      filtered.sort((a, b) => a.name.localeCompare(b.name));
+      break;
+      case "opposite":
+      filtered.sort((a, b) => b.name.localeCompare(a.name));
+      break;
+    case "oldest":
+      filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      break;
+    case "newest":
+      filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      break;
+    default:
+      break;
+  }
+
+  setFilteredStudents(filtered);
+
+  if (search.trim()) {
+    setVisibleCount(10);
+  }
+}, [search, sortBy, students]);
+
 
   if (loading) {
     return (
@@ -151,6 +182,18 @@ const handleDeleteSelected = async () => {
     </Button>
   </div>
 )}
+<Form.Select
+  className="mb-4"
+  value={sortBy}
+  onChange={(e) => setSortBy(e.target.value)}
+>
+  <option value="name">Sort by Name (A-Z)</option>
+  <option value="opposite">Sort by Name (Z-A)</option>
+  
+  <option value="oldest">Sort by Oldest Registration</option>
+  <option value="newest">Sort by Newest Registration</option>
+</Form.Select>
+
    <Table striped bordered hover responsive>
   <thead>
     <tr>

@@ -27,7 +27,7 @@ export function AdminProvider({ children }) {
         setIsAuthenticated(true);
         setRole(res.data.role);
         setFirstTimeSignin(res.data.firstTimeSignin || false);
-        console.log(res.data.user )
+        
       }
     } catch (error) {
       console.error(error);

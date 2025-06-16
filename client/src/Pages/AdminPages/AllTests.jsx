@@ -14,7 +14,9 @@ export default function AllTests() {
         try {
             const res = await instance.get("/test/allTests");
             setTestName(res.data.tests);
-            // console.log(res.data.tests);
+            console.log(res.data.tests);
+            console.log("question data",res.data.tests);
+
         } catch (error) {
             console.error("Failed to fetch tests", error);
         }
