@@ -21,6 +21,8 @@ function AdminHome() {
   const [newDuration, setNewDuration] = useState("");
   const navigate = useNavigate();
 
+  
+
   useEffect(() => {
     async function fetchTests() {
       try {
@@ -95,6 +97,11 @@ function AdminHome() {
             👩‍🎓 View Student Details
           </Button>
         </Col>
+        <Col xs="auto">
+    <Button as={Link} to="/admin/tests" variant="dark">
+      View Student Results
+    </Button>
+  </Col>
       </Row>
 
       <Table striped bordered hover responsive className="test-table shadow-sm">

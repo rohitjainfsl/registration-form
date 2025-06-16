@@ -24,7 +24,6 @@ import ViewTest from "./Pages/AdminPages/ViewTest";
 import StudentQuiz from "./Pages/StudentPages/StudentQuiz";
 import StudentPanel from "./Pages/StudentPages/ReleasedQuiz";
 import ResultPage from "./Pages/StudentPages/ResultPage";
-
 import Privacy from "./Privacy";
 import ScoreList from "./Pages/AdminPages/ScoreList";
 import TestScoresPage from "./Pages/AdminPages/TestScore";
@@ -62,7 +61,7 @@ function App() {
             </>
           }
         ></Route>
-         <Route
+        <Route
           path="/student/studentpanel"
           element={
             <>
@@ -71,7 +70,7 @@ function App() {
             </>
           }
         ></Route>
-        
+
         <Route
           path="/registration"
           element={
@@ -99,7 +98,7 @@ function App() {
             </>
           }
         ></Route>
-          <Route
+        <Route
           path="/student/changePassword"
           element={
             <>
@@ -126,53 +125,53 @@ function App() {
             </>
           }
         ></Route>
-         <Route
+        <Route
           path="/admin/login"
           element={
-            <>  
+            <>
               <Navbar />
               <AdminLogin />
             </>
           }
         ></Route>
-                <Route
+        <Route
           path="/admin/scorelist"
           element={
-            <>  
+            <>
               <Navbar />
               <ScoreList />
             </>
           }
         ></Route>
-          <Route
+        <Route
           path="/admin/fetch/students"
           element={
             <ProtectedRoute>
               <Navbar />
               <StudentList />
-              </ProtectedRoute>
-          }
-        ></Route>
-          
-          <Route
-          path="/getStudents/:id"
-          element={
-            <ProtectedRoute>
-            <>
-              <Navbar />
-              <StudentDetails />
-            </>
             </ProtectedRoute>
           }
         ></Route>
-         <Route
+
+        <Route
+          path="/getStudents/:id"
+          element={
+            <ProtectedRoute>
+              <>
+                <Navbar />
+                <StudentDetails />
+              </>
+            </ProtectedRoute>
+          }
+        ></Route>
+        <Route
           path="/admin/home"
           element={
             <ProtectedRoute>
-            <>
-              <Navbar />
-              <AdminHome />
-            </>
+              <>
+                <Navbar />
+                <AdminHome />
+              </>
             </ProtectedRoute>
           }
         ></Route>
@@ -191,32 +190,32 @@ function App() {
           path="/admin/create/test"
           element={
             <ProtectedRoute>
-            <>
-              <Navbar />
-              <CreateTestForm />
-            </>
+              <>
+                <Navbar />
+                <CreateTestForm />
+              </>
             </ProtectedRoute>
           }
         ></Route>
-                <Route
+        <Route
           path="/admin/view/test/:id"
           element={
             <ProtectedRoute>
-            <>
-              <Navbar />
-              <ViewTest/>
-            </>
+              <>
+                <Navbar />
+                <ViewTest />
+              </>
             </ProtectedRoute>
           }
         ></Route>
-         <Route
+        <Route
           path="/admin/home"
           element={
             <ProtectedRoute>
-            <>
-              <Navbar />
-              <AdminHome />
-            </>
+              <>
+                <Navbar />
+                <AdminHome />
+              </>
             </ProtectedRoute>
           }
         ></Route>
@@ -224,52 +223,51 @@ function App() {
           path="/admin/create/test"
           element={
             <ProtectedRoute>
-            <>
-              <Navbar />
-              <CreateTestForm />
-            </>
+              <>
+                <Navbar />
+                <CreateTestForm />
+              </>
             </ProtectedRoute>
           }
         ></Route>
-         <Route
+        <Route
           path="/admin/update/test/:id"
           element={
             <ProtectedRoute>
-            <>
-              <Navbar />
-              <UpdateTest />
-            </>
+              <>
+                <Navbar />
+                <UpdateTest />
+              </>
             </ProtectedRoute>
           }
         ></Route>
-                <Route
+        <Route
           path="/admin/view/test/:id"
           element={
-          <ProtectedRoute>
-            <>
-              <Navbar />
-              <ViewTest/>
-            </>
+            <ProtectedRoute>
+              <>
+                <Navbar />
+                <ViewTest />
+              </>
             </ProtectedRoute>
           }
         ></Route>
         <Route
           path="/student/result"
           element={
-        
+
             <>
               <Navbar />
-              <ResultPage/>
+              <ResultPage />
             </>
-           
+
           }
         ></Route>
-
       </Routes>,
-      
+
     </BrowserRouter>
 
-  
+
   );
 }
 
