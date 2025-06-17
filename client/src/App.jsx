@@ -5,12 +5,11 @@ import {
 } from "react-router-dom";
 import Home from "./Pages/Home";
 import UserForm from "./Pages/StudentPages/registrationForm";
-import About from "./Pages/About"
-import Navbar from "../src/Components/Navbar"
+import About from "./Pages/About";
+import Navbar from "./Components/Navbar";
 import Header from "./Components/Header";
 import Courses from "./Pages/Courses";
 import Blog from "./Pages/Blog";
-import "./App.css";
 import ChangePassword from "./Pages/StudentPages/ChangePassword";
 import AdminLogin from "./Pages/AdminPages/AdminLogin";
 import StudentList from "./Pages/AdminPages/FetchStudents";
@@ -23,16 +22,14 @@ import UpdateTest from "./Pages/AdminPages/UpdateTest";
 import ViewTest from "./Pages/AdminPages/ViewTest";
 import StudentQuiz from "./Pages/StudentPages/StudentQuiz";
 import StudentPanel from "./Pages/StudentPages/ReleasedQuiz";
-
 import ResultPage from "./Pages/StudentPages/ResultPage";
 import Privacy from "./Privacy";
-import TestScores from "./Pages/AdminPages/TestScores"
 import ScoreList from "./Pages/AdminPages/ScoreList";
-import AllTests from  "./Pages/AdminPages/AllTests"
-import StudentAnswer from "./Pages/AdminPages/StudentAnswer"
-import StudentAnswers from "./Pages/AdminPages/StudentAnswer";
-
-
+// import TestScoresPage from "./Pages/AdminPages/TestScorePage";
+import Breadcrumbs from "./Components/Breadcrumbs"; // ✅ Imported
+import "./App.css";
+import SeeTestCsore from "./Pages/AdminPages/SeeTestScore";
+import TestScoresPage from "./Pages/AdminPages/TestScore"
 
 function App() {
   return (
@@ -47,230 +44,224 @@ function App() {
               <Home />
             </>
           }
-        ></Route>
+        />
         <Route
           path="/student/login"
           element={
             <>
               <Navbar />
+              <Breadcrumbs />
               <StudentLogin />
             </>
           }
-        ></Route>
+        />
         <Route
           path="/student/quiz/:testId"
           element={
             <>
               <Navbar />
+              <Breadcrumbs />
               <StudentQuiz />
             </>
           }
-        ></Route>
+        />
         <Route
           path="/student/studentpanel"
           element={
             <>
               <Navbar />
+              <Breadcrumbs />
               <StudentPanel />
             </>
           }
-        ></Route>
-
+        />
         <Route
           path="/registration"
           element={
             <>
               <Navbar />
+              <Breadcrumbs />
               <UserForm />
             </>
           }
-        ></Route>
+        />
         <Route
           path="/about"
           element={
             <>
               <Navbar />
+              <Breadcrumbs />
               <About />
             </>
           }
-        ></Route>
+        />
         <Route
           path="/course"
           element={
             <>
               <Navbar />
+              <Breadcrumbs />
               <Courses />
             </>
           }
-        ></Route>
+        />
         <Route
           path="/student/changePassword"
           element={
             <>
               <Navbar />
+              <Breadcrumbs />
               <ChangePassword />
             </>
           }
-        ></Route>
+        />
         <Route
           path="/blog"
           element={
             <>
               <Navbar />
+              <Breadcrumbs />
               <Blog />
             </>
           }
-        ></Route>
+        />
         <Route
           path="/privacy-policy"
           element={
             <>
               <Navbar />
+              <Breadcrumbs />
               <Privacy />
             </>
           }
-        ></Route>
+        />
         <Route
           path="/admin/login"
           element={
             <>
               <Navbar />
+              <Breadcrumbs />
               <AdminLogin />
             </>
           }
-        ></Route>
+        />
+        <Route
+          path="/admin/seeResult"
+          element={
+            <>
+              <Navbar />
+              <Breadcrumbs />
+              <SeeTestCsore />
+            </>
+          }
+        />
         <Route
           path="/admin/scorelist"
           element={
             <>
               <Navbar />
+              <Breadcrumbs />
               <ScoreList />
             </>
           }
-        ></Route>
+        />
         <Route
           path="/admin/fetch/students"
           element={
             <ProtectedRoute>
-              <Navbar />
-              <StudentList />
+              <>
+                <Navbar />
+                <Breadcrumbs />
+                <StudentList />
+              </>
             </ProtectedRoute>
           }
-        ></Route>
-
+        />
         <Route
           path="/getStudents/:id"
           element={
             <ProtectedRoute>
               <>
                 <Navbar />
+                <Breadcrumbs />
                 <StudentDetails />
               </>
             </ProtectedRoute>
           }
-        ></Route>
+        />
         <Route
           path="/admin/home"
           element={
             <ProtectedRoute>
               <>
                 <Navbar />
+                <Breadcrumbs />
                 <AdminHome />
               </>
             </ProtectedRoute>
           }
-        ></Route>
+        />
+        <Route
+          path="/admin/testScore/:id"
+          element={
+            <ProtectedRoute>
+            <>
+                <Navbar />
+                <Breadcrumbs />
+                <TestScoresPage />
+              </>
+              </ProtectedRoute>
+          }
+        />
         <Route
           path="/admin/create/test"
           element={
             <ProtectedRoute>
               <>
                 <Navbar />
+                <Breadcrumbs />
                 <CreateTestForm />
               </>
             </ProtectedRoute>
           }
-        ></Route>
+        />
         <Route
           path="/admin/view/test/:id"
           element={
             <ProtectedRoute>
               <>
                 <Navbar />
+                <Breadcrumbs />
                 <ViewTest />
               </>
             </ProtectedRoute>
           }
-        ></Route>
-        <Route
-          path="/admin/home"
-          element={
-            <ProtectedRoute>
-              <>
-                <Navbar />
-                <AdminHome />
-              </>
-            </ProtectedRoute>
-          }
-        ></Route>
-        <Route
-          path="/admin/create/test"
-          element={
-            <ProtectedRoute>
-              <>
-                <Navbar />
-                <CreateTestForm />
-              </>
-            </ProtectedRoute>
-          }
-        ></Route>
+        />
         <Route
           path="/admin/update/test/:id"
           element={
             <ProtectedRoute>
               <>
                 <Navbar />
+                <Breadcrumbs />
                 <UpdateTest />
               </>
             </ProtectedRoute>
           }
-        ></Route>
-        <Route
-          path="/admin/view/test/:id"
-          element={
-            <ProtectedRoute>
-              <>
-                <Navbar />
-                <ViewTest />
-              </>
-            </ProtectedRoute>
-          }
-        ></Route>
+        />
         <Route
           path="/student/result"
           element={
-
             <>
               <Navbar />
+              <Breadcrumbs />
               <ResultPage />
             </>
-
           }
-        ></Route>
-        <Route path="/admin/tests" element={<AllTests />} ></Route>
-        <Route path="/admin/test/:testId/scores" element={<TestScores />} ></Route>
-        <Route path="/admin/test/:testId/student/:studentId" element={<StudentAnswers />} />
-
-
-      </Routes>,
-
+        />
+      </Routes>
     </BrowserRouter>
-
-
   );
 }
 
 export default App;
-
-
-
