@@ -1,0 +1,33 @@
+.admin-dashboard {
+  margin-top: 100px;
+}
+
+.header-title {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: #0d6efd;
+}
+
+.action-buttons .btn {
+  min-width: 180px;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.test-table th,
+.test-table td {
+  vertical-align: middle;
+  text-align: center;
+}
+
+.modal-title {
+  font-weight: 600;
+}
+
+.modal-body .form-control {
+  border-radius: 8px;
+}
+
+button.me-2 {
+  margin-bottom: 5px;
+}
