@@ -1,22 +1,27 @@
-import { useState, useContext} from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useContext } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Navbar, Nav, Container, Button } from "react-bootstrap";
-// import Logo from "./assets/logo.png";
-import Logo from "../assets/logo.png"
+import Logo from "../assets/logo.png";
 import "../styles/navbar.css";
 import { adminContext } from "../Pages/Context/Admincontext";
 
 const CustomNavbar = () => {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { isAuthenticated, LogOut } = useContext(adminContext);
+  const { isAuthenticated, LogOut, role } = useContext(adminContext);
   const navigate = useNavigate();
+  const location = useLocation();
   const isHomePage = location.pathname === "/";
 
-  function handleLogOut() {
+  const handleLogOut = () => {
     LogOut();
-    navigate("/");
-  }
-  // console.log(isAuthenticated);
+    navigate("/student/login");
+  };
+
+  const handleLoginRedirect = () => {
+      navigate("/student/login");
+  };
+
+  const homeLink = role === "admin" ? "/admin/home" : "/";
 
   return (
     <Navbar
@@ -25,7 +30,7 @@ const CustomNavbar = () => {
       fixed="top"
     >
       <Container>
-        <Navbar.Brand as={Link} to="/">
+        <Navbar.Brand as={Link} to={homeLink}>
           <img src={Logo} alt="Full Stack Learning" />
         </Navbar.Brand>
         <Navbar.Toggle
@@ -37,26 +42,28 @@ const CustomNavbar = () => {
           className={isMobileMenuOpen ? "show" : ""}
         >
           <Nav className="ms-auto">
-            <Nav.Link as={Link} to="/">
+            <Nav.Link as={Link} to={homeLink}>
               Home
             </Nav.Link>
-            <Nav.Link as={Link} to="/about">
-              About
-            </Nav.Link>
-            <Nav.Link as={Link} to="/blog">
-              Blog
-            </Nav.Link>
-            <Nav.Link as={Link} to="/contact">
-              Contact Us
-            </Nav.Link>
-            {}
+              <>
+                <Nav.Link as={Link} to="/about">
+                  About
+                </Nav.Link>
+                <Nav.Link as={Link} to="/blog">
+                  Blog
+                </Nav.Link>
+                <Nav.Link as={Link} to="/contact">
+                  Contact Us
+                </Nav.Link>
+              </>
+
             {isAuthenticated ? (
-              <Button onClick={() => handleLogOut()} className="navbar-button">
+              <Button onClick={handleLogOut} className="navbar-button">
                 Logout
               </Button>
             ) : (
-              <Button as={Link} to="/student/login" className="navbar-button">
-                Login 
+              <Button onClick={handleLoginRedirect} className="navbar-button">
+                Login
               </Button>
             )}
           </Nav>

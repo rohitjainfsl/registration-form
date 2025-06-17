@@ -31,7 +31,7 @@ function AdminHome() {
       } catch (error) {
         console.error("Failed to fetch tests", error);
       }
-    }
+    } 
     fetchTests();
   }, []);
 
