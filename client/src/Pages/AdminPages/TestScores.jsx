@@ -13,44 +13,32 @@ import {
 import instance from "../../axiosConfig";
 
 function TestScoresPage() {
-  const { testId } = useParams(); // using `testId` like your original code
+  const { id } = useParams(); 
   const [attempts, setAttempts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [selectedDetail, setSelectedDetail] = useState(null);
   const [emailStatus, setEmailStatus] = useState("");
-  const [testTitle, setTestTitle] = useState("");
 
   const formatDateTime = (date) => new Date(date).toLocaleString();
 
   useEffect(() => {
-    const fetchData = async () => {
+    async function fetchScores() {
       try {
-        // Fetch all test attempts
-        const res = await instance.get(`/students/score/test/${testId}`);
-        setAttempts(res.data);
-      } catch (err) {
-        console.error("Error fetching attempts:", err);
-        setAttempts([]);
-      } finally {
+        const res = await instance.get(`/test/testscore/${id}`);
+        setAttempts(res.data.attempts);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching scores:", error);
         setLoading(false);
       }
-
-      try {
-        // Fetch test title
-        const titleRes = await instance.get(`/test/getTestById/${testId}`);
-        setTestTitle(titleRes.data.title);
-      } catch (err) {
-        console.error("Error fetching test title:", err);
-        setTestTitle("Unknown Test");
-      }
-    };
-    fetchData();
-  }, [testId]);
+    }
+    fetchScores();
+  }, [id]);
 
   const handleViewDetails = async (studentId) => {
     try {
-      const res = await instance.get(`/test/scoreDetails/${studentId}/${testId}`);
+      const res = await instance.get(`/test/scoreDetails/${studentId}/${id}`);
       setSelectedDetail(res.data);
       setShowModal(true);
     } catch (error) {
@@ -66,7 +54,7 @@ function TestScoresPage() {
   const handleReleaseResult = async () => {
     try {
       setEmailStatus("Sending...");
-      await instance.post(`/test/releaseResult/${testId}`);
+      const res = await instance.post(`/test/releaseResult/${id}`);
       setEmailStatus("Result emails sent successfully.");
     } catch (err) {
       console.error("Error sending result emails:", err);
@@ -76,11 +64,11 @@ function TestScoresPage() {
 
   return (
     <Container className="py-4" style={{ marginTop: "100px" }}>
-      <h2 className="mb-4">🧮 Test: {testTitle}</h2>
+      <h2 className="mb-4">🧮 Test Score Details</h2>
 
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <Button as={Link} to="/admin/tests" variant="secondary">
-          ⬅ Back to All Tests
+        <Button as={Link} to="/admin/home" variant="secondary">
+          ⬅ Back to Dashboard
         </Button>
         <Button variant="success" onClick={handleReleaseResult}>
           Release Result
@@ -113,27 +101,25 @@ function TestScoresPage() {
             <tr>
               <th>#</th>
               <th>Student Name</th>
-              <th>College ID</th>
               <th>Score</th>
               <th>Start Time</th>
               <th>End Time</th>
-              <th>View Answer</th>
+              <th>View</th>
             </tr>
           </thead>
           <tbody>
-            {attempts.map((student, index) => (
+            {attempts.map((a, index) => (
               <tr key={index}>
                 <td>{index + 1}</td>
-                <td>{student.studentName}</td>
-                <td>{student.collegeId}</td>
-                <td>{student.score}</td>
-                <td>{new Date(student.startTime).toLocaleDateString('en-GB')}</td>
-                <td>{new Date(student.endTime).toLocaleDateString('en-GB')}</td>
+                <td>{a.studentName}</td>
+                <td>{a.score}</td>
+                <td>{formatDateTime(a.startTime)}</td>
+                <td>{formatDateTime(a.endTime)}</td>
                 <td>
                   <Button
                     variant="info"
                     size="sm"
-                    onClick={() => handleViewDetails(student.studentId)}
+                    onClick={() => handleViewDetails(a.studentId)}
                   >
                     View Details
                   </Button>
@@ -143,8 +129,6 @@ function TestScoresPage() {
           </tbody>
         </Table>
       )}
-
-      {/* Modal */}
       <Modal show={showModal} onHide={handleClose} size="lg">
         <Modal.Header closeButton>
           <Modal.Title>

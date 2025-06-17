@@ -11,7 +11,7 @@ import {
   deleteManyStudents,
   getScoresByTest,
   getAllScore,
-  StudenAnswer
+  StudenAnswer,
 
 } from "../controllers/studentController.js";
 import { fileArr } from "../middlewares/multer.js";
@@ -27,7 +27,7 @@ studentRouter.get("/get-questions/:testId",authMiddleware("studentToken"),getQue
 studentRouter.post("/start-quiz/:testId" ,authMiddleware("studentToken"),startQuiz)
 studentRouter.post("/finishQuiz/:quizAttemptId", authMiddleware("studentToken"),finishQuiz)
 studentRouter.post("/deleteMany",authMiddleware("adminToken"),deleteManyStudents )
-studentRouter.post("/submit-answer/:quizAttemptId",authMiddleware("studentToken"),submitAnswer)
+studentRouter.post("/submit-answer/:quizAttemptId/:testId",authMiddleware("studentToken"),submitAnswer)
 studentRouter.get("/score/test/:testId", getScoresByTest);
 studentRouter.get("/score",getAllScore)
 studentRouter.get("/admin/test/:testId/student/:studentId/answers",authMiddleware("adminToken", "studentToken"),StudenAnswer)

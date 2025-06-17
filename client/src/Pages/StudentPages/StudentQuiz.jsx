@@ -41,8 +41,10 @@ function QuizPage() {
   useEffect(() => {
     async function startQuizAndFetchQuestions() {
       try {
-        const { data: startData } = await instance.post(`/students/start-quiz/${testId}`,
+        const { data: startData } = await instance.post(`/students/start-quiz/${testId}`, 
           { withCredentials: true });
+          console.log(startData);
+          
         const quizAttemptId = startData.quizAttemptId;
         setQuizAttemptId(quizAttemptId);
 
@@ -60,6 +62,7 @@ function QuizPage() {
 
     startQuizAndFetchQuestions();
   }, [testId]);
+// console.log(quizAttemptId);
 
   const calculateScoreFromRefs = useCallback(() => {
     let score = 0;
@@ -76,21 +79,10 @@ function QuizPage() {
     
     try {
       const score = calculateScoreFromRefs();
+       const res =   instance.post(`/students/finishQuiz/${quizAttemptIdRef.current},{score}`);
+      console.log(res);
       
-      if (navigator.sendBeacon) {
-        const data = JSON.stringify({ score });
-        const url = `${instance.defaults.baseURL}/students/finishQuiz/${quizAttemptIdRef.current}`;
-        navigator.sendBeacon(url, new Blob([data], { type: 'application/json' }));
-      } else {
-        await fetch(`${instance.defaults.baseURL}/students/finishQuiz/${quizAttemptIdRef.current}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ score }),
-          keepalive: true
-        });
-      }
+      
       
       isQuizFinishedRef.current = true;
     } catch (err) {
@@ -264,7 +256,7 @@ function QuizPage() {
 
     setSubmitting(true);
     try {
-      await instance.post(`/students/submit-answer/${quizAttemptId}`, {
+      await instance.post(`/students/submit-answer/${quizAttemptId}/${testId}`, {
         questionId,
         selectedAnswer,
         selectedOption,
@@ -303,7 +295,7 @@ function QuizPage() {
       const lastResponse = responses[currentQuestion._id];
 
       if (lastResponse) {
-        await instance.post(`/students/submit-answer/${quizAttemptId}`, {
+        await instance.post(`/students/submit-answer/${quizAttemptId}/${testId}`, {
           questionId: currentQuestion._id,
           selectedAnswer: lastResponse.selectedAnswer,
           selectedOption: lastResponse.selectedOption,
@@ -311,7 +303,7 @@ function QuizPage() {
       }
 
       const score = calculateScore(responses);
-      const response = await instance.post(`/students/finishQuiz/${quizAttemptId}`, { score });
+      const response = await instance.post(`/students/finishQuiz/${quizAttemptId}, { score }`);
       console.log(response);
 
       showThankYouMessage();
@@ -327,7 +319,7 @@ function QuizPage() {
     setIsQuizFinished(true);
     try {
       const score = calculateScore(responses);
-      await instance.post(`/students/finish-quiz/${quizAttemptId}`, { score });
+      await instance.post(`/students/finish-quiz/${quizAttemptId}, { score }`);
       showThankYouMessage();
     } catch (err) {
       console.error("Time-up submission failed:", err);
@@ -364,7 +356,7 @@ function QuizPage() {
   return (
     <Container className="py-4" style={{ marginTop: "80px" }}>
       <Alert variant="warning" className="mb-3">
-        <Alert.Heading>⚠️ Quiz Security Notice</Alert.Heading>
+        <Alert.Heading>⚠ Quiz Security Notice</Alert.Heading>
         <p className="mb-0">
           <strong>Important:</strong> This quiz is monitored for integrity. 
           Switching tabs, opening new windows, using developer tools, or attempting to copy content 
@@ -374,7 +366,7 @@ function QuizPage() {
 
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h3>Quiz</h3>
-        <span className={`fw-bold ${timeLeft <= 300 ? "text-danger" : ""}`}>
+        <span className={fw-bold `${timeLeft <= 300 ? "text-danger" : ""}`}>
           Time Left: {formatTime(timeLeft)}
         </span>
       </div>
