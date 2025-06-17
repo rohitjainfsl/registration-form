@@ -7,15 +7,14 @@ function ProtectedRoute({ children }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isAuthenticated && !role === `{"admin" || "student"}`) {
-      navigate("/");
-    }
-    else{
-      navigate("/admin/home")
-    }
+    if (!isAuthenticated || !(role === "admin" || role === "student")) {
+  navigate("/student/login");
+}
+
   }, [isAuthenticated]);
 
   return isAuthenticated ? children : null;
 }
 
 export default ProtectedRoute;
+
