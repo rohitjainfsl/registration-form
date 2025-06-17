@@ -5,6 +5,7 @@ import attemptQuiz from "../models/QuizAttempt.js";
 import mongoose from "mongoose";
 import studentModel from "../models/studentModel.js"
 import quizAttemptSchema from "../models/QuizAttempt.js"
+import sendSendgridResults from "../services/acknowledgement.js";
 
 export const createTest = async (req, res) => {
   try {
@@ -240,31 +241,48 @@ export const TestScoreDetails = async (req, res) => {
   }
 };
 
-
 export const releaseResultsByMailchimp = async (req, res) => {
   const { testId } = req.params;
 
   try {
-    const attempts = await attemptQuiz.find({
-      testId: new mongoose.Types.ObjectId(testId),
+    const quizAttempts = await attemptQuiz.find({
+      "attempts.testId": testId
     });
 
-    if (!attempts.length) {
+    if (!quizAttempts.length) {
       return res.status(404).json({ message: "No attempts found for this test." });
     }
 
-    const attemptedStudentIds = attempts.map((a) => a.studentId.toString());
+    const filteredStudentIds = [];
+    const filteredStudentsData = [];
+
+    for (const doc of quizAttempts) {
+      const matchingAttempt = doc.attempts.find(a => a.testId.toString() === testId);
+
+      if (matchingAttempt) {
+        filteredStudentIds.push(doc.studentId);
+        filteredStudentsData.push({
+          studentId: doc.studentId,
+          name: doc.studentName,
+        });
+      }
+    }
 
     const students = await studentModel.find({
-      _id: { $in: attemptedStudentIds },
+      _id: { $in: filteredStudentIds }
     });
 
-    const filteredStudents = students.filter((student) =>
-      attemptedStudentIds.includes(student._id.toString())
-    );
-    console.log(filteredStudents)
+    const studentsWithEmail = students.map((student) => {
+      const match = filteredStudentsData.find(s => s.studentId.toString() === student._id.toString());
+      return {
+        email: student.email,
+        name: match?.name || student.name
+      };
+    });
 
-    await sendMailchimpResults({ students: filteredStudents, testId });
+    await sendSendgridResults({ students: studentsWithEmail, testId });
+
+    await Test.findByIdAndUpdate(testId, { result: true });
 
     res.status(200).json({ message: "Result emails sent to attempted students only." });
   } catch (error) {
@@ -272,8 +290,6 @@ export const releaseResultsByMailchimp = async (req, res) => {
     res.status(500).json({ message: "Error sending result emails." });
   }
 };
-
-
 
 export const deleteTest = async (req, res)=> {
   try {

@@ -1,14 +1,15 @@
 import sgMail from "@sendgrid/mail";
 import "dotenv/config";
 
-const LOGO_BASE64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==";
+const LOGO_BASE64 =
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==";
 
 const TAILWIND_CDN = `<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">`;
 
 function createAckEmailTemplate(password) {
   return `
     <!DOCTYPE html>
-    <html lang="en">
+    <html lang="en"> 
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -127,8 +128,12 @@ function createRegistrationEmailTemplate(newData, timestamp) {
             <div class="p-8">
                 <!-- Student Card -->
                 <div class="bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl p-6 mb-8 border-l-4 border-primary">
-                    <div class="text-2xl font-semibold text-primary mb-2">👨‍🎓 ${newData.name}</div>
-                    <div class="text-lg text-secondary mb-3">📧 ${newData.email}</div>
+                    <div class="text-2xl font-semibold text-primary mb-2">👨‍🎓 ${
+                      newData.name
+                    }</div>
+                    <div class="text-lg text-secondary mb-3">📧 ${
+                      newData.email
+                    }</div>
                     <div class="text-gray-600">📱 ${newData.phone}</div>
                 </div>
                 
@@ -136,7 +141,11 @@ function createRegistrationEmailTemplate(newData, timestamp) {
                 <div class="bg-gradient-primary text-white p-6 rounded-2xl text-center my-6">
                     <h3 class="text-xl mb-3 mt-0">📚 Enrolled Course</h3>
                     <div class="text-2xl font-bold mb-2">${newData.course}</div>
-                    ${newData.otherCourse ? `<div class="text-base opacity-90">Custom: ${newData.otherCourse}</div>` : ''}
+                    ${
+                      newData.otherCourse
+                        ? `<div class="text-base opacity-90">Custom: ${newData.otherCourse}</div>`
+                        : ""
+                    }
                 </div>
                 
                 <!-- Details Grid -->
@@ -149,15 +158,21 @@ function createRegistrationEmailTemplate(newData, timestamp) {
                         <div class="space-y-3">
                             <div class="flex justify-between items-center py-2 border-b border-gray-100">
                                 <span class="font-semibold text-gray-600 min-w-max">Date of Birth:</span>
-                                <span class="text-gray-800 ml-4">${newData.dob}</span>
+                                <span class="text-gray-800 ml-4">${
+                                  newData.dob
+                                }</span>
                             </div>
                             <div class="flex justify-between items-center py-2 border-b border-gray-100">
                                 <span class="font-semibold text-gray-600 min-w-max">Father's Name:</span>
-                                <span class="text-gray-800 ml-4">${newData.fname}</span>
+                                <span class="text-gray-800 ml-4">${
+                                  newData.fname
+                                }</span>
                             </div>
                             <div class="flex justify-between items-center py-2">
                                 <span class="font-semibold text-gray-600 min-w-max">Father's Phone:</span>
-                                <span class="text-gray-800 ml-4">${newData.fphone}</span>
+                                <span class="text-gray-800 ml-4">${
+                                  newData.fphone
+                                }</span>
                             </div>
                         </div>
                     </div>
@@ -170,16 +185,22 @@ function createRegistrationEmailTemplate(newData, timestamp) {
                         <div class="space-y-3">
                             <div class="flex justify-between items-start py-2 border-b border-gray-100">
                                 <span class="font-semibold text-gray-600 min-w-max">Local Address:</span>
-                                <span class="text-gray-800 ml-4 text-right">${newData.laddress}</span>
+                                <span class="text-gray-800 ml-4 text-right">${
+                                  newData.laddress
+                                }</span>
                             </div>
                             <div class="flex justify-between items-start py-2">
                                 <span class="font-semibold text-gray-600 min-w-max">Permanent Address:</span>
-                                <span class="text-gray-800 ml-4 text-right">${newData.paddress}</span>
+                                <span class="text-gray-800 ml-4 text-right">${
+                                  newData.paddress
+                                }</span>
                             </div>
                         </div>
                     </div>
                     
-                    ${newData.role === 'student' ? `
+                    ${
+                      newData.role === "student"
+                        ? `
                     <!-- Academic Information -->
                     <div class="bg-white rounded-xl p-5 shadow-md border-t-4 border-t-primary">
                         <h3 class="text-primary text-lg mb-4 mt-0 flex items-center">
@@ -200,9 +221,13 @@ function createRegistrationEmailTemplate(newData, timestamp) {
                             </div>
                         </div>
                     </div>
-                    ` : ''}
+                    `
+                        : ""
+                    }
                     
-                    ${newData.role === 'working' ? `
+                    ${
+                      newData.role === "working"
+                        ? `
                     <!-- Professional Information -->
                     <div class="bg-white rounded-xl p-5 shadow-md border-t-4 border-t-primary">
                         <h3 class="text-primary text-lg mb-4 mt-0 flex items-center">
@@ -219,7 +244,9 @@ function createRegistrationEmailTemplate(newData, timestamp) {
                             </div>
                         </div>
                     </div>
-                    ` : ''}
+                    `
+                        : ""
+                    }
                     
                     <!-- Referral Information -->
                     <div class="bg-white rounded-xl p-5 shadow-md border-t-4 border-t-primary">
@@ -227,16 +254,26 @@ function createRegistrationEmailTemplate(newData, timestamp) {
                             🤝 Referral Information
                         </h3>
                         <div class="space-y-3">
-                            <div class="flex justify-between items-center py-2 ${newData.referral.toLowerCase() === 'friend' ? 'border-b border-gray-100' : ''}">
+                            <div class="flex justify-between items-center py-2 ${
+                              newData.referral.toLowerCase() === "friend"
+                                ? "border-b border-gray-100"
+                                : ""
+                            }">
                                 <span class="font-semibold text-gray-600 min-w-max">How did you know:</span>
-                                <span class="text-gray-800 ml-4">${newData.referral}</span>
+                                <span class="text-gray-800 ml-4">${
+                                  newData.referral
+                                }</span>
                             </div>
-                            ${newData.referral.toLowerCase() === 'friend' ? `
+                            ${
+                              newData.referral.toLowerCase() === "friend"
+                                ? `
                             <div class="flex justify-between items-center py-2">
                                 <span class="font-semibold text-gray-600 min-w-max">Friend's Name:</span>
                                 <span class="text-gray-800 ml-4">${newData.friendName}</span>
                             </div>
-                            ` : ''}
+                            `
+                                : ""
+                            }
                         </div>
                     </div>
                 </div>
@@ -246,11 +283,15 @@ function createRegistrationEmailTemplate(newData, timestamp) {
                     <h3 class="text-primary text-lg mb-4 mt-0">📄 Uploaded Documents</h3>
                     <div class="flex flex-wrap justify-center gap-6">
                         <div class="border-4 border-primary rounded-xl p-2 bg-white">
-                            <img src="${newData.aadharFront}" alt="Aadhar Front" class="w-40 h-auto rounded-lg" />
+                            <img src="${
+                              newData.aadharFront
+                            }" alt="Aadhar Front" class="w-40 h-auto rounded-lg" />
                             <div class="text-center mt-2 text-sm text-gray-600">Aadhar Front</div>
                         </div>
                         <div class="border-4 border-primary rounded-xl p-2 bg-white">
-                            <img src="${newData.aadharBack}" alt="Aadhar Back" class="w-40 h-auto rounded-lg" />
+                            <img src="${
+                              newData.aadharBack
+                            }" alt="Aadhar Back" class="w-40 h-auto rounded-lg" />
                             <div class="text-center mt-2 text-sm text-gray-600">Aadhar Back</div>
                         </div>
                     </div>
@@ -269,9 +310,24 @@ function createRegistrationEmailTemplate(newData, timestamp) {
   `;
 }
 
+export function sendResultEmail(student, testId) {
+  return `
+    <html>
+      <body>
+        <p>Dear ${student.name},</p>
+        <p>Your test result has been released. Please log in to view your score and responses.</p>
+        <p><strong>Test ID:</strong> ${testId}</p>
+        <br />
+        <p>Best regards,<br />Admin Team</p>
+      </body>
+    </html>
+  `;
+}
+
+
 export function sendAckEmail(newData) {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-  
+
   const msg = {
     to: newData.email,
     from: "rohit@fullstacklearning.com",
@@ -280,14 +336,14 @@ export function sendAckEmail(newData) {
     attachments: [
       {
         filename: "logo.png",
-        content: LOGO_BASE64.split(',')[1], // Remove data:image/png;base64, part
+        content: LOGO_BASE64.split(",")[1], // Remove data:image/png;base64, part
         type: "image/png",
         disposition: "inline",
-        content_id: "logo"
-      }
-    ]
+        content_id: "logo",
+      },
+    ],
   };
-  
+
   console.log(newData.email);
   sgMail
     .send(msg)
@@ -301,12 +357,27 @@ export function sendAckEmail(newData) {
 
 export function sendDataByEmail(newData) {
   const getDayName = [
-    "Monday", "Tuesday", "Wednesday", "Thursday", 
-    "Friday", "Saturday", "Sunday"
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
   ];
   const getMonthName = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
 
   const dt = new Date();
@@ -316,11 +387,13 @@ export function sendDataByEmail(newData) {
   const year = dt.getFullYear();
   const hour = dt.getHours();
   const min = dt.getMinutes();
-  const timestamp = `${day}, ${date} ${month} ${year} at ${hour}:${min.toString().padStart(2, '0')}`;
+  const timestamp = `${day}, ${date} ${month} ${year} at ${hour}:${min
+    .toString()
+    .padStart(2, "0")}`;
 
   try {
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-    
+
     const msg = {
       to: "rohit@fullstacklearning.com",
       from: "rohit@fullstacklearning.com",
@@ -329,18 +402,20 @@ export function sendDataByEmail(newData) {
       attachments: [
         {
           filename: "logo.png",
-          content: LOGO_BASE64.split(',')[1], // Remove data:image/png;base64, part
+          content: LOGO_BASE64.split(",")[1], // Remove data:image/png;base64, part
           type: "image/png",
           disposition: "inline",
-          content_id: "logo"
-        }
-      ]
+          content_id: "logo",
+        },
+      ],
     };
-    
+
     sgMail
       .send(msg)
       .then(() => {
-        console.log("Enhanced registration notification email sent successfully");
+        console.log(
+          "Enhanced registration notification email sent successfully"
+        );
       })
       .catch((error) => {
         console.error("Error sending registration notification email:", error);
@@ -349,3 +424,48 @@ export function sendDataByEmail(newData) {
     console.log("Error in sendDataByEmail:", error);
   }
 }
+
+const sendSendgridResults = async ({ students, testId }) => {
+  const results = [];
+
+  for (const student of students) {
+    const htmlContent = sendResultEmail(student, testId);
+
+    const msg = {
+      to: student.email,
+      from: "rohit@fullstacklearning.com",
+      subject: "📢 Your Test Result is Released!",
+      html: htmlContent,
+      attachments: [
+        {
+          filename: "logo.png",
+          content: LOGO_BASE64.split(",")[1], // Strip base64 prefix
+          type: "image/png",
+          disposition: "inline",
+          content_id: "logo",
+        },
+      ],
+    };
+
+    try {
+      sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+      const response = await sgMail.send(msg);
+      results.push({ email: student.email, status: "sent", response });
+      console.log(`Email sent to ${student.email}`);
+    } catch (error) {
+      console.error(
+        `Failed to send email to ${student.email}`,
+        error.response?.body || error.message
+      );
+      results.push({
+        email: student.email,
+        status: "failed",
+        error: error.response?.body || error.message,
+      });
+    }
+  }
+
+  return results;
+};
+export default sendSendgridResults;

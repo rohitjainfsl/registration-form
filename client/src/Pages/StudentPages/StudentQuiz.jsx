@@ -79,11 +79,7 @@ function QuizPage() {
     
     try {
       const score = calculateScoreFromRefs();
-      
-      
-        // const data = JSON.stringify({ score });
        const res =   instance.post(`/students/finishQuiz/${quizAttemptIdRef.current}`,{score});
-        // navigator.sendBeacon(url, new Blob([data], { type: 'application/json' }));
       console.log(res);
       
       
