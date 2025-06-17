@@ -10,7 +10,7 @@ const attemptSchema = new Schema({
       questionId: { type: Schema.Types.ObjectId, ref: "Question" },
       selectedOption: { type: String, enum: ['A', 'B', 'C', 'D'] },
       selectedAnswer: { type: String },
-      correct_answer:  { type: Schema.Types.ObjectId, ref: "Question" },
+      correct_answer:  { type: String, ref: "Question" },
       _id: false
     }
   ]
