@@ -26,7 +26,9 @@ function TestScoresPage() {
     async function fetchScores() {
       try {
         const res = await instance.get(`/test/testscore/${id}`);
-        setAttempts(res.data.attempts);
+        console.log(res);
+        
+        setAttempts(res?.data.attempts);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching scores:", error);
