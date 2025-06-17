@@ -21,8 +21,6 @@ function AdminHome() {
   const [newDuration, setNewDuration] = useState("");
   const navigate = useNavigate();
 
-  
-
   useEffect(() => {
     async function fetchTests() {
       try {
@@ -31,7 +29,7 @@ function AdminHome() {
       } catch (error) {
         console.error("Failed to fetch tests", error);
       }
-    } 
+    }
     fetchTests();
   }, []);
 
@@ -97,9 +95,15 @@ function AdminHome() {
             👩‍🎓 View Student Details
           </Button>
         </Col>
-        <Col xs="auto">
-  </Col>
+        <Col xs="auto"></Col>
       </Row>
+      <Button
+        variant="success"
+        className="me-2"
+        onClick={() => navigate(`/admin/seeResult`)}
+      >
+      See Score
+      </Button>
 
       <Table striped bordered hover responsive className="test-table shadow-sm">
         <thead className="table-dark">
@@ -153,13 +157,6 @@ function AdminHome() {
                     onClick={() => handleOpenCopyModal(test)}
                   >
                     📋 Copy
-                  </Button>
-                  <Button
-                    variant="success"
-                    className="me-2"
-                    onClick={() => navigate(`/admin/testScore/${test._id}`)}
-                  >
-                    🧮 Show Scores
                   </Button>
                 </td>
               </tr>
