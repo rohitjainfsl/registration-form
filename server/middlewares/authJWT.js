@@ -9,6 +9,8 @@ const authMiddleware = (...tokenKeys) => (req, res, next) => {
     if (tokenKey === "adminToken") token = req.cookies.adminToken;
     else if (tokenKey === "studentToken") token = req.cookies.studentToken;
 
+
+
     if (token) {
       try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
