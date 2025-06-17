@@ -1,6 +1,11 @@
-
+import sendMailchimpResults from "../services/MailChimp.js";
 import Test from "../models/testModel.js";
 import { cloudinaryUpload } from "../middlewares/cloudinaryUpload.js";
+import attemptQuiz from "../models/QuizAttempt.js";
+import mongoose from "mongoose";
+import studentModel from "../models/studentModel.js"
+import quizAttemptSchema from "../models/QuizAttempt.js"
+import sendSendgridResults from "../services/acknowledgement.js";
 
 export const createTest = async (req, res) => {
   try {
@@ -112,6 +117,177 @@ export const updateTestReleaseStatus = async (req, res) => {
   } catch (error) {
     console.error("Error updating test:", error);
     res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const CopyTest = async (req, res) => {
+  try {
+    const { originalTestId, newTitle, newDuration } = req.body;
+
+    if (!originalTestId || !newTitle || !newDuration) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const originalTest = await Test.findById(originalTestId);
+    if (!originalTest) {
+      return res.status(404).json({ message: "Original test not found" });
+    }
+
+    const copiedTest = new Test({
+      title: newTitle,
+      numQuestions: originalTest.numQuestions,
+      duration: newDuration,
+      questions: originalTest.questions.map((q) => ({
+        question: { ...q.question },
+        options: [...q.options],
+        correct_answer: q.correct_answer,
+        codeSnippet: q.codeSnippet || null,
+      })),
+    });
+
+    await copiedTest.save();
+
+    res.status(201).json({ message: "Test copied successfully", test: copiedTest });
+  } catch (error) {
+    console.error("Error copying test:", error);
+    res.status(500).json({ message: "Internal Server Error", error: error.message });
+  }
+};
+
+export const getTestScores = async (req, res) => {
+  const { testId } = req.params;
+
+  try {
+    const allAttempts = await attemptQuiz.find({
+      "attempts.testId": testId,
+    });
+
+    const attemptList = [];
+
+    allAttempts.forEach((studentAttempt) => {
+      const { studentId, studentName, attempts } = studentAttempt;
+
+      const testAttempt = attempts.find(
+        (a) => a.testId.toString() === testId
+      );
+
+      if (testAttempt) {
+        attemptList.push({
+          studentId,
+          studentName,
+          score: testAttempt.score,
+          startTime: testAttempt.startTime,
+          endTime: testAttempt.endTime,
+        });
+      }
+    });
+
+    res.status(200).json({ attempts: attemptList });
+  } catch (error) {
+    console.error("Error fetching test scores:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+export const TestScoreDetails = async (req, res) => {
+  const { studentId, testId } = req.params;
+
+  try {
+    const attemptDoc = await quizAttemptSchema.findOne({ studentId });
+
+    if (!attemptDoc) {
+      return res.status(404).json({ message: "Attempt not found" });
+    }
+    const matchingAttempt = attemptDoc.attempts.find(
+      (a) => a.testId.toString() === testId
+    );
+
+    if (!matchingAttempt) {
+      return res.status(404).json({ message: "Test attempt not found" });
+    }
+    const test = await Test.findById(testId);
+    if (!test) {
+      return res.status(404).json({ message: "Test not found" });
+    }
+
+    const questionMap = {};
+    test.questions.forEach((q) => {
+      questionMap[q._id.toString()] = q;
+    });
+
+    const responseDetails = matchingAttempt.responses.map((r) => {
+      const question = questionMap[r.questionId.toString()];
+      return {
+        questionText: question?.question?.text || "",
+        questionImage: question?.question?.fileUrl || null,
+        options: question?.options || [],
+        correctAnswer: question?.correct_answer || "",
+        selectedOption: r.selectedOption || "",
+        selectedAnswer: r.selectedAnswer || "", 
+      };
+    });
+
+    res.status(200).json({
+      studentName: attemptDoc.studentName,
+      studentId: attemptDoc.studentId,
+      score: matchingAttempt.score,
+      startTime: matchingAttempt.startTime,
+      endTime: matchingAttempt.endTime,
+      responses: responseDetails,
+    });
+  } catch (error) {
+    console.error("Error fetching score details:", error);
+    res.status(500).json({ message: "Failed to fetch score details", error: error.message });
+  }
+};
+
+export const releaseResultsByMailchimp = async (req, res) => {
+  const { testId } = req.params;
+
+  try {
+    const quizAttempts = await attemptQuiz.find({
+      "attempts.testId": testId
+    });
+
+    if (!quizAttempts.length) {
+      return res.status(404).json({ message: "No attempts found for this test." });
+    }
+
+    const filteredStudentIds = [];
+    const filteredStudentsData = [];
+
+    for (const doc of quizAttempts) {
+      const matchingAttempt = doc.attempts.find(a => a.testId.toString() === testId);
+
+      if (matchingAttempt) {
+        filteredStudentIds.push(doc.studentId);
+        filteredStudentsData.push({
+          studentId: doc.studentId,
+          name: doc.studentName,
+        });
+      }
+    }
+
+    const students = await studentModel.find({
+      _id: { $in: filteredStudentIds }
+    });
+
+    const studentsWithEmail = students.map((student) => {
+      const match = filteredStudentsData.find(s => s.studentId.toString() === student._id.toString());
+      return {
+        email: student.email,
+        name: match?.name || student.name
+      };
+    });
+
+    await sendSendgridResults({ students: studentsWithEmail, testId });
+
+    await Test.findByIdAndUpdate(testId, { result: true });
+
+    res.status(200).json({ message: "Result emails sent to attempted students only." });
+  } catch (error) {
+    console.error("Mailchimp send error:", error);
+    res.status(500).json({ message: "Error sending result emails." });
   }
 };
 

@@ -151,10 +151,15 @@ export async function getQuestion(req, res) {
 
 export async function startQuiz(req, res) {
   try {
-    const token = req.user;
+    // console.log(req);
+    
+    const token = req.firstTimeSignin.id;
     const { testId } = req.params;
+// console.log();
 
-    const user = await studentModel.findById(token.id);
+    // console.log(req.user)
+
+    const user = await studentModel.findById(token);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -164,14 +169,14 @@ export async function startQuiz(req, res) {
       return res.status(404).json({ message: "Test not found" });
     }
 
-    const studentId = token.id;
+    const studentId = token;
     const newAttempt = {
       testId,
       startTime: new Date(),
-      responses: [] // Initialize empty responses array for this attempt
+      responses: []
     };
 
-    let quizAttemptDoc = await QuizAttempt.findOne({ studentId });
+    let quizAttemptDoc = await attemptQuiz.findOne({ studentId });
 
     if (quizAttemptDoc) {
       const alreadyAttempted = quizAttemptDoc.attempts.some(
@@ -191,15 +196,15 @@ export async function startQuiz(req, res) {
         quizAttemptId: latestAttemptId,
       });
     } else {
-      const newQuizAttemptDoc = new QuizAttempt({
+      const newQuizAttemptDoc = new attemptQuiz({
         studentId,
         studentName: user.name,
-        collegeId: user.collegeId,
+        // collegeId: user.collegeId,
         attempts: [newAttempt],
       });
 
       await newQuizAttemptDoc.save();
-
+// console.log(newQuizAttemptDoc);
       return res.status(201).json({
         message: "Quiz attempt started",
         quizAttemptId: newQuizAttemptDoc.attempts[0]._id,
@@ -215,8 +220,10 @@ export async function startQuiz(req, res) {
 export async function submitAnswer(req, res) {
   try {
     const { quizAttemptId, testId } = req.params;
+    console.log(req.params);
+    
     const { questionId, selectedOption, selectedAnswer } = req.body;
-
+// console.log(testId);
     const test = await Test.findById(testId);
     if (!test) return res.status(404).json({ message: "Test not found" });
 
@@ -227,11 +234,11 @@ export async function submitAnswer(req, res) {
     if (!question) return res.status(404).json({ message: "Question not found" });
 
     const correctAnswer = question.correct_answer;
-    console.log(correctAnswer);
+    // console.log(correctAnswer);
     
 
     // Find quiz attempt document
-    const quizAttemptDoc = await QuizAttempt.findOne({
+    const quizAttemptDoc = await attemptQuiz.findOne({
       "attempts._id": quizAttemptId,
     });
 
@@ -280,7 +287,10 @@ export async function submitAnswer(req, res) {
 export async function finishQuiz(req, res) {
   try {
     const { quizAttemptId } = req.params;
+    console.log(quizAttemptId);
+    
     const { score } = req.body;
+console.log(score);
 
     if (typeof score !== "number") {
       return res.status(400).json({ message: "Score must be a number" });
