@@ -80,10 +80,6 @@ function QuizPage() {
     try {
       const score = calculateScoreFromRefs();
        const res =   instance.post(`/students/finishQuiz/${quizAttemptIdRef.current}`,{score});
-      console.log(res);
-      
-      
-      
       isQuizFinishedRef.current = true;
     } catch (err) {
       console.error("Silent finish error:", err);
@@ -303,7 +299,7 @@ function QuizPage() {
       }
 
       const score = calculateScore(responses);
-      const response = await instance.post(`/students/finishQuiz/${quizAttemptId}`, { score });
+      const response = await instance.post(`/students/finishQuiz/${quizAttemptId}, { score }`);
       console.log(response);
 
       showThankYouMessage();
@@ -319,7 +315,7 @@ function QuizPage() {
     setIsQuizFinished(true);
     try {
       const score = calculateScore(responses);
-      await instance.post(`/students/finish-quiz/${quizAttemptId}`, { score });
+      await instance.post(`/students/finish-quiz/${quizAttemptId}, { score }`);
       showThankYouMessage();
     } catch (err) {
       console.error("Time-up submission failed:", err);
@@ -356,7 +352,7 @@ function QuizPage() {
   return (
     <Container className="py-4" style={{ marginTop: "80px" }}>
       <Alert variant="warning" className="mb-3">
-        <Alert.Heading>⚠️ Quiz Security Notice</Alert.Heading>
+        <Alert.Heading>⚠ Quiz Security Notice</Alert.Heading>
         <p className="mb-0">
           <strong>Important:</strong> This quiz is monitored for integrity. 
           Switching tabs, opening new windows, using developer tools, or attempting to copy content 
@@ -366,7 +362,7 @@ function QuizPage() {
 
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h3>Quiz</h3>
-        <span className={`fw-bold ${timeLeft <= 300 ? "text-danger" : ""}`}>
+        <span className={fw-bold `${timeLeft <= 300 ? "text-danger" : ""}`}>
           Time Left: {formatTime(timeLeft)}
         </span>
       </div>

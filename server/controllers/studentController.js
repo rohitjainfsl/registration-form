@@ -407,7 +407,7 @@ export async function getScoresByTest(req, res) {
     }
     
     
-    // console.log(`Found ${students.length} students for test ${testId}`);
+    // console.log(Found ${students.length} students for test ${testId});
     return res.status(200).json(students);
   } catch (error) {
     console.error("Error fetching test scores:", error);
