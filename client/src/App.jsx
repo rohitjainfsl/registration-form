@@ -27,7 +27,7 @@ import ResultPage from "./Pages/StudentPages/ResultPage";
 import Privacy from "./Privacy";
 import ScoreList from "./Pages/AdminPages/ScoreList";
 import TestScoresPage from "./Pages/AdminPages/TestScore";
-import HomeRedirect from "./Pages/Redirect";
+// import HomeRedirect from "./Pages/Redirect";
 
 function App() {
   return (
@@ -39,7 +39,7 @@ function App() {
             <>
               <Header />
               <Navbar />
-              <HomeRedirect />
+              <Home />
             </>
           }
         ></Route>

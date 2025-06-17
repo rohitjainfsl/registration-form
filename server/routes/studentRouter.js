@@ -11,7 +11,7 @@ import {
   deleteManyStudents,
   getScoresByTest,
   getAllScore,
-  StudenAnswer
+  StudenAnswer,
 
 } from "../controllers/studentController.js";
 import { fileArr } from "../middlewares/multer.js";
