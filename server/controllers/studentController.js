@@ -171,7 +171,7 @@ export async function startQuiz(req, res) {
       responses: [] // Initialize empty responses array for this attempt
     };
 
-    let quizAttemptDoc = await QuizAttempt.findOne({ studentId });
+    let quizAttemptDoc = await attemptQuiz.findOne({ studentId });
 
     if (quizAttemptDoc) {
       const alreadyAttempted = quizAttemptDoc.attempts.some(
@@ -191,10 +191,9 @@ export async function startQuiz(req, res) {
         quizAttemptId: latestAttemptId,
       });
     } else {
-      const newQuizAttemptDoc = new QuizAttempt({
+      const newQuizAttemptDoc = new attemptQuiz({
         studentId,
         studentName: user.name,
-        collegeId: user.collegeId,
         attempts: [newAttempt],
       });
 
@@ -409,62 +408,54 @@ export async function getScoresByTest(req, res) {
 }
 
 
-export async function StudenAnswer(req, res) {
+export const StudenAnswer = async (req, res) => {
+  const { studentId, testId } = req.params;
+
   try {
-    const { testId, studentId } = req.params;
+    const attemptDoc = await attemptQuiz.findOne({ studentId });
 
-    // Step 1: Find student's quiz attempt
-    const studentAttemptDoc = await attemptQuiz.findOne({ studentId });
-    if (!studentAttemptDoc)
-      return res.status(404).json({ error: "Student not found" });
-
-    // Step 2: Find the specific test attempt
-    const testAttempt = studentAttemptDoc.attempts.find(
+    if (!attemptDoc) {
+      return res.status(404).json({ message: "Attempt not found" });
+    }
+    const matchingAttempt = attemptDoc.attempts.find(
       (a) => a.testId.toString() === testId
     );
-    if (!testAttempt)
-      return res.status(404).json({ error: "Test attempt not found" });
 
-    // Step 3: Fetch questions used in the test
-    const questionIds = testAttempt.responses.map((r) => r.questionId);
-    const questions = await attemptQuiz.find({ _id: { $in: questionIds } }).lean();
+    if (!matchingAttempt) {
+      return res.status(404).json({ message: "Test attempt not found" });
+    }
+    const test = await Test.findById(testId);
+    if (!test) {
+      return res.status(404).json({ message: "Test not found" });
+    }
 
-    // Step 4: Get test title
-    const test = await Test.findById(testId).lean();
+    const questionMap = {};
+    test.questions.forEach((q) => {
+      questionMap[q._id.toString()] = q;
+    });
 
-    // Step 5: Build answer report
-    const answers = testAttempt.responses.map((response) => {
-      const question = questions.find(
-        (q) => attemptQuiz._id.toString() === response.testid.toString()
-      );
-      console.log(question);
-      
+    const responseDetails = matchingAttempt.responses.map((r) => {
+      const question = questionMap[r.questionId.toString()];
       return {
-        question: {
-          text: question?.text || "Question not found",
-          options: question?.options || [],
-        },
-        selectedOption: response.selectedOption,  
-        selectedAnswer: response.selectedAnswer,
-        correctAnswer: question?.correctOption || "Not available"
+        questionText: question?.question?.text || "",
+        questionImage: question?.question?.fileUrl || null,
+        options: question?.options || [],
+        correctAnswer: question?.correct_answer || "",
+        selectedOption: r.selectedOption || "",
+        selectedAnswer: r.selectedAnswer || "", 
       };
     });
 
-    // Step 6: Send response
-    return res.json({
-      student: {
-        id: studentId,
-        name: studentAttemptDoc.studentName,
-      },
-      test: {
-        id: testId,
-        title: test?.title || "Untitled Test",
-      },
-      answers,
+    res.status(200).json({
+      studentName: attemptDoc.studentName,
+      studentId: attemptDoc.studentId,
+      score: matchingAttempt.score,
+      startTime: matchingAttempt.startTime,
+      endTime: matchingAttempt.endTime,
+      responses: responseDetails,
     });
-
-  } catch (err) {
-    console.error("Error fetching student answers:", err);
-    res.status(500).json({ error: "Internal server error" });
+  } catch (error) {
+    console.error("Error fetching score details:", error);
+    res.status(500).json({ message: "Failed to fetch score details", error: error.message });
   }
-}
+};

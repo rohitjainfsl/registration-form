@@ -41,7 +41,7 @@ function QuizPage() {
   useEffect(() => {
     async function startQuizAndFetchQuestions() {
       try {
-        const { data: startData } = await instance.post(`/students/start-quiz/${testId}`, {},
+        const { data: startData } = await instance.post(`/students/start-quiz/${testId}`,
           { withCredentials: true });
         const quizAttemptId = startData.quizAttemptId;
         setQuizAttemptId(quizAttemptId);

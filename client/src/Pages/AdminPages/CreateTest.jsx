@@ -139,77 +139,73 @@ const handleSubmit = async (e) => {
           />
         </Form.Group>
 
-        {questions.map((q, index) => (
-          <Card className="mb-4" key={index}>
-            <Card.Body>
-              <Card.Title>Question {index + 1}</Card.Title>
+       {questions.map((q, index) => (
+  <Card className="mb-4" key={index}>
+    <Card.Body>
+      <Card.Title>Question {index + 1}</Card.Title>
 
-              <Form.Group className="mb-3">
-                <Form.Label>Text</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={q.text}
-                  onChange={(e) =>
-                    handleQuestionChange(index, "text", e.target.value)
-                  }
-                />
-              </Form.Group>
+      <Form.Group className="mb-3">
+        <Form.Label>Text</Form.Label>
+        <Form.Control
+          type="text"
+          value={q.text}
+          onChange={(e) =>
+            handleQuestionChange(index, "text", e.target.value)
+          }
+        />
+      </Form.Group>
 
-              <Form.Group className="mb-3">
-                <Form.Label>Image (optional)</Form.Label>
-                <Form.Control
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) =>
-                    handleFileChange(index, e.target.files[0])
-                  }
-                />
-              </Form.Group>
+      <Form.Group className="mb-3">
+        <Form.Label>Image (optional)</Form.Label>
+        <Form.Control
+          type="file"
+          accept="image/*"
+          onChange={(e) => handleFileChange(index, e.target.files[0])}
+        />
+      </Form.Group>
 
-              <Row>
-                {q.options.map((opt, i) => (
-                  <Col md={6} key={i}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Option {String.fromCharCode(65 + i)}</Form.Label>
-                      <Form.Control
-                        type="text"
-                        value={opt}
-                        onChange={(e) =>
-                          handleOptionChange(index, i, e.target.value)
-                        }
-                        required
-                      />
-                    </Form.Group>
-                  </Col>
-                ))}
-              </Row>
-
-              <Form.Group className="mb-3">
-                <Form.Label>Correct Answer</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={q.correct_answer}
-                  onChange={(e) =>
-                    handleQuestionChange(index, "correct_answer", e.target.value)
-                  }
-                  required
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>Code Snippet (optional)</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  rows={3}
-                  value={q.codeSnippet}
-                  onChange={(e) =>
-                    handleQuestionChange(index, "codeSnippet", e.target.value)
-                  }
-                />
-              </Form.Group>
-            </Card.Body>
-          </Card>
+      <Row>
+        {q.options.map((opt, i) => (
+          <Col md={6} key={i}>
+            <Form.Group className="mb-3">
+              <Form.Label>Option {String.fromCharCode(65 + i)}</Form.Label>
+              <Form.Control
+                type="text"
+                value={opt}
+                onChange={(e) =>
+                  handleOptionChange(index, i, e.target.value)
+                }
+                required
+              />
+            </Form.Group>
+          </Col>
         ))}
+      </Row>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Correct Answer</Form.Label>
+        <Form.Select
+          value={q.correct_answer}
+          onChange={(e) =>
+            handleQuestionChange(index, "correct_answer", e.target.value)
+          }
+          required
+        >
+          <option value="">Select correct answer</option>
+          {q.options.map(
+            (opt, i) =>
+              opt && (
+                <option key={i} value={opt}>
+                  {opt}
+                </option>
+              )
+          )}
+        </Form.Select>
+      </Form.Group>
+    </Card.Body>
+  </Card>
+))}
+ 
 
         <Button variant="secondary" onClick={handleAddQuestion}>
           Add Another Question
