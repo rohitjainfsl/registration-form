@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+  import React, { useEffect, useState } from "react";
 import {
   Container,
   Button,
@@ -25,66 +25,37 @@ function ResultPage() {
         });
         console.log(res);
         
-        // Flatten all attempts from all quiz attempt documents
-        const allAttempts = [];
-        const testIds = new Set(); // Collect unique test IDs
-        
+        // The new API already returns only released results
         if (res.data && Array.isArray(res.data)) {
-          res.data.forEach(quizDoc => {
-            if (quizDoc.attempts && Array.isArray(quizDoc.attempts)) {
-              quizDoc.attempts.forEach(attempt => {
-                allAttempts.push({
-                  ...attempt,
-                  studentName: quizDoc.studentName,
-                  studentId: quizDoc.studentId,
-                  quizAttemptId: attempt._id,
-                  testId: attempt.testId // Use testId from attempt
-                });
-                testIds.add(attempt.testId); // Collect test ID
-              });
-            }
+          // Transform the data to match the expected format
+          const formattedAttempts = res.data.map(attempt => ({
+            ...attempt,
+            quizAttemptId: attempt._id,
+            // Test details are already included in the response
+            testTitle: attempt.testTitle,
+            testDuration: attempt.testDuration
+          }));
+          
+          setQuizAttempts(formattedAttempts);
+          
+          // Create tests map for display purposes
+          const testsMap = {};
+          formattedAttempts.forEach(attempt => {
+            testsMap[attempt.testId] = {
+              _id: attempt.testId,
+              title: attempt.testTitle,
+              duration: attempt.testDuration,
+              result: true // All returned tests have results released
+            };
           });
+          setTests(testsMap);
         }
-        
-        // Sort by most recent first
-        allAttempts.sort((a, b) => new Date(b.startTime) - new Date(a.startTime));
-        setQuizAttempts(allAttempts);
-        
-        // Fetch test details for all unique test IDs
-        await fetchTestDetails(Array.from(testIds));
         
       } catch (error) {
         console.error("Failed to fetch quiz attempts", error);
         setError("Failed to load quiz results. Please try again.");
       } finally {
         setLoading(false);
-      }
-    }
-
-    async function fetchTestDetails(testIds) {
-      try {
-        // Fetch test details for all test IDs
-        const testPromises = testIds.map(testId => 
-          instance.get(`/tests/${testId}`, { withCredentials: true })
-            .catch(err => {
-              console.error(`Failed to fetch test ${testId}:`, err);
-              return { data: { _id: testId, title: 'Unknown Test', subject: 'N/A' } };
-            })
-        );
-        
-        const testResponses = await Promise.all(testPromises);
-        const testsMap = {};
-        
-        testResponses.forEach(response => {
-          if (response.data) {
-            testsMap[response.data._id] = response.data;
-          }
-        });
-        
-        setTests(testsMap);
-      } catch (error) {
-        console.error("Failed to fetch test details", error);
-        // Don't set error here as it's not critical - we can still show results without test names
       }
     }
 
@@ -122,9 +93,11 @@ function ResultPage() {
         <div>
           <div className="fw-bold">{test.title || 'Untitled Test'}</div>
           <small className="text-muted">
-            {test.subject && `Subject: ${test.subject}`}
-            {test.duration && ` | Duration: ${test.duration} min`}
+            {test.duration && `Duration: ${test.duration} min`}
           </small>
+          <div>
+            <span className="badge bg-success ms-2">Results Released</span>
+          </div>
         </div>
       );
     }
@@ -172,50 +145,53 @@ function ResultPage() {
 
       {quizAttempts.length === 0 ? (
         <Alert variant="info">
-          No quiz attempts found. Take a quiz to see your results here.
+          <Alert.Heading>No Released Results</Alert.Heading>
+          <p className="mb-0">
+            No quiz results have been released yet. Results will appear here once your instructor releases them.
+          </p>
         </Alert>
       ) : (
-        <Table striped bordered hover responsive>
-          <thead>
-            <tr>
-              <th>Test Details</th>
-              <th>Attempt ID</th>
-              <th>Started At</th>
-              <th>Status</th>
-              <th>Score</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {quizAttempts.map((attempt) => (
-              <tr key={attempt._id}>
-                <td style={{ minWidth: '200px' }}>
-                  {getTestDisplay(attempt.testId)}
-                </td>
-                <td>
-                  <code className="text-muted">
-                    {attempt.quizAttemptId?.slice(-8)}...
-                  </code>
-                </td>
-                <td>{formatDate(attempt.startTime)}</td>
-                <td>{getStatusBadge(attempt)}</td>
-                <td>
-                  <strong>{getScoreDisplay(attempt)}</strong>
-                </td>
-                <td>
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    onClick={() => handleViewResult(attempt.quizAttemptId, attempt.testId)}
-                    disabled={!attempt.endTime}
-                  >
-                    {attempt.endTime ? "View Details" : "In Progress"}
-                  </Button>
-                </td>
+        <>
+          <Alert variant="success" className="mb-3">
+            <strong>Results Available!</strong> Your instructor has released the results for {quizAttempts.length} quiz attempt(s).
+          </Alert>
+          <Table striped bordered hover responsive>
+            <thead>
+              <tr>
+                <th>Test Details</th>
+                <th>Started At</th>
+                <th>Status</th>
+                <th>Score</th>
+                <th>Action</th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody>
+              {quizAttempts.map((attempt) => (
+                <tr key={attempt._id}>
+                  <td style={{ minWidth: '200px' }}>
+                    {getTestDisplay(attempt.testId)}
+                  </td>
+                  
+                  <td>{new Date(attempt.startTime).toLocaleDateString('en-GB')}</td>
+                  <td>{getStatusBadge(attempt)}</td>
+                  <td>
+                    <strong>{getScoreDisplay(attempt)}</strong>
+                  </td>
+                  <td>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={() => handleViewResult(attempt.quizAttemptId, attempt.testId)}
+                      disabled={!attempt.endTime}
+                    >
+                      {attempt.endTime ? "View Details" : "In Progress"}
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </>
       )}
     </Container>
   );

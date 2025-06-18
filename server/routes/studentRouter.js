@@ -12,6 +12,8 @@ import {
   getScoresByTest,
   getAllScore,
   StudenAnswer,
+  getStudentQuizAttempts,
+  getStudentQuizAttemptDetail
 
 } from "../controllers/studentController.js";
 import { fileArr } from "../middlewares/multer.js";
@@ -31,6 +33,8 @@ studentRouter.post("/submit-answer/:quizAttemptId/:testId",authMiddleware("stude
 studentRouter.get("/score/test/:testId", getScoresByTest);
 studentRouter.get("/score",getAllScore)
 studentRouter.get("/admin/test/:testId/student/:studentId/answers",authMiddleware("adminToken", "studentToken"),StudenAnswer)
+studentRouter.get('/quiz-attempts', authMiddleware("adminToken", "studentToken"), getStudentQuizAttempts);
+studentRouter.get('/quiz-attempt-detail/:quizAttemptId', authMiddleware("adminToken", "studentToken"), getStudentQuizAttemptDetail);
 
 
 export default studentRouter;

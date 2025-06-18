@@ -1,4 +1,4 @@
-
+// import sendMailchimpResults from "../services/MailChimp.js";
 import Test from "../models/testModel.js";
 import { cloudinaryUpload } from "../middlewares/cloudinaryUpload.js";
 import quizAttemptSchema from "../models/QuizAttempt.js";
