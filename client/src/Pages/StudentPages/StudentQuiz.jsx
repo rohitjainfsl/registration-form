@@ -76,22 +76,8 @@ function QuizPage() {
     
     try {
       const score = calculateScoreFromRefs();
-      
-      if (navigator.sendBeacon) {
-        const data = JSON.stringify({ score });
-        const url = `${instance.defaults.baseURL}/students/finishQuiz/${quizAttemptIdRef.current}`;
-        navigator.sendBeacon(url, new Blob([data], { type: 'application/json' }));
-      } else {
-        await fetch(`${instance.defaults.baseURL}/students/finishQuiz/${quizAttemptIdRef.current}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ score }),
-          keepalive: true
-        });
-      }
-      
+
+       const res =   instance.post(`/students/finishQuiz/${quizAttemptIdRef.current}`,{score});
       isQuizFinishedRef.current = true;
     } catch (err) {
       console.error("Silent finish error:", err);
