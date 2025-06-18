@@ -459,3 +459,137 @@ export const StudenAnswer = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch score details", error: error.message });
   }
 };
+
+
+// Add this new function to your student controller
+
+export async function getStudentQuizAttempts(req, res) {
+  try {
+    const token = req.firstTimeSignin; 
+    const studentId = token.id;
+
+
+    const studentAttempts = await attemptQuiz.findOne({ studentId });
+    
+    if (!studentAttempts || !studentAttempts.attempts.length) {
+      return res.status(200).json([]); 
+    }
+    const testIds = studentAttempts.attempts.map(attempt => attempt.testId);
+
+    const tests = await Test.find({ 
+      _id: { $in: testIds },
+      result: true // Only get tests where results have been released
+    });  
+
+    // Create a map of test IDs for quick lookup
+    const releasedTestIds = new Set(tests.map(test => test._id.toString()));
+
+    // Filter attempts to only include those with released results
+    const releasedAttempts = studentAttempts.attempts.filter(attempt => 
+      releasedTestIds.has(attempt.testId.toString())
+    );
+
+    // Format the response data
+    const formattedAttempts = releasedAttempts.map(attempt => {
+      const test = tests.find(t => t._id.toString() === attempt.testId.toString());
+      return {
+        _id: attempt._id,
+        testId: attempt.testId,
+        testTitle: test?.title || 'Unknown Test',
+        testDuration: test?.duration || 0,
+        startTime: attempt.startTime,
+        endTime: attempt.endTime,
+        score: attempt.score,
+        responses: attempt.responses,
+        studentName: studentAttempts.studentName,
+        studentId: studentAttempts.studentId
+      };
+    });
+
+    // Sort by most recent first
+    formattedAttempts.sort((a, b) => new Date(b.startTime) - new Date(a.startTime));
+
+    return res.status(200).json(formattedAttempts);
+
+  } catch (error) {
+    console.error("Error fetching student quiz attempts:", error);
+    return res.status(500).json({
+      message: "Failed to fetch quiz attempts",
+      error: error.message,
+    });
+  }
+}
+
+// Also add this function to get detailed results for a specific attempt
+export async function getStudentQuizAttemptDetail(req, res) {
+  try {
+    const token = req.firstTimeSignin;
+    const studentId = token.id;
+    const { quizAttemptId } = req.params;
+    // console.log(token);
+
+    // Find the student's quiz attempts
+    const studentAttempts = await attemptQuiz.findOne({ studentId });
+
+    if (!studentAttempts) {
+      return res.status(404).json({ message: "No quiz attempts found" });
+    }
+
+    // Find the specific attempt
+    const attempt = studentAttempts.attempts.id(quizAttemptId);
+
+    if (!attempt) {
+      return res.status(404).json({ message: "Quiz attempt not found" });
+    }
+
+    // Check if results are released for this test
+    const test = await Test.findById(attempt.testId);
+    console.log(test);
+    
+    if (!test) {
+      return res.status(404).json({ message: "Test not found" });
+    }
+
+    if (test.result===false) {
+      return res.status(403).json({ message: "Results not yet released for this test" });
+    }
+
+    // Create question map for detailed responses
+    const questionMap = {};
+    test.questions.forEach((q) => {
+      questionMap[q._id.toString()] = q;
+    });
+
+    const responseDetails = attempt.responses.map((r) => {
+      const question = questionMap[r.questionId.toString()];
+      return {
+        questionText: question?.question?.text || "",
+        questionImage: question?.question?.fileUrl || null,
+        options: question?.options || [],
+        correctAnswer: question?.correct_answer || "",
+        selectedOption: r.selectedOption || "",
+        selectedAnswer: r.selectedAnswer || "",
+        isCorrect: r.selectedAnswer === question?.correct_answer
+      };
+    });
+
+    return res.status(200).json({
+      studentName: studentAttempts.studentName,
+      studentId: studentAttempts.studentId,
+      testTitle: test.title,
+      testDuration: test.duration,
+      score: attempt.score,
+      totalQuestions: attempt.responses.length,
+      startTime: attempt.startTime,
+      endTime: attempt.endTime,
+      responses: responseDetails,
+    });
+
+  } catch (error) {
+    console.error("Error fetching quiz attempt details:", error);
+    return res.status(500).json({
+      message: "Failed to fetch quiz attempt details",
+      error: error.message,
+    });
+  }
+}
