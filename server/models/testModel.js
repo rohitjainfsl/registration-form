@@ -17,7 +17,6 @@ const testSchema = new mongoose.Schema(
     duration: { type: Number, required: true },
     questions: [questionSchema],
     released: { type: Boolean, default: false },
-    result:{type:Boolean, default:false},
   },
   { timestamps: true }
 );

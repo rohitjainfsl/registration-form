@@ -8,15 +8,9 @@ function ProtectedRoute({ children }) {
 
   console.log("akshat")
   useEffect(() => {
-
-    if (!isAuthenticated && !(role === "admin" || role === "student")) {
-  navigate("/student/login");
-}
-else{
-  navigate("/")
-}
-
-
+    if (!isAuthenticated && !role === "admin") {
+      navigate("/admin/login");
+    }
   }, [isAuthenticated]);
 
 

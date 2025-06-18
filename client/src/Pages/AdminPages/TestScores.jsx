@@ -13,7 +13,7 @@ import {
 import instance from "../../axiosConfig";
 
 function TestScoresPage() {
-  const { testId } = useParams(); // using `testId` like your original code
+  const { testId } = useParams(); 
   const [attempts, setAttempts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -26,7 +26,6 @@ function TestScoresPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch all test attempts
         const res = await instance.get(`/students/score/test/${testId}`);
         setAttempts(res.data);
       } catch (err) {
@@ -37,8 +36,7 @@ function TestScoresPage() {
       }
 
       try {
-        // Fetch test title
-        const titleRes = await instance.get(`/test/getTestById/${testId}`);
+        const titleRes = await instance.get(`/test/test/${testId}`);
         setTestTitle(titleRes.data.title);
       } catch (err) {
         console.error("Error fetching test title:", err);
@@ -57,12 +55,10 @@ function TestScoresPage() {
       console.error("Error fetching detailed responses:", error);
     }
   };
-
   const handleClose = () => {
     setShowModal(false);
     setSelectedDetail(null);
   };
-
   const handleReleaseResult = async () => {
     try {
       setEmailStatus("Sending...");

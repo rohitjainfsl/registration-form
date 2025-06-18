@@ -1,10 +1,9 @@
 // import sendMailchimpResults from "../services/MailChimp.js";
 import Test from "../models/testModel.js";
 import { cloudinaryUpload } from "../middlewares/cloudinaryUpload.js";
+import quizAttemptSchema from "../models/QuizAttempt.js";
 import attemptQuiz from "../models/QuizAttempt.js";
-import mongoose from "mongoose";
-import studentModel from "../models/studentModel.js"
-import quizAttemptSchema from "../models/QuizAttempt.js"
+import studentModel from "../models/studentModel.js";
 import sendSendgridResults from "../services/acknowledgement.js";
 
 export const createTest = async (req, res) => {
@@ -120,39 +119,18 @@ export const updateTestReleaseStatus = async (req, res) => {
   }
 };
 
-export const CopyTest = async (req, res) => {
+export const deleteTest = async (req, res)=> {
   try {
-    const { originalTestId, newTitle, newDuration } = req.body;
-
-    if (!originalTestId || !newTitle || !newDuration) {
-      return res.status(400).json({ message: "All fields are required" });
+    const deletedTest = await Test.findByIdAndDelete(req.params.id);
+    if (!deletedTest) {
+      return res.status(404).json({ message: "Test not found" });
     }
-
-    const originalTest = await Test.findById(originalTestId);
-    if (!originalTest) {
-      return res.status(404).json({ message: "Original test not found" });
-    }
-
-    const copiedTest = new Test({
-      title: newTitle,
-      numQuestions: originalTest.numQuestions,
-      duration: newDuration,
-      questions: originalTest.questions.map((q) => ({
-        question: { ...q.question },
-        options: [...q.options],
-        correct_answer: q.correct_answer,
-        codeSnippet: q.codeSnippet || null,
-      })),
-    });
-
-    await copiedTest.save();
-
-    res.status(201).json({ message: "Test copied successfully", test: copiedTest });
+    res.status(200).json({ message: "Test deleted successfully" });
   } catch (error) {
-    console.error("Error copying test:", error);
-    res.status(500).json({ message: "Internal Server Error", error: error.message });
+    console.error("Error deleting test:", error);
+    res.status(500).json({ message: "Failed to delete test", error: error.message });
   }
-};
+}
 
 export const getTestScores = async (req, res) => {
   const { testId } = req.params;
@@ -189,7 +167,7 @@ export const getTestScores = async (req, res) => {
   }
 };
 
-export const TestScoreDetails = async (req, res) => {
+    export const TestScoreDetails = async (req, res) => {
   const { studentId, testId } = req.params;
 
   try {
@@ -290,17 +268,3 @@ export const releaseResultsByMailchimp = async (req, res) => {
     res.status(500).json({ message: "Error sending result emails." });
   }
 };
-
-export const deleteTest = async (req, res)=> {
-  try {
-    const deletedTest = await Test.findByIdAndDelete(req.params.id);
-    if (!deletedTest) {
-      return res.status(404).json({ message: "Test not found" });
-    }
-    res.status(200).json({ message: "Test deleted successfully" });
-  } catch (error) {
-    console.error("Error deleting test:", error);
-    res.status(500).json({ message: "Failed to delete test", error: error.message });
-  }
-}
-
