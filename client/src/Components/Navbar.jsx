@@ -91,7 +91,7 @@ const CustomNavbar = () => {
   const getHomeLink = () => {
     if (isAuthenticated) {
       if (role === "admin") return "/admin/home";
-      if (role === "student") return "/student/panel";
+      if (role === "student") return "/student/studentpanel";
     }
     return "/";
   };
