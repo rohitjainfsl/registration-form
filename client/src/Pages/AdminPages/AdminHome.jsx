@@ -7,8 +7,6 @@ function AdminHome() {
   const [tests, setTests] = useState([]);
   const navigate = useNavigate();
 
-  
-
   useEffect(() => {
     async function fetchTests() {
       try {

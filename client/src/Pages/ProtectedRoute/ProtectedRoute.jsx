@@ -7,10 +7,11 @@ function ProtectedRoute({ children }) {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if(isAuthenticated && role){
     if (!isAuthenticated && !role === "admin") {
       navigate("/admin/login");
-    }
-  }, [isAuthenticated]);
+    }}
+  }, [isAuthenticated,role]);
 
   return isAuthenticated ? children : null;
 }
