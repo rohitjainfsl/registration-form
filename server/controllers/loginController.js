@@ -7,7 +7,6 @@ dotenv.config();
 
 
 export async function studentlogin(req, res) {
-
   const { email, password,role,firstTimesignin } = req.body;
 
   try {
@@ -18,6 +17,7 @@ export async function studentlogin(req, res) {
     }
 
     const user = await studentModel.findOne({ email, password });
+    // console.log(user.role);
   
     if (!user) {
       return res.status(404).json({ message: "Invalid email or password." });
@@ -39,7 +39,7 @@ export async function studentlogin(req, res) {
     return res.status(200).json({
       message: "Login successful",
       role: user.role,
-      firstTimeSignin: user.firstTimesignin 
+      firstTimeSignin: user.firstTimesignin // must be Boolean
     });
   } catch (error) {
     console.error("Login error:", error);

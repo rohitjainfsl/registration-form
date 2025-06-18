@@ -41,10 +41,8 @@ function QuizPage() {
   useEffect(() => {
     async function startQuizAndFetchQuestions() {
       try {
-        const { data: startData } = await instance.post(`/students/start-quiz/${testId}`, 
+        const { data: startData } = await instance.post(`/students/start-quiz/${testId}`,
           { withCredentials: true });
-          console.log(startData);
-          
         const quizAttemptId = startData.quizAttemptId;
         setQuizAttemptId(quizAttemptId);
 
@@ -62,7 +60,6 @@ function QuizPage() {
 
     startQuizAndFetchQuestions();
   }, [testId]);
-// console.log(quizAttemptId);
 
   const calculateScoreFromRefs = useCallback(() => {
     let score = 0;
@@ -79,10 +76,21 @@ function QuizPage() {
     
     try {
       const score = calculateScoreFromRefs();
-       const res =   instance.post(`/students/finishQuiz/${quizAttemptIdRef.current}`,{score});
-      console.log(res);
       
-      
+      if (navigator.sendBeacon) {
+        const data = JSON.stringify({ score });
+        const url = `${instance.defaults.baseURL}/students/finishQuiz/${quizAttemptIdRef.current}`;
+        navigator.sendBeacon(url, new Blob([data], { type: 'application/json' }));
+      } else {
+        await fetch(`${instance.defaults.baseURL}/students/finishQuiz/${quizAttemptIdRef.current}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ score }),
+          keepalive: true
+        });
+      }
       
       isQuizFinishedRef.current = true;
     } catch (err) {
