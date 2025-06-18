@@ -65,7 +65,7 @@ function QuizPage() {
     let score = 0;
     questionsRef.current.forEach((q) => {
       const response = responsesRef.current[q._id];
-      const isCorrect = response && response.selectedOption === q.correct_answer;
+      const isCorrect = response && response.selectedAnswer === q.correct_answer;
       if (isCorrect) score++;
     });
     return score;
@@ -249,6 +249,7 @@ function QuizPage() {
     const { selectedAnswer, selectedOption } = response;
 
     setSubmitting(true);
+
     try {
       await instance.post(`/students/submit-answer/${quizAttemptId}/${testId}`, {
         questionId,
@@ -274,7 +275,9 @@ function QuizPage() {
     let Score = 0;
     questions.forEach((q) => {
       const response = responses[q._id];
-      const isCorrect = response && response.selectedOption === q.correct_answer;
+      const isCorrect =  response.selectedAnswer === q.correct_answer;
+      console.log(isCorrect);
+      
       if (isCorrect) Score++;
     });
     return Score;
