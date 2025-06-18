@@ -7,7 +7,7 @@ dotenv.config();
 
 
 export async function studentlogin(req, res) {
-  const { email, password,role,firstTimesignin } = req.body;
+  const { email, password,role,firstTimesignin} = req.body;
 
   try {
     if (!email || !password) {
@@ -24,7 +24,7 @@ export async function studentlogin(req, res) {
     }
     
     const token = jwt.sign(
-      { id: user._id, role: "student" },
+      { id: user._id, role: "student", loginStatus:user.firstTimesignin},
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
@@ -180,7 +180,7 @@ export const checkToken = (req, res)=>{
       message:`${role} aunthenticated`,
       role,
       user: decoded,
-      // firstTimeSignin:student.firstTimeSignin,
+      // firstTimeSignin:user.firstTimeSignin,
     });
   } catch (error) {
     return res.status(401).json({

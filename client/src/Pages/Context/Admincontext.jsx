@@ -1,10 +1,9 @@
-import { createContext, useState, useEffect} from "react";
+import { createContext, useState, useEffect } from "react";
 import instance from "../../axiosConfig";
 
 export const adminContext = createContext();
 
 export function AdminProvider({ children }) {
-
   const [students, setStudents] = useState([]);
   const [filteredStudents, setFilteredStudents] = useState([]);
   const [visibleCount, setVisibleCount] = useState(10);
@@ -12,9 +11,8 @@ export function AdminProvider({ children }) {
   const [role, setRole] = useState(null);
   const [firstTimeSignin, setFirstTimeSignin] = useState(false);
 
-
   useEffect(() => {
-    checkToken();   
+    checkToken();
   }, []);
 
   const checkToken = async () => {
@@ -22,30 +20,28 @@ export function AdminProvider({ children }) {
       const res = await instance.get("/auth/checkToken", {
         withCredentials: true,
       });
-      
-      if (res.status === 200) {   
+
+      if (res.status === 200) {
         setIsAuthenticated(true);
         setRole(res.data.role);
-        setFirstTimeSignin(res.data.firstTimeSignin || false);
-        
+        setFirstTimeSignin(res.data.user.loginStatus);
+        // console.log(res.data.user.loginStatus)
       }
     } catch (error) {
       console.error(error);
       setIsAuthenticated(false);
       setRole(null);
     }
-  };  
+  };
 
-  
   const LogOut = async () => {
     try {
-      const res = await instance.post("/auth/logout", { withCredentials: true });
-        setIsAuthenticated(false);
-        setRole(null);
-
-        // console.log(isAuthenticated)
-
-        console.log(res.status);
+      const res = await instance.post("/auth/logout", {
+        withCredentials: true,
+      });
+      setIsAuthenticated(false);
+      setRole(null);
+      console.log(res.status);
     } catch (error) {
       console.error("Logout failed:", error);
     }
@@ -68,7 +64,6 @@ export function AdminProvider({ children }) {
         LogOut,
         firstTimeSignin,
         setFirstTimeSignin,
-
       }}
     >
       {children}

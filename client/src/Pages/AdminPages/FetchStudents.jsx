@@ -157,7 +157,7 @@ const handleDeleteSelected = async () => {
   }
 
   return (
-    <Container className="mt-5" style={{marginTop:"150px"}}>
+    <Container >
       <h3 className="mb-3">Registered Students</h3>
 
       <Form className="mb-4">
