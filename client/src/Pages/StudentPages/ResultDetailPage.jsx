@@ -26,9 +26,7 @@ function ResultDetailPage() {
         const res = await instance.get(`/students/quiz-attempt-detail/${quizAttemptId}`, {
           withCredentials: true
         });
-        
         setResultDetail(res.data);
-        
       } catch (error) {
         console.error("Failed to fetch result details", error);
         if (error.response?.status === 403) {

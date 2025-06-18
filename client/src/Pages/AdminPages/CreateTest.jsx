@@ -1,9 +1,13 @@
 import { useState } from "react";
 import { Form, Button, Col, Row, Card, Container } from "react-bootstrap";
 import instance from "../../axiosConfig";
+import { useNavigate } from "react-router-dom";
+
 
 const CreateTestForm = () => {
   const [title, setTitle] = useState("");
+    const navigate = useNavigate();
+  
   const [numQuestions, setNumQuestions] = useState(1);
   const [duration, setDuration] = useState(60);
   const [questions, setQuestions] = useState([
@@ -211,7 +215,7 @@ const handleSubmit = async (e) => {
           Add Another Question
         </Button>
 
-        <Button variant="primary" type="submit" className="ms-3">
+        <Button variant="primary" type="submit" className="ms-3" onClick={() => navigate("/admin/home")}>
           Create Test
         </Button>
       </Form>
