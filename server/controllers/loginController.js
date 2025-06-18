@@ -69,7 +69,6 @@ export async function changePassword(req, res) {
   }
 }
 
-// login
 
 export const adminLogin = async (req, res) => {
   try {
@@ -158,8 +157,6 @@ export const checkToken = (req, res)=>{
   const {adminToken, studentToken} = req.cookies;
   let token = null;
   let role = null;
-      // console.log(process.env.SAMESITE)
-
   if(adminToken)
   {
     token = adminToken;
@@ -180,7 +177,6 @@ export const checkToken = (req, res)=>{
       message:`${role} aunthenticated`,
       role,
       user: decoded,
-      // firstTimeSignin:user.firstTimeSignin,
     });
   } catch (error) {
     return res.status(401).json({
