@@ -157,7 +157,7 @@ const handleDeleteSelected = async () => {
   }
 
   return (
-    <Container className="mt-5">
+    <Container className="mt-5" style={{marginTop:"150px"}}>
       <h3 className="mb-3">Registered Students</h3>
 
       <Form className="mb-4">
@@ -199,7 +199,6 @@ const handleDeleteSelected = async () => {
     <tr>
       <th>#</th>
       <th>Name</th>
-      <th>Action</th>
       <th>Select</th>
     </tr>
   </thead>
@@ -207,18 +206,7 @@ const handleDeleteSelected = async () => {
     {studentsToDisplay.map((student, index) => (
       <tr key={student._id}>
         <td>{index + 1}</td>
-        <td>{student.name}</td>
-        <td>
-          <Button
-            variant="primary"
-            onClick={() => {
-              sessionStorage.setItem("scrollY", window.scrollY);
-              navigate(`/getStudents/${student._id}`);
-            }}
-          >
-            View
-          </Button>
-        </td>
+        <td><a href={`/getStudents/${student._id}`}>{student.name}</a></td>
         <td>
           <Form.Check
             type="checkbox"
