@@ -1,9 +1,17 @@
-import { useState } from "react";
-import { Form, Button, Container, Card, Alert, Row, Col } from "react-bootstrap";
+import { useContext, useState } from "react";
+import {
+  Form,
+  Button,
+  Container,
+  Card,
+  Alert,
+  Row,
+  Col,
+} from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import instance from "../../axiosConfig";
 import "../../styles/changePassword.css";
-
+  
 function ChangePassword() {
   const [email, setEmail] = useState("");
   const [oldPassword, setOldPassword] = useState("");
@@ -14,24 +22,18 @@ function ChangePassword() {
   const handleChangePassword = async (e) => {
     e.preventDefault();
     try {
-
       const response = await instance.post("/auth/changePassword", {
-
-
         email,
         password: oldPassword,
         newPassword,
       });
 
-console.log(response);
-
+      console.log(response);
 
       if (response.status === 200) {
         setMessage(response.data.message);
         setTimeout(() => {
-
           navigate("/student/studentpanel");
-
         }, 2000);
       } else {
         setMessage(response.data.message);

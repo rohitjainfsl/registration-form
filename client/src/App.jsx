@@ -29,7 +29,6 @@ import Privacy from "./Privacy";
 import TestScores from "./Pages/AdminPages/TestScores"
 import ScoreList from "./Pages/AdminPages/ScoreList";
 import AllTests from  "./Pages/AdminPages/AllTests"
-import StudentAnswer from "./Pages/AdminPages/StudentAnswer"
 import StudentAnswers from "./Pages/AdminPages/StudentAnswer";
 import ResultDetailPage from "./Pages/StudentPages/ResultDetailPage";
 

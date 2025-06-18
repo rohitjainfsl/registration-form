@@ -295,7 +295,7 @@ export function sendAckEmail(newData) {
     attachments: [
       {
         filename: "logo.png",
-        content: LOGO_BASE64.split(',')[1], // Remove data:image/png;base64, part
+        content: LOGO_BASE64.split(',')[1], 
         type: "image/png",
         disposition: "inline",
         content_id: "logo"

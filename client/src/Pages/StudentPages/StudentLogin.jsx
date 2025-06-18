@@ -50,10 +50,8 @@ function StudentLogin() {
   setMessage(message);
   setIsAuthenticated(true);
   setRole("student");
-  setFirstTimeSignin(firstTimeSignin); // update context
+  setFirstTimeSignin(firstTimeSignin)
   console.log(firstTimeSignin);
-  
-  localStorage.setItem("firstTimesignin", firstTimeSignin); // optional
 
   if (firstTimeSignin) navigate("/student/changePassword");
   else navigate("/student/studentpanel");
