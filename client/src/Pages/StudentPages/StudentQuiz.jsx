@@ -76,6 +76,7 @@ function QuizPage() {
     
     try {
       const score = calculateScoreFromRefs();
+
        const res =   instance.post(`/students/finishQuiz/${quizAttemptIdRef.current}`,{score});
       isQuizFinishedRef.current = true;
     } catch (err) {
