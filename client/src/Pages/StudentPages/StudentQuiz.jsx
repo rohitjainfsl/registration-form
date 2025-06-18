@@ -41,10 +41,8 @@ function QuizPage() {
   useEffect(() => {
     async function startQuizAndFetchQuestions() {
       try {
-        const { data: startData } = await instance.post(`/students/start-quiz/${testId}`, 
+        const { data: startData } = await instance.post(`/students/start-quiz/${testId}`,
           { withCredentials: true });
-          console.log(startData);
-          
         const quizAttemptId = startData.quizAttemptId;
         setQuizAttemptId(quizAttemptId);
 
@@ -62,7 +60,6 @@ function QuizPage() {
 
     startQuizAndFetchQuestions();
   }, [testId]);
-// console.log(quizAttemptId);
 
   const calculateScoreFromRefs = useCallback(() => {
     let score = 0;
@@ -79,11 +76,8 @@ function QuizPage() {
     
     try {
       const score = calculateScoreFromRefs();
+
        const res =   instance.post(`/students/finishQuiz/${quizAttemptIdRef.current}`,{score});
-      console.log(res);
-      
-      
-      
       isQuizFinishedRef.current = true;
     } catch (err) {
       console.error("Silent finish error:", err);
