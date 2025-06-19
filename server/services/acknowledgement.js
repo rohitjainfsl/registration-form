@@ -271,16 +271,43 @@ function createRegistrationEmailTemplate(newData, timestamp) {
 export function sendResultEmail(student, testTitle) {
   return `
     <html>
-      <body>
-        <p>Dear ${student.name},</p>
-        <p>Your test result has been released. Please log in to view your score and responses.</p>
-        <p><strong>Test:</strong> ${testTitle}</p>
-        <br />
-        <p>Best regards,<br />Admin Team</p>
+      <body style="font-family: Arial, sans-serif; background-color: #f5f7fa; margin: 0; padding: 0;">
+        <table align="center" width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.05); margin-top: 40px;">
+          <tr>
+            <td style="padding: 20px 30px; text-align: center; background-color: #004aad; color: #ffffff; border-top-left-radius: 8px; border-top-right-radius: 8px;">
+              <h2 style="margin: 0;">Test Result Notification</h2>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 30px;">
+              <p style="font-size: 16px; color: #333333;">Dear <strong>${student.name}</strong>,</p>
+              <p style="font-size: 16px; color: #333333;">
+                We hope you're doing well. Your test result has been released. Please log in to your dashboard to view your score and detailed responses.
+              </p>
+              <p style="font-size: 16px; color: #333333;"><strong>Test:</strong> ${testTitle}</p>
+              <div style="margin: 20px 0;">
+                <a href="https://registration-form-1-mbw5.onrender.com/student/result" style="background-color: #004aad; color: #ffffff; padding: 10px 20px; border-radius: 4px; text-decoration: none; font-weight: bold;">View Result</a>
+              </div>
+              <p style="font-size: 14px; color: #777777;">
+                If you have any questions or concerns, feel free to reach out to us.
+              </p>
+              <p style="font-size: 16px; color: #333333;">
+                Best regards,<br/>
+                <strong>Admin Team</strong>
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 15px; text-align: center; font-size: 12px; color: #999999; background-color: #f0f0f0; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;">
+              © ${new Date().getFullYear()} Your Institute Name. All rights reserved.
+            </td>
+          </tr>
+        </table>
       </body>
     </html>
   `;
 }
+
 
 
 
