@@ -28,7 +28,7 @@ import ResultPage from "./Pages/StudentPages/ResultPage";
 import Privacy from "./Privacy";
 import TestScores from "./Pages/AdminPages/TestScores"
 import ScoreList from "./Pages/AdminPages/ScoreList";
-import AllTests from  "./Pages/AdminPages/AllTests"
+import AllTests from "./Pages/AdminPages/AllTests"
 import StudentAnswers from "./Pages/AdminPages/StudentAnswer";
 import ResultDetailPage from "./Pages/StudentPages/ResultDetailPage";
 
@@ -268,9 +268,12 @@ function App() {
 
           }
         ></Route>
-        <Route path="/admin/tests" element={<AllTests />} ></Route>
-        <Route path="/admin/test/:testId/scores" element={<TestScores />} ></Route>
-        <Route path="/admin/test/:testId/student/:studentId" element={<StudentAnswers />} />
+        <Route path="/admin/tests" element={<>
+          <Navbar /><AllTests /></>} ></Route>
+        <Route path="/admin/test/:testId/scores" element={<>
+          <Navbar /><TestScores /></>} ></Route>
+        <Route path="/admin/test/:testId/student/:studentId" element={<>
+          <Navbar /><StudentAnswers /></>} />
 
 
       </Routes>,

@@ -103,21 +103,21 @@ const handleBeforeUnload = useCallback((event) => {
     }
   }, [finishQuizSilently]);
 
- const handleVisibilityChange = useCallback(() => {
-  if (document.visibilityState === 'hidden' && !isQuizFinishedRef.current && quizAttemptIdRef.current) {
-    finishQuizSilently("User switched tab or minimized window");
-  }
-}, [finishQuizSilently]);
+  const handleVisibilityChange = useCallback(() => {
+    if (document.visibilityState === 'hidden' && !isQuizFinishedRef.current && quizAttemptIdRef.current) {
+      finishQuizSilently();
+    }
+  }, [finishQuizSilently]);
 
-const handleWindowBlur = useCallback(() => {
-  if (!isQuizFinishedRef.current && quizAttemptIdRef.current) {
-    finishQuizSilently("User switched window or lost focus");
-  }
-}, [finishQuizSilently]);
+  const handleWindowBlur = useCallback(() => {
+    if (!isQuizFinishedRef.current && quizAttemptIdRef.current) {
+      finishQuizSilently();
+    }
+  }, [finishQuizSilently]);
+
 
   const handleWindowFocus = useCallback(() => {
     if (isQuizFinishedRef.current) {
-      console.log('Quiz was already finished due to tab switching');
     }
   }, []);
 
@@ -276,7 +276,6 @@ const handlePopState = useCallback((event) => {
     questions.forEach((q) => {
       const response = responses[q._id];
       const isCorrect =  response.selectedAnswer === q.correct_answer;
-      console.log(isCorrect);
       
       if (isCorrect) Score++;
     });
@@ -301,7 +300,6 @@ const handlePopState = useCallback((event) => {
 
       const score = calculateScore(responses);
       const response = await instance.post(`/students/finishQuiz/${quizAttemptId}`, { score });
-      console.log(response);
 
       showThankYouMessage();
     } catch (err) {

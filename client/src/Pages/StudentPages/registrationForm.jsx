@@ -58,7 +58,6 @@ function UserForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form data before submit:", formElements);
 
     try {
       setLoading(true);
@@ -120,7 +119,6 @@ function UserForm() {
 
   const termsCondition = () => {
     setModalOpen(true);
-    console.log(modalOpen);
   };
 
 

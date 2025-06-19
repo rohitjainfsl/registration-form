@@ -303,7 +303,6 @@ export function sendAckEmail(newData) {
     ]
   };
   
-  console.log(newData.email);
   sgMail
     .send(msg)
     .then(() => {
@@ -393,7 +392,6 @@ const sendSendgridResults = async ({ students, testId }) => {
 
       const response = await sgMail.send(msg);
       results.push({ email: student.email, status: "sent", response });
-      console.log(`Email sent to ${student.email}`);
     } catch (error) {
       console.error(
         `Failed to send email to ${student.email}`,
