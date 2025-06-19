@@ -211,6 +211,7 @@ export const getTestScores = async (req, res) => {
       startTime: matchingAttempt.startTime,
       endTime: matchingAttempt.endTime,
       responses: responseDetails,
+      finishReason:matchingAttempt.finishReason,
     });
   } catch (error) {
     console.error("Error fetching score details:", error);

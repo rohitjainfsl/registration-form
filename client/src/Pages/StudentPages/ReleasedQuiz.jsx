@@ -3,6 +3,7 @@ import {
   Container,
   Button,
   Table,
+  Alert,
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import instance from "../../axiosConfig";
@@ -33,7 +34,16 @@ function StudentPanel() {
     navigate("/student/result"); 
   };
   return (
+    
     <Container className="py-4" style={{marginTop:"100px"}}>
+       <Alert variant="warning" className="mb-3">
+        <Alert.Heading>⚠️ Quiz Security Notice</Alert.Heading>
+        <p className="mb-0">
+          <strong>Important:</strong> This quiz is monitored for integrity. 
+          Switching tabs, opening new windows, using developer tools, or attempting to copy content 
+          will automatically submit your quiz with the current score.
+        </p>
+      </Alert>
     <div className="d-flex align-items-center justify-content-between mb-3">
   <h2 className="mb-0">Available Tests</h2>
    <button className="btn btn-warning" onClick={goToResultPage}>Result</button>

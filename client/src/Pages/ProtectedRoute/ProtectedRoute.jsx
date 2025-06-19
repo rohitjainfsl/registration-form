@@ -6,11 +6,10 @@ function ProtectedRoute({ children }) {
   const { isAuthenticated, role } = useContext(adminContext);
   const navigate = useNavigate();
 
-  console.log("akshat")
   useEffect(() => {
     if(isAuthenticated && role){
     if (!isAuthenticated && !role === "admin") {
-      navigate("/admin/login");
+      navigate("/student/login");
     }}
   }, [isAuthenticated,role]);
 
