@@ -71,26 +71,31 @@ function QuizPage() {
     return score;
   }, []);
 
-  const finishQuizSilently = useCallback(async () => {
-    if (isQuizFinishedRef.current || !quizAttemptIdRef.current) return;
-    
-    try {
-      const score = calculateScoreFromRefs();
+const finishQuizSilently = useCallback(async (reason = "Auto submission") => {
+  if (isQuizFinishedRef.current || !quizAttemptIdRef.current) return;
 
-       const res =   instance.post(`/students/finishQuiz/${quizAttemptIdRef.current}`,{score});
-      isQuizFinishedRef.current = true;
-    } catch (err) {
-      console.error("Silent finish error:", err);
-    }
-  }, [calculateScoreFromRefs]);
+  try {
+    const score = calculateScoreFromRefs();
+    await instance.post(`/students/finishQuiz/${quizAttemptIdRef.current}`, {
+      score,
+      reason,
+    });
+    isQuizFinishedRef.current = true;
+    setShowThankYou(true);
+    setTimeout(() => navigate("/student/studentpanel"), 3000);
+  } catch (err) {
+    console.error("Silent finish error:", err);
+  }
+}, [calculateScoreFromRefs, navigate]);
 
-  const handleBeforeUnload = useCallback((event) => {
-    if (!isQuizFinishedRef.current && quizAttemptIdRef.current) {
-      event.preventDefault();
-      event.returnValue = 'You have an active quiz. Are you sure you want to leave?';
-      finishQuizSilently();
-    }
-  }, [finishQuizSilently]);
+
+const handleBeforeUnload = useCallback((event) => {
+  if (!isQuizFinishedRef.current && quizAttemptIdRef.current) {
+    event.preventDefault();
+    event.returnValue = 'You have an active quiz. Are you sure you want to leave?';
+    finishQuizSilently("Page refreshed or closed");
+  }
+}, [finishQuizSilently]);
 
   const handleUnload = useCallback(() => {
     if (!isQuizFinishedRef.current && quizAttemptIdRef.current) {
@@ -98,19 +103,17 @@ function QuizPage() {
     }
   }, [finishQuizSilently]);
 
-  const handleVisibilityChange = useCallback(() => {
-    if (document.visibilityState === 'hidden' && !isQuizFinishedRef.current && quizAttemptIdRef.current) {
-      console.log('Tab switched or window minimized - finishing quiz');
-      finishQuizSilently();
-    }
-  }, [finishQuizSilently]);
+ const handleVisibilityChange = useCallback(() => {
+  if (document.visibilityState === 'hidden' && !isQuizFinishedRef.current && quizAttemptIdRef.current) {
+    finishQuizSilently("User switched tab or minimized window");
+  }
+}, [finishQuizSilently]);
 
-  const handleWindowBlur = useCallback(() => {
-    if (!isQuizFinishedRef.current && quizAttemptIdRef.current) {
-      console.log('Window lost focus - finishing quiz');
-      finishQuizSilently();
-    }
-  }, [finishQuizSilently]);
+const handleWindowBlur = useCallback(() => {
+  if (!isQuizFinishedRef.current && quizAttemptIdRef.current) {
+    finishQuizSilently("User switched window or lost focus");
+  }
+}, [finishQuizSilently]);
 
   const handleWindowFocus = useCallback(() => {
     if (isQuizFinishedRef.current) {
@@ -118,15 +121,14 @@ function QuizPage() {
     }
   }, []);
 
-  const handleDevToolsOpen = useCallback(() => {
-    if (!isQuizFinishedRef.current && quizAttemptIdRef.current) {
-      const threshold = 160; // Threshold for detecting devtools
-      if (window.outerHeight - window.innerHeight > threshold || 
-          window.outerWidth - window.innerWidth > threshold) {
-        finishQuizSilently();
-      }
-    }
-  }, [finishQuizSilently]);
+const handleDevToolsOpen = useCallback(() => {
+  const threshold = 160;
+  if (!isQuizFinishedRef.current && quizAttemptIdRef.current &&
+      (window.outerHeight - window.innerHeight > threshold || 
+       window.outerWidth - window.innerWidth > threshold)) {
+    finishQuizSilently("Developer tools opened");
+  }
+}, [finishQuizSilently]);
 
   const handleContextMenu = useCallback((event) => {
     if (!isQuizFinishedRef.current && quizAttemptIdRef.current) {
@@ -166,21 +168,19 @@ function QuizPage() {
     }
   }, [finishQuizSilently]);
 
-  const handlePopState = useCallback((event) => {
-    if (!isQuizFinishedRef.current && quizAttemptIdRef.current) {
-      event.preventDefault();
-      const confirmLeave = window.confirm('You have an active quiz. Leaving will automatically submit your quiz. Do you want to continue?');
-      
-      if (confirmLeave) {
-        finishQuizSilently();
-        setTimeout(() => {
-          window.history.back();
-        }, 100);
-      } else {
-        window.history.pushState(null, null, window.location.pathname);
-      }
+const handlePopState = useCallback((event) => {
+  if (!isQuizFinishedRef.current && quizAttemptIdRef.current) {
+    const confirmLeave = window.confirm("Leaving will auto-submit your quiz. Continue?");
+    if (confirmLeave) {
+      finishQuizSilently("User pressed back button");
+      setTimeout(() => {
+        window.history.back();
+      }, 100);
+    } else {
+      window.history.pushState(null, null, window.location.pathname);
     }
-  }, [finishQuizSilently]);
+  }
+}, [finishQuizSilently]);
 
   useEffect(() => {
     window.addEventListener('beforeunload', handleBeforeUnload);
@@ -352,15 +352,7 @@ function QuizPage() {
 
   return (
     <Container className="py-4" style={{ marginTop: "80px" }}>
-      <Alert variant="warning" className="mb-3">
-        <Alert.Heading>⚠️ Quiz Security Notice</Alert.Heading>
-        <p className="mb-0">
-          <strong>Important:</strong> This quiz is monitored for integrity. 
-          Switching tabs, opening new windows, using developer tools, or attempting to copy content 
-          will automatically submit your quiz with the current score.
-        </p>
-      </Alert>
-
+     
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h3>Quiz</h3>
         <span className={`fw-bold ${timeLeft <= 300 ? "text-danger" : ""}`}>

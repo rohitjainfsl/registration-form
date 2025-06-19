@@ -14,7 +14,6 @@ export function AdminProvider({ children }) {
   useEffect(() => {
     checkToken();
   }, []);
-
   const checkToken = async () => {
     try {
       const res = await instance.get("/auth/checkToken", {
@@ -25,7 +24,6 @@ export function AdminProvider({ children }) {
         setIsAuthenticated(true);
         setRole(res.data.role);
         setFirstTimeSignin(res.data.user.loginStatus);
-        // console.log(res.data.user.loginStatus)
       }
     } catch (error) {
       console.error(error);
