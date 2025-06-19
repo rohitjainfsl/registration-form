@@ -269,17 +269,15 @@ export async function submitAnswer(req, res) {
   }
 }
 
-
 export async function finishQuiz(req, res) {
   try {
     const { quizAttemptId } = req.params;
-    const { score } = req.body;
+    const { score, reason } = req.body; 
 
     if (typeof score !== "number") {
       return res.status(400).json({ message: "Score must be a number" });
     }
 
-    // Find the document containing the attempt
     const quizAttemptDoc = await attemptQuiz.findOne({
       "attempts._id": quizAttemptId,
     });
@@ -288,19 +286,19 @@ export async function finishQuiz(req, res) {
       return res.status(404).json({ message: "Quiz attempt not found" });
     }
 
-    // Find the specific attempt
     const attempt = quizAttemptDoc.attempts.id(quizAttemptId);
 
     if (!attempt) {
       return res.status(404).json({ message: "Attempt not found" });
     }
-    // Check if quiz is already finished
+
     if (attempt.endTime) {
       return res.status(400).json({ message: "Quiz already completed" });
     }
 
     attempt.endTime = new Date();
     attempt.score = score;
+    attempt.finishReason = reason || "Manual submission"; 
 
     await quizAttemptDoc.save();
 
@@ -310,6 +308,7 @@ export async function finishQuiz(req, res) {
     return res.status(500).json({ message: "Error finishing quiz", error: error.message });
   }
 }
+
 
 
 export async function deleteManyStudents(req, res) {

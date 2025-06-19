@@ -18,8 +18,6 @@ function StudentLogin() {
   setIsAuthenticated,
   role,
   setRole,
-  firstTimeSignin,
-  setFirstTimeSignin,
 } = useContext(adminContext);
 
   const [email, setEmail] = useState("");
@@ -45,11 +43,14 @@ function StudentLogin() {
       if (response.status === 200) {
 
   const { message,firstTimeSignin} = response.data;
+
   setMessage(message);
-  setIsAuthenticated(true);
+  setIsAuthenticated(response.data.loginStatus);
   setRole("student");
+
   setFirstTimeSignin(firstTimeSignin)
   if (firstTimeSignin) navigate("/student/changePassword");
+
   else navigate("/student/studentpanel");
 } else {
         setMessage(response.data.message);

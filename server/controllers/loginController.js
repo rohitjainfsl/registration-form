@@ -38,7 +38,7 @@ export async function studentlogin(req, res) {
     return res.status(200).json({
       message: "Login successful",
       role: user.role,
-      firstTimeSignin: user.firstTimesignin // must be Boolean
+      loginStatus: user.firstTimesignin 
     });
   } catch (error) {
     console.error("Login error:", error);
@@ -51,7 +51,7 @@ export async function changePassword(req, res) {
   const { email, password, newPassword } = req.body;
   
   try {
-    const user = await studentModel.findOne({ email, password: password });
+    const user = await studentModel.findOne({ email, password: password});
     
     if (!user) {
       return res.status(400).json({ message: "Old password is incorrect." });
@@ -177,6 +177,7 @@ export const checkToken = (req, res)=>{
       message:`${role} aunthenticated`,
       role,
       user: decoded,
+      // loginStatus:firstTimesignin,
     });
   } catch (error) {
     return res.status(401).json({

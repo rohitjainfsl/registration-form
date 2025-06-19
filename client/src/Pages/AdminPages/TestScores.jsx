@@ -13,7 +13,7 @@ import {
 import instance from "../../axiosConfig";
 
 function TestScoresPage() {
-  const { testId } = useParams(); 
+  const { testId } = useParams();
   const [attempts, setAttempts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -21,7 +21,7 @@ function TestScoresPage() {
   const [emailStatus, setEmailStatus] = useState("");
   const [testTitle, setTestTitle] = useState("");
 
-  const formatDateTime = (date) => new Date(date).toLocaleString();
+  // const formatDateTime = (date) => new Date(date).toLocaleString();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,12 +47,14 @@ function TestScoresPage() {
     };
     fetchData();
   }, [testId]);
-
   const handleViewDetails = async (studentId) => {
     try {
-      const res = await instance.get(`/test/scoreDetails/${studentId}/${testId}`);
+      const res = await instance.get(
+        `/test/scoreDetails/${studentId}/${testId}`
+      );
       setSelectedDetail(res.data);
       setShowModal(true);
+      console.log(res.data)
     } catch (error) {
       console.error("Error fetching detailed responses:", error);
     }
@@ -125,8 +127,10 @@ function TestScoresPage() {
                 <td>{student.studentName}</td>
              
                 <td>{student.score}</td>
+
                <td>{new Date(student.startTime).toLocaleString('en-GB')}</td>
 <td>{new Date(student.endTime).toLocaleString('en-GB')}</td>
+
 
                 <td>
                   <Button
@@ -149,6 +153,11 @@ function TestScoresPage() {
           <Modal.Title>
             🧾 {selectedDetail?.studentName}'s Answers | Score:{" "}
             {selectedDetail?.score} / {selectedDetail?.responses?.length}
+            <br />
+            🕵️‍♂️ Finish Reason:{" "}
+            <span className="text-primary">
+              {selectedDetail?.finishReason || "N/A"}
+            </span>
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
