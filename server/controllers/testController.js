@@ -231,6 +231,11 @@ export const releaseResultsByMailchimp = async (req, res) => {
       return res.status(404).json({ message: "No attempts found for this test." });
     }
 
+    const test = await Test.findById(testId);
+    if (!test) {
+      return res.status(404).json({ message: "Test not found." });
+    }
+
     const filteredStudentIds = [];
     const filteredStudentsData = [];
 
@@ -258,7 +263,8 @@ export const releaseResultsByMailchimp = async (req, res) => {
       };
     });
 
-    await sendSendgridResults({ students: studentsWithEmail, testId });
+    // ✅ Pass test.title instead of testId
+    await sendSendgridResults({ students: studentsWithEmail, testTitle: test.title });
 
     await Test.findByIdAndUpdate(testId, { result: true });
 
