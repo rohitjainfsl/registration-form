@@ -90,7 +90,6 @@ function createAckEmailTemplate(password) {
   `;
 }
 
-// Enhanced registration notification email template with Tailwind CSS
 function createRegistrationEmailTemplate(newData, timestamp) {
   return `
     <!DOCTYPE html>
@@ -269,19 +268,20 @@ function createRegistrationEmailTemplate(newData, timestamp) {
   `;
 }
 
-export function sendResultEmail(student, testId) {
+export function sendResultEmail(student, testTitle) {
   return `
     <html>
       <body>
         <p>Dear ${student.name},</p>
         <p>Your test result has been released. Please log in to view your score and responses.</p>
-        <p><strong>Test ID:</strong> ${testId}</p>
+        <p><strong>Test:</strong> ${testTitle}</p>
         <br />
         <p>Best regards,<br />Admin Team</p>
       </body>
     </html>
   `;
 }
+
 
 
 export function sendAckEmail(newData) {
@@ -364,27 +364,17 @@ export function sendDataByEmail(newData) {
   }
 }
 
-
-const sendSendgridResults = async ({ students, testId }) => {
+const sendSendgridResults = async ({ students, testTitle }) => {
   const results = [];
 
   for (const student of students) {
-    const htmlContent = sendResultEmail(student, testId);
+    const htmlContent = sendResultEmail(student, testTitle); // use testTitle here
 
     const msg = {
       to: student.email,
       from: "rohit@fullstacklearning.com",
-      subject: "📢 Your Test Result is Released!",
+      subject: `📢 Your Result for "${testTitle}" is Released!`,
       html: htmlContent,
-      attachments: [
-        {
-          filename: "logo.png",
-          content: LOGO_BASE64.split(",")[1], // Strip base64 prefix
-          type: "image/png",
-          disposition: "inline",
-          content_id: "logo",
-        },
-      ],
     };
 
     try {
@@ -407,4 +397,5 @@ const sendSendgridResults = async ({ students, testId }) => {
 
   return results;
 };
+
 export default sendSendgridResults;
