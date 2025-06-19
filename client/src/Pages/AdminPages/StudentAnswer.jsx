@@ -18,7 +18,6 @@ export default function StudentAnswers() {
                 setStudent(res.data.student);
                 setTest(res.data.test);
                 setLoading(false); 
-                console.log(test)
             })
             .catch(err => {
                 console.error("Error fetching student answers:", err);

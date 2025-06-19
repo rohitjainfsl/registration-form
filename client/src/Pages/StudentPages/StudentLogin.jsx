@@ -16,6 +16,7 @@ import { adminContext } from "../Context/Admincontext";
 function StudentLogin() {
   const {
   setIsAuthenticated,
+  role,
   setRole,
 } = useContext(adminContext);
 
@@ -24,6 +25,7 @@ function StudentLogin() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -36,19 +38,19 @@ function StudentLogin() {
         { email, password },
         { withCredentials: true }
       );
-      console.log(response);
-      
+      setFirstTimeSignin(true)
 
       if (response.status === 200) {
 
-  const { message,loginStatus} = response.data;
+  const { message,firstTimeSignin} = response.data;
 
   setMessage(message);
   setIsAuthenticated(response.data.loginStatus);
   setRole("student");
-  
 
-  if (loginStatus) navigate("/student/changePassword");
+  setFirstTimeSignin(firstTimeSignin)
+  if (firstTimeSignin) navigate("/student/changePassword");
+
   else navigate("/student/studentpanel");
 } else {
         setMessage(response.data.message);

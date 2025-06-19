@@ -6,13 +6,15 @@ import instance from "../../axiosConfig";
 function AdminHome() {
   const [tests, setTests] = useState([]);
   const navigate = useNavigate();
+  const [releaseStatus, setReleaseStatus] = useState(null);
+
 
   useEffect(() => {
     async function fetchTests() {
       try {
         const res = await instance.get("/test/allTests");
         setTests(res.data.tests);
-        console.log(res.data.tests);
+        
       } catch (error) {
         console.error("Failed to fetch tests", error);
       }
@@ -26,14 +28,18 @@ function AdminHome() {
         ...test,
         released: !test.released,
       };
+      
 
       await instance.put(`/test/update/${test._id}`, updatedTest);
 
       setTests((prev) =>
         prev.map((t) => (t._id === test._id ? updatedTest : t))
       );
+
+      setReleaseStatus(updatedTest.released ? "Test released" : "Test unreleased ");
     } catch (error) {
       console.error("Failed to update release status", error);
+      setReleaseStatus(" Failed to update release status");
     }
   };
   const handleDelete = async (id) => {
@@ -46,6 +52,15 @@ function AdminHome() {
       console.error("Failed to delete test", error);
     }
   };
+  useEffect(() => {
+  if (releaseStatus) {
+    const timer = setTimeout(() => {
+      setReleaseStatus(null);
+    }, 3000); 
+
+    return () => clearTimeout(timer);
+  }
+}, [releaseStatus]);
   return (
     <Container className="py-4" style={{marginTop:"100px"}}>
       <h1 className="mb-4">Admin Dashboard</h1>
@@ -66,6 +81,14 @@ function AdminHome() {
     </Button>
   </Col>
       </Row>
+      {releaseStatus && (
+  <div className="mb-3">
+    <div className={`alert ${releaseStatus.includes("Failed") ? "alert-danger" : releaseStatus.includes("unreleased") ? "alert-warning" : "alert-success"}`} role="alert">
+      {releaseStatus}
+    </div>
+  </div>
+)}
+
 
       <Table striped bordered hover responsive>
         <thead>

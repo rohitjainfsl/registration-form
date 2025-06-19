@@ -28,6 +28,7 @@ function TestScoresPage() {
       try {
         const res = await instance.get(`/students/score/test/${testId}`);
         setAttempts(res.data);
+        
       } catch (err) {
         console.error("Error fetching attempts:", err);
         setAttempts([]);
@@ -37,7 +38,8 @@ function TestScoresPage() {
 
       try {
         const titleRes = await instance.get(`/test/test/${testId}`);
-        setTestTitle(titleRes.data.title);
+        setTestTitle(titleRes.data.test.title);
+        
       } catch (err) {
         console.error("Error fetching test title:", err);
         setTestTitle("Unknown Test");
@@ -111,7 +113,7 @@ function TestScoresPage() {
             <tr>
               <th>#</th>
               <th>Student Name</th>
-              <th>College ID</th>
+          
               <th>Score</th>
               <th>Start Time</th>
               <th>End Time</th>
@@ -123,12 +125,13 @@ function TestScoresPage() {
               <tr key={index}>
                 <td>{index + 1}</td>
                 <td>{student.studentName}</td>
-                <td>{student.collegeId}</td>
+             
                 <td>{student.score}</td>
-                <td>
-                  {new Date(student.startTime).toLocaleDateString("en-GB")}
-                </td>
-                <td>{new Date(student.endTime).toLocaleDateString("en-GB")}</td>
+
+               <td>{new Date(student.startTime).toLocaleString('en-GB')}</td>
+<td>{new Date(student.endTime).toLocaleString('en-GB')}</td>
+
+
                 <td>
                   <Button
                     variant="info"

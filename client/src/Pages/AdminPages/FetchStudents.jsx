@@ -149,7 +149,7 @@ const handleDeleteSelected = async () => {
 
   if (loading) {
     return (
-      <Container className="text-center mt-5">
+      <Container className="text-center mt-5 pt-5">
         <Spinner animation="border" />
         <p>Loading students...</p>
       </Container>
@@ -157,7 +157,7 @@ const handleDeleteSelected = async () => {
   }
 
   return (
-    <Container >
+    <Container className="mt-5 pt-5">
       <h3 className="mb-3">Registered Students</h3>
 
       <Form className="mb-4">
