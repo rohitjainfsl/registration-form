@@ -100,21 +100,18 @@ function QuizPage() {
 
   const handleVisibilityChange = useCallback(() => {
     if (document.visibilityState === 'hidden' && !isQuizFinishedRef.current && quizAttemptIdRef.current) {
-      console.log('Tab switched or window minimized - finishing quiz');
       finishQuizSilently();
     }
   }, [finishQuizSilently]);
 
   const handleWindowBlur = useCallback(() => {
     if (!isQuizFinishedRef.current && quizAttemptIdRef.current) {
-      console.log('Window lost focus - finishing quiz');
       finishQuizSilently();
     }
   }, [finishQuizSilently]);
 
   const handleWindowFocus = useCallback(() => {
     if (isQuizFinishedRef.current) {
-      console.log('Quiz was already finished due to tab switching');
     }
   }, []);
 
@@ -276,7 +273,6 @@ function QuizPage() {
     questions.forEach((q) => {
       const response = responses[q._id];
       const isCorrect =  response.selectedAnswer === q.correct_answer;
-      console.log(isCorrect);
       
       if (isCorrect) Score++;
     });
@@ -301,7 +297,6 @@ function QuizPage() {
 
       const score = calculateScore(responses);
       const response = await instance.post(`/students/finishQuiz/${quizAttemptId}`, { score });
-      console.log(response);
 
       showThankYouMessage();
     } catch (err) {

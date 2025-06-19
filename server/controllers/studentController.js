@@ -226,10 +226,8 @@ export async function submitAnswer(req, res) {
     if (!question) return res.status(404).json({ message: "Question not found" });
 
     const correctAnswer = question.correct_answer;
-    console.log(correctAnswer);
     
 
-    // Find quiz attempt document
     const quizAttemptDoc = await attemptQuiz.findOne({
       "attempts._id": quizAttemptId,
     });
@@ -237,23 +235,19 @@ export async function submitAnswer(req, res) {
     if (!quizAttemptDoc)
       return res.status(404).json({ message: "Quiz attempt not found" });
 
-    // Locate the specific attempt
     const attempt = quizAttemptDoc.attempts.id(quizAttemptId);
     if (!attempt)
       return res.status(404).json({ message: "Attempt not found" });
 
-    // Check if response already exists
     const existingResponseIndex = attempt.responses.findIndex(
       (resp) => resp.questionId.toString() === questionId.toString()
     );
 
     if (existingResponseIndex !== -1) {
-      // Update existing response
       attempt.responses[existingResponseIndex].selectedOption = selectedOption;
       attempt.responses[existingResponseIndex].selectedAnswer = selectedAnswer;
       attempt.responses[existingResponseIndex].correct_answer = correctAnswer;
     } else {
-      // Add new response with correct answer
       attempt.responses.push({
         questionId,
         selectedOption,
@@ -386,7 +380,7 @@ export async function getScoresByTest(req, res) {
         }
       },
       {
-        $sort: { score: -1 } // Sort by score descending, adjust as needed
+        $sort: { score: -1 } 
       }
     ]);
     
@@ -396,7 +390,6 @@ export async function getScoresByTest(req, res) {
     }
     
     
-    // console.log(`Found ${students.length} students for test ${testId}`);
     return res.status(200).json(students);
   } catch (error) {
     console.error("Error fetching test scores:", error);
@@ -526,25 +519,20 @@ export async function getStudentQuizAttemptDetail(req, res) {
     const token = req.firstTimeSignin;
     const studentId = token.id;
     const { quizAttemptId } = req.params;
-    // console.log(token);
 
-    // Find the student's quiz attempts
     const studentAttempts = await attemptQuiz.findOne({ studentId });
 
     if (!studentAttempts) {
       return res.status(404).json({ message: "No quiz attempts found" });
     }
 
-    // Find the specific attempt
     const attempt = studentAttempts.attempts.id(quizAttemptId);
 
     if (!attempt) {
       return res.status(404).json({ message: "Quiz attempt not found" });
     }
 
-    // Check if results are released for this test
     const test = await Test.findById(attempt.testId);
-    console.log(test);
     
     if (!test) {
       return res.status(404).json({ message: "Test not found" });

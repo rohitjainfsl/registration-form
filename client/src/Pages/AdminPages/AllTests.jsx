@@ -14,8 +14,7 @@ export default function AllTests() {
         try {
             const res = await instance.get("/test/allTests");
             setTestName(res.data.tests);
-            console.log(res.data.tests);
-            console.log("question data",res.data.tests);
+            
 
         } catch (error) {
             console.error("Failed to fetch tests", error);
@@ -26,10 +25,10 @@ export default function AllTests() {
         setLoading(true);
         instance.get("/students/score")
             .then(res => {
-                console.log("API Response:", res.data);
+                
 
                 const testMap = new Map();
-                console.log(testMap);
+                
 
                 if (Array.isArray(res.data)) {
                     res.data.forEach(student => {
@@ -62,7 +61,7 @@ export default function AllTests() {
         fetchTests();
 
     }, []);
-    console.log(testName)
+   
 
     if (loading) {
         return <div>Loading tests...</div>;
@@ -73,7 +72,7 @@ export default function AllTests() {
     }
 
     return (
-        <div className="container mt-4">
+        <div className="container mt-5 pt-5">
             <Breadcrumbs />
             <h2 className="mb-3">All Tests</h2>
             {tests.length === 0 ? (

@@ -28,6 +28,7 @@ function TestScoresPage() {
       try {
         const res = await instance.get(`/students/score/test/${testId}`);
         setAttempts(res.data);
+        
       } catch (err) {
         console.error("Error fetching attempts:", err);
         setAttempts([]);
@@ -37,7 +38,8 @@ function TestScoresPage() {
 
       try {
         const titleRes = await instance.get(`/test/test/${testId}`);
-        setTestTitle(titleRes.data.title);
+        setTestTitle(titleRes.data.test.title);
+        
       } catch (err) {
         console.error("Error fetching test title:", err);
         setTestTitle("Unknown Test");

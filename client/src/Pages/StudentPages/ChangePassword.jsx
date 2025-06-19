@@ -28,7 +28,6 @@ function ChangePassword() {
         newPassword,
       });
 
-      console.log(response);
 
       if (response.status === 200) {
         setMessage(response.data.message);

@@ -23,7 +23,6 @@ function ResultPage() {
         const res = await instance.get(`/students/quiz-attempts`, {
           withCredentials: true
         });
-        console.log(res);
         
         // The new API already returns only released results
         if (res.data && Array.isArray(res.data)) {

@@ -9,23 +9,22 @@ export function AdminProvider({ children }) {
   const [visibleCount, setVisibleCount] = useState(10);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [role, setRole] = useState(null);
-  const [firstTimeSignin, setFirstTimeSignin] = useState(false);
+  const [firstTimeSignin, setFirstTimeSignin] = useState(null);
 
-  useEffect(() => {
-    checkToken();
-  }, []);
+  useEffect(() => {    
+      checkToken();
 
+  }, [role]);
   const checkToken = async () => {
     try {
+      
       const res = await instance.get("/auth/checkToken", {
         withCredentials: true,
       });
-
+      
       if (res.status === 200) {
         setIsAuthenticated(true);
         setRole(res.data.role);
-        setFirstTimeSignin(res.data.user.loginStatus);
-        // console.log(res.data.user.loginStatus)
       }
     } catch (error) {
       console.error(error);
@@ -41,7 +40,6 @@ export function AdminProvider({ children }) {
       });
       setIsAuthenticated(false);
       setRole(null);
-      console.log(res.status);
     } catch (error) {
       console.error("Logout failed:", error);
     }

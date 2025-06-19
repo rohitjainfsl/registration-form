@@ -52,38 +52,6 @@ const CreateTestForm = () => {
     setQuestions(updated);
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-
-  //   const formData = new FormData();
-  //   formData.append("title", title);
-  //   formData.append("numQuestions", numQuestions);
-  //   formData.append("duration", duration);
-
-  //   const qData = questions.map((q) => ({
-  //     text: q.text,
-  //     options: q.options,
-  //     correct_answer: q.correct_answer,
-  //     codeSnippet: q.codeSnippet,
-  //   }));
-
-  //   formData.append("questions", JSON.stringify(qData));
-
-  //   questions.forEach((q, index) => {
-  //     if (q.file) {
-  //       formData.append("questionimage", q.file); 
-  //     }
-  //   });
-
-  //   try {
-  //     const res = await instance.post("/test/create", formData); 
-  //     console.log(formData);
-  //     alert("Test Created Successfully!");
-  //   } catch (err) {
-  //     console.error("Error creating test:", err);
-  //     alert("Error creating test");
-  //   }
-  // };
 
 const handleSubmit = async (e) => {
   e.preventDefault();
@@ -112,11 +80,21 @@ const handleSubmit = async (e) => {
   try {
     const res = await instance.post("/test/create", formData);
     alert("Test Created Successfully!");
+    navigate("/admin/home")
   } catch (err) {
     console.error("Error creating test:", err);
     alert("Error creating test");
   }
 };
+  useEffect(() => {
+    if (releaseStatus) {
+      const timer = setTimeout(() => {
+        setReleaseStatus(null);
+      }, 3000); 
+
+      return () => clearTimeout(timer); 
+    }
+  }, [releaseStatus]);
 
 
   return (
@@ -215,7 +193,7 @@ const handleSubmit = async (e) => {
           Add Another Question
         </Button>
 
-        <Button variant="primary" type="submit" className="ms-3" onClick={() => navigate("/admin/home")}>
+        <Button variant="primary" type="submit" className="ms-3">
           Create Test
         </Button>
       </Form>

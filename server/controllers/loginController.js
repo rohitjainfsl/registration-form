@@ -17,7 +17,6 @@ export async function studentlogin(req, res) {
     }
 
     const user = await studentModel.findOne({ email, password });
-    // console.log(user.role);
   
     if (!user) {
       return res.status(404).json({ message: "Invalid email or password." });
@@ -157,7 +156,8 @@ export const checkToken = (req, res)=>{
   const {adminToken, studentToken} = req.cookies;
   let token = null;
   let role = null;
-  if(adminToken)
+  
+  if(adminToken)  
   {
     token = adminToken;
     role = "admin";
