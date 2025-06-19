@@ -16,7 +16,6 @@ import { adminContext } from "../Context/Admincontext";
 function StudentLogin() {
   const {
   setIsAuthenticated,
-  role,
   setRole,
 } = useContext(adminContext);
 
@@ -38,7 +37,6 @@ function StudentLogin() {
         { email, password },
         { withCredentials: true }
       );
-      setFirstTimeSignin(true)
 
       if (response.status === 200) {
 
@@ -48,7 +46,6 @@ function StudentLogin() {
   setIsAuthenticated(response.data.loginStatus);
   setRole("student");
 
-  setFirstTimeSignin(firstTimeSignin)
   if (firstTimeSignin) navigate("/student/changePassword");
 
   else navigate("/student/studentpanel");
