@@ -91,7 +91,7 @@ export const adminLogin = async (req, res) => {
 
     res.cookie("adminToken", token, {
       httpOnly: true,
-      secure: true,
+      secure:process.env.NODE_ENV === "production",
       sameSite: process.env.SAMESITE,
       maxAge: 2 * 60 * 60 * 1000,
     });
@@ -142,7 +142,7 @@ export const logout = (req, res) => {
   try {
     res.clearCookie(`${role}Token`, {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       sameSite: process.env.SAMESITE,
     });
     return res.status(200).json({ message: "LogOut successful" });
