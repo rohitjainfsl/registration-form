@@ -38,7 +38,7 @@ const HeroSection = () => {
     <section
       id="home"
       className="relative min-h-screen flex items-center overflow-hidden"
-      style={{ background: "var(--hero-gradient)" }}
+      // style={{ background: "var(--hero-gradient)" }}
     >
       
       {/* Background Image Slider */}

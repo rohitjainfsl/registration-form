@@ -78,9 +78,9 @@ const EnquirySection = () => {
 
           <div className="mt-8 space-y-5">
             {[
-              { Icon: Phone, text: "+91 98765 43210" },
-              { Icon: Mail, text: "admissions@technestacademy.com" },
-              { Icon: MapPin, text: "Tech Park, Sector 62, Noida, India" },
+              { Icon: Phone, text: "+91 88244 53320" },
+              { Icon: Mail, text: "fullstacklearning@gmail.com" },
+              { Icon: MapPin, text: "A-20, Murtikala Colony Gopalpura BypassTonk Rd, Jaipur, Rajasthan 302018" },
             ].map(({ Icon, text }) => (
               <div key={text} className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
