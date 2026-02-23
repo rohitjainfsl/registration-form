@@ -1,70 +1,14 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Clock, Award, ArrowRight, Code, Layers, PenTool, BarChart3, Terminal, Megaphone, Monitor, Palette } from "lucide-react";
+import { Clock, Award, ArrowRight } from "lucide-react";
+import { courses } from "@/data/courses";
 
 const categories = ["All", "Development", "Design", "Marketing"];
 
-const courses = [
-  {
-    title: "Full Stack Developer",
-    desc: "Master frontend & backend development with modern frameworks and deployment strategies.",
-    duration: "6 Months",
-    category: "Development",
-    Icon: Code,
-  },
-  {
-    title: "MERN Stack",
-    desc: "Build powerful web apps with MongoDB, Express, React & Node.js from scratch.",
-    duration: "5 Months",
-    category: "Development",
-    Icon: Layers,
-  },
-  {
-    title: ".NET Developer",
-    desc: "Enterprise-grade application development with C#, ASP.NET Core and Azure cloud.",
-    duration: "5 Months",
-    category: "Development",
-    Icon: Monitor,
-  },
-  {
-    title: "UI/UX Designer",
-    desc: "Create stunning user experiences with Figma, design systems and user research methodologies.",
-    duration: "4 Months",
-    category: "Design",
-    Icon: PenTool,
-  },
-  {
-    title: "Graphic Designer",
-    desc: "Master Adobe Creative Suite, branding and visual communication for digital & print media.",
-    duration: "4 Months",
-    category: "Design",
-    Icon: Palette,
-  },
-  {
-    title: "Data Analytics",
-    desc: "Analyze business data with Python, SQL, Power BI and machine learning fundamentals.",
-    duration: "5 Months",
-    category: "Development",
-    Icon: BarChart3,
-  },
-  {
-    title: "Python Development",
-    desc: "From basics to advanced Python — web apps, automation, APIs and data science.",
-    duration: "5 Months",
-    category: "Development",
-    Icon: Terminal,
-  },
-  {
-    title: "Digital Marketing",
-    desc: "SEO, SEM, social media, content strategy and performance marketing mastery.",
-    duration: "3 Months",
-    category: "Marketing",
-    Icon: Megaphone,
-  },
-];
-
 const CoursesSection = () => {
   const [filter, setFilter] = useState("All");
+  const navigate = useNavigate();
 
   const filtered = filter === "All" ? courses : courses.filter((c) => c.category === filter);
 
@@ -133,7 +77,7 @@ const CoursesSection = () => {
                 </div>
               </div>
 
-              <button className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-primary group-hover:gap-2 transition-all">
+              <button className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-primary group-hover:gap-2 transition-all" onClick={() => navigate(`/courses/${course.slug}`)}>
                 View Details <ArrowRight className="w-4 h-4" />
               </button>
 

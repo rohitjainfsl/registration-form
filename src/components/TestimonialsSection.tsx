@@ -4,33 +4,33 @@ import { Star, ChevronLeft, ChevronRight } from "lucide-react";
 
 const testimonials = [
   {
-    name: "Priya Sharma",
-    course: "Full Stack Developer",
-    feedback: "TechNest Academy transformed my career. The hands-on projects and mentor support helped me land a role at a top MNC within 2 months of completing the course!",
+    name: "Dron Pareek",
+    course: "Frontend Developer",
+    feedback: "The teaching style in this coaching is a bit different, which makes studying enjoyable. The teacher is very supportive, and the students are also helpful — if you have any doubt, they explain it. The environment is very friendly, and you won’t find such a good atmosphere anywhere else for such a low fee.",
     rating: 5,
   },
   {
-    name: "Rahul Verma",
+    name: "PREKSHA GAUR",
     course: "MERN Stack",
-    feedback: "The curriculum was perfectly aligned with industry needs. The live projects gave me real confidence. I'm now working as a React developer with a great package.",
+    feedback: "I recently attended the Hands-On Training on Tailwind CSS and React for Real-World Projects workshop. The experience was amazing! Rohit Jain sir and Dheeraj sir were fantastic instructors who made learning fun and interactive and insightful. They explained complex concepts in a simple way and were always there to help us whenever we faced challenges. I gained a lot of practical knowledge that I can apply to real-world projects. Overall, it was a highly rewarding experience, and I’m grateful to both sir's for their guidance!",
     rating: 5,
   },
   {
-    name: "Ananya Patel",
+    name: "Aakash Sirswa",
     course: "UI/UX Designer",
-    feedback: "From zero design knowledge to working at a design agency — TechNest made it possible. The instructors are patient and incredibly skilled.",
+    feedback: "It was a pleasure getting trained under Rohit sir, He is an IT giant and an expert level trainer.I started my development journey from here. Learnt to make responsive webpages, learnt javascript react in deep.Rohit sir puts great focus on practical learning. The past part of this institute is they will support you immensely in your career journeythanks a lot for your teaching sir",
     rating: 5,
   },
   {
-    name: "Vikram Singh",
+    name: "Gajender",
     course: "Data Analytics",
-    feedback: "The data analytics program was comprehensive. I learned Python, SQL and Power BI in a structured way. Got placed in an analytics firm right after completion.",
+    feedback: "Rohit Sir fosters a positive and engaging environment with exceptional teaching skills. The combination of effective learning and enjoyable moments makes studying a truly fun experience",
     rating: 5,
   },
   {
     name: "Sneha Reddy",
     course: "Digital Marketing",
-    feedback: "Best decision I ever made! The digital marketing course covered everything from SEO to paid ads. Now running campaigns for major brands.",
+    feedback: "Learning Full Stack Development under Rohit Sir was truly a game-changer for me. His ability to simplify complex topics like React and Node made learning enjoyable and effective. The hands-on projects helped me gain real confidence in building complex web applications.",
     rating: 5,
   },
 ];
