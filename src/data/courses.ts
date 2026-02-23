@@ -9,7 +9,7 @@ export interface Course {
   category: string;
   Icon: any;
   features?: string[];
-  syllabus?: string[];
+  syllabus?: { title: string; skills: string[] }[];
   price?: string;
   rating?: number;
   students?: number;
@@ -33,12 +33,12 @@ export const courses: Course[] = [
       "Testing: Jest, Cypress"
     ],
     syllabus: [
-      "Month 1: HTML, CSS, JavaScript Basics",
-      "Month 2: React & Frontend Frameworks",
-      "Month 3: Node.js & Backend Development",
-      "Month 4: Database Design & Management",
-      "Month 5: API Development & Integration",
-      "Month 6: Deployment & DevOps Basics"
+      { title: "Month 1: HTML, CSS, JavaScript Basics", skills: ["HTML5", "CSS3", "JavaScript ES6", "DOM Manipulation", "Responsive Design"] },
+      { title: "Month 2: React & Frontend Frameworks", skills: ["React Components", "State Management", "Hooks", "Routing", "Context API"] },
+      { title: "Month 3: Node.js & Backend Development", skills: ["Node.js Runtime", "Express.js", "Middleware", "Error Handling", "Authentication"] },
+      { title: "Month 4: Database Design & Management", skills: ["SQL Databases", "NoSQL (MongoDB)", "Schema Design", "CRUD Operations", "Data Modeling"] },
+      { title: "Month 5: API Development & Integration", skills: ["RESTful APIs", "GraphQL", "API Testing", "Third-party Integrations", "Security"] },
+      { title: "Month 6: Deployment & DevOps Basics", skills: ["Cloud Deployment", "Docker", "CI/CD", "Version Control", "Monitoring"] }
     ],
     price: "₹50,000",
     rating: 4.8,
@@ -61,11 +61,11 @@ export const courses: Course[] = [
       "Authentication & Security"
     ],
     syllabus: [
-      "Month 1: JavaScript & Node.js Fundamentals",
-      "Month 2: MongoDB & Database Design",
-      "Month 3: Express.js & API Development",
-      "Month 4: React Frontend Development",
-      "Month 5: Full-Stack Project & Deployment"
+      { title: "Month 1: JavaScript & Node.js Fundamentals", skills: ["JavaScript ES6+", "Node.js Basics", "NPM", "Asynchronous Programming", "Modules"] },
+      { title: "Month 2: MongoDB & Database Design", skills: ["MongoDB Setup", "CRUD Operations", "Schema Design", "Indexing", "Aggregation"] },
+      { title: "Month 3: Express.js & API Development", skills: ["Express Routing", "Middleware", "Error Handling", "Validation", "Security"] },
+      { title: "Month 4: React Frontend Development", skills: ["React Components", "State Management", "Hooks", "API Integration", "UI/UX"] },
+      { title: "Month 5: Full-Stack Project & Deployment", skills: ["Project Architecture", "Deployment", "Testing", "Performance", "Best Practices"] }
     ],
     price: "₹45,000",
     rating: 4.9,
@@ -88,11 +88,11 @@ export const courses: Course[] = [
       "Microservices Architecture"
     ],
     syllabus: [
-      "Month 1: C# & .NET Fundamentals",
-      "Month 2: ASP.NET Core Web Development",
-      "Month 3: Database Integration with EF",
-      "Month 4: Azure Cloud & Deployment",
-      "Month 5: Advanced Topics & Project"
+      { title: "Month 1: C# & .NET Fundamentals", skills: ["C# Syntax", ".NET Framework", "OOP Principles", "LINQ", "Collections"] },
+      { title: "Month 2: ASP.NET Core Web Development", skills: ["MVC Pattern", "Razor Pages", "Controllers", "Views", "Routing"] },
+      { title: "Month 3: Database Integration with EF", skills: ["Entity Framework", "Code First", "Migrations", "Relationships", "Queries"] },
+      { title: "Month 4: Azure Cloud & Deployment", skills: ["Azure Services", "App Service", "Storage", "Authentication", "CI/CD"] },
+      { title: "Month 5: Advanced Topics & Project", skills: ["Microservices", "API Design", "Testing", "Security", "Performance"] }
     ],
     price: "₹55,000",
     rating: 4.7,
@@ -115,10 +115,10 @@ export const courses: Course[] = [
       "Visual Design Principles"
     ],
     syllabus: [
-      "Month 1: Design Fundamentals & Research",
-      "Month 2: Wireframing & Prototyping",
-      "Month 3: UI Design & Visual Systems",
-      "Month 4: UX Testing & Portfolio Project"
+      { title: "Month 1: Design Fundamentals & Research", skills: ["Design Principles", "User Research", "Personas", "User Journey", "Wireframing"] },
+      { title: "Month 2: Wireframing & Prototyping", skills: ["Low/High Fidelity", "Prototyping Tools", "Interaction Design", "Usability", "Feedback"] },
+      { title: "Month 3: UI Design & Visual Systems", skills: ["Visual Hierarchy", "Typography", "Color Theory", "Design Systems", "Component Libraries"] },
+      { title: "Month 4: UX Testing & Portfolio Project", skills: ["Usability Testing", "A/B Testing", "Analytics", "Portfolio Creation", "Client Presentation"] }
     ],
     price: "₹40,000",
     rating: 4.6,
@@ -141,10 +141,10 @@ export const courses: Course[] = [
       "Portfolio Development"
     ],
     syllabus: [
-      "Month 1: Design Basics & Adobe Tools",
-      "Month 2: Branding & Logo Design",
-      "Month 3: Digital & Print Media",
-      "Month 4: Advanced Projects & Portfolio"
+      { title: "Month 1: Design Basics & Adobe Tools", skills: ["Photoshop Basics", "Illustrator Basics", "Design Theory", "File Formats", "Color Modes"] },
+      { title: "Month 2: Branding & Logo Design", skills: ["Brand Identity", "Logo Creation", "Typography", "Color Psychology", "Brand Guidelines"] },
+      { title: "Month 3: Digital & Print Media", skills: ["Web Graphics", "Print Design", "Social Media Assets", "Banner Ads", "Packaging"] },
+      { title: "Month 4: Advanced Projects & Portfolio", skills: ["Advanced Techniques", "Client Projects", "Portfolio Design", "Presentation", "Industry Standards"] }
     ],
     price: "₹35,000",
     rating: 4.5,
@@ -167,11 +167,11 @@ export const courses: Course[] = [
       "Data Visualization"
     ],
     syllabus: [
-      "Month 1: Python & Data Fundamentals",
-      "Month 2: SQL & Database Management",
-      "Month 3: Data Analysis & Statistics",
-      "Month 4: Visualization Tools",
-      "Month 5: ML & Advanced Analytics"
+      { title: "Month 1: Python & Data Fundamentals", skills: ["Python Basics", "Data Types", "Pandas", "NumPy", "Data Cleaning"] },
+      { title: "Month 2: SQL & Database Management", skills: ["SQL Queries", "Joins", "Aggregations", "Database Design", "Data Warehousing"] },
+      { title: "Month 3: Data Analysis & Statistics", skills: ["Statistical Methods", "Hypothesis Testing", "Regression", "Correlation", "Data Visualization"] },
+      { title: "Month 4: Visualization Tools", skills: ["Power BI", "Tableau", "Matplotlib", "Seaborn", "Dashboard Creation"] },
+      { title: "Month 5: ML & Advanced Analytics", skills: ["Machine Learning Basics", "Supervised Learning", "Unsupervised Learning", "Model Evaluation", "Predictive Analytics"] }
     ],
     price: "₹48,000",
     rating: 4.8,
@@ -194,11 +194,11 @@ export const courses: Course[] = [
       "Database Integration"
     ],
     syllabus: [
-      "Month 1: Python Basics & OOP",
-      "Month 2: Web Development Frameworks",
-      "Month 3: API & Database Integration",
-      "Month 4: Automation & Advanced Topics",
-      "Month 5: Data Science & Projects"
+      { title: "Month 1: Python Basics & OOP", skills: ["Python Syntax", "Data Structures", "OOP Concepts", "Exception Handling", "File I/O"] },
+      { title: "Month 2: Web Development Frameworks", skills: ["Django/Flask", "Templates", "Forms", "Authentication", "REST APIs"] },
+      { title: "Month 3: API & Database Integration", skills: ["API Design", "Database Connections", "ORM", "Serialization", "Caching"] },
+      { title: "Month 4: Automation & Advanced Topics", skills: ["Scripting", "Web Scraping", "Multithreading", "Async Programming", "Testing"] },
+      { title: "Month 5: Data Science & Projects", skills: ["Data Analysis", "Visualization", "Machine Learning", "Project Deployment", "Best Practices"] }
     ],
     price: "₹42,000",
     rating: 4.7,
@@ -221,9 +221,9 @@ export const courses: Course[] = [
       "Analytics & Reporting"
     ],
     syllabus: [
-      "Month 1: Digital Marketing Fundamentals",
-      "Month 2: SEO & SEM Strategies",
-      "Month 3: Social Media & Content Marketing"
+      { title: "Month 1: Digital Marketing Fundamentals", skills: ["Marketing Basics", "Digital Channels", "Customer Journey", "Campaign Planning", "Analytics Basics"] },
+      { title: "Month 2: SEO & SEM Strategies", skills: ["On-page SEO", "Off-page SEO", "Google Ads", "Keyword Research", "PPC Campaigns"] },
+      { title: "Month 3: Social Media & Content Marketing", skills: ["Social Platforms", "Content Strategy", "Community Management", "Influencer Marketing", "Email Marketing"] }
     ],
     price: "₹30,000",
     rating: 4.6,

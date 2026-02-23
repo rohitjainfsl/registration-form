@@ -72,7 +72,7 @@ const TestimonialsSection = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.4 }}
-            className="rounded-2xl bg-card border border-border p-8 md:p-12 shadow-lg"
+            className="rounded-2xl bg-card border border-border p-8 md:p-12 shadow-lg h-[400px]"
           >
             <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center text-2xl font-bold text-primary mb-4">
               {t.name[0]}
@@ -82,7 +82,16 @@ const TestimonialsSection = () => {
                 <Star key={i} className="w-5 h-5 fill-accent text-accent" />
               ))}
             </div>
-            <p className="text-muted-foreground leading-relaxed max-w-2xl mx-auto mb-6 italic">"{t.feedback}"</p>
+            <p className=" text-muted-foreground
+    leading-relaxed
+    max-w-2xl
+    mx-auto
+    mb-6
+    italic
+    h-[120px]
+    md:h-[150px]
+    overflow-y-auto
+    pr-2">"{t.feedback}"</p>
             <p className="font-display font-bold text-foreground">{t.name}</p>
             <p className="text-sm text-secondary font-medium">{t.course}</p>
           </motion.div>

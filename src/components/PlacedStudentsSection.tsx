@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Users, Briefcase, Building2, TrendingUp } from "lucide-react";
 import bg1 from "@/assets/bg1.jpg";
-import bg2 from "@/assets/bg2.jpg";
-import bg3 from "@/assets/bg3.png";
+import bg2 from "@/assets/bg2.avif";
+import bg3 from "@/assets/bg3.webp";
 import bg4 from "@/assets/bg4.jpg";
 
 const stats = [

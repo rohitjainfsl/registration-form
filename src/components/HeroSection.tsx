@@ -3,8 +3,8 @@ import { ArrowRight, Play, Code, Database, Layout, Sparkles } from "lucide-react
 import { useState, useEffect } from "react";
 
 import bg1 from "@/assets/bg1.jpg";
-import bg2 from "@/assets/bg2.jpg";
-import bg3 from "@/assets/bg3.png";
+import bg2 from "@/assets/bg2.avif";
+import bg3 from "@/assets/bg3.webp";
 import bg4 from "@/assets/bg4.jpg";
 
 const IMAGES = [bg1, bg2, bg3, bg4];
@@ -38,12 +38,12 @@ const HeroSection = () => {
     <section
       id="home"
       className="relative min-h-screen flex items-center overflow-hidden"
-      // style={{ background: "var(--hero-gradient)" }}
+      style={{ background: "var(--hero-gradient)" }}
     >
       
       {/* Background Image Slider */}
       <div
-        className={`absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ${
+        className={`absolute inset-0 bg-cover  bg-center transition-opacity duration-1000 ${
           fade ? "opacity-100" : "opacity-0"
         }`}
         style={{
@@ -99,10 +99,10 @@ const HeroSection = () => {
               Explore Courses <ArrowRight className="w-4 h-4" />
             </a>
             <a
-              href="#contact"
+              href="https://registration-form-1-mbw5.onrender.com/registration"
               className="inline-flex items-center gap-2 rounded-xl glass-card px-7 py-3.5 text-sm font-semibold text-primary-foreground hover:bg-white/10 transition-all"
             >
-              <Play className="w-4 h-4" /> Book Free Demo
+              <Play className="w-4 h-4" /> Enroll Now
             </a>
           </div>
 

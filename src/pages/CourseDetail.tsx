@@ -1,12 +1,18 @@
 import { useParams, Link } from "react-router-dom";
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, Clock, Award, Users, Star, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { courses } from "@/data/courses";
 
 const CourseDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const course = courses.find(c => c.slug === slug);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   if (!course) {
     return (
@@ -119,16 +125,33 @@ const CourseDetail = () => {
               transition={{ delay: 0.3 }}
             >
               <h2 className="text-2xl font-bold mb-6">Course Syllabus</h2>
-              <div className="space-y-4">
+              <Accordion type="single" collapsible className="w-full">
                 {course.syllabus?.map((item, i) => (
-                  <div key={i} className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg">
-                    <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold">
-                      {i + 1}
-                    </div>
-                    <span className="font-medium">{item}</span>
-                  </div>
+                  <AccordionItem key={i} value={`item-${i}`}>
+                    <AccordionTrigger className="text-left">
+                      <div className="flex items-center gap-4">
+                        <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold">
+                          {i + 1}
+                        </div>
+                        <span className="font-medium">{item.title}</span>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <div className="ml-12 mt-4">
+                        <h4 className="font-semibold mb-3">Skills you'll learn:</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                          {item.skills.map((skill, j) => (
+                            <div key={j} className="flex items-center gap-2">
+                              <CheckCircle className="w-4 h-4 text-success" />
+                              <span className="text-sm text-muted-foreground">{skill}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
                 ))}
-              </div>
+              </Accordion>
             </motion.section>
           </div>
 
@@ -169,7 +192,8 @@ const CourseDetail = () => {
               </ul>
               
               <Button className="w-full mt-6" size="lg">
-                Enroll Now - {course.price}
+                Enroll Now  
+                {/* {course.price} */}
               </Button>
             </motion.div>
           </div>
