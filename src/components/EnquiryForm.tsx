@@ -19,6 +19,8 @@ export default function EnquiryForm() {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [result, setResult] = useState("");
+
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
 
@@ -41,9 +43,32 @@ export default function EnquiryForm() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    
+    //WEB 3 FORM
+    const formData = new FormData();
+    formData.append("name", form.name);
+    formData.append("email", form.email);
+    formData.append("phone", form.phone);
+    formData.append("course", form.course);
+    formData.append("message", form.message);
+
+    formData.append("access_key", "9896dc59-07e4-4630-9b2d-39348c63866c");
+
+    const response = await fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      body: formData,
+    });
+    const data = await response.json();
+
+    if (data.success) {
+      setSubmitted(true);
+      setResult("Form Submitted Successfully");
+    } else {
+      console.log("Error", data);
+      setResult(data.message);
+    }
     setTimeout(() => setSubmitted(false), 4000);
     setForm({ name: "", email: "", phone: "", course: "", message: "" });
   };
