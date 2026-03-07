@@ -45,7 +45,7 @@ export default function EnquiryForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     //WEB 3 FORM
     const formData = new FormData();
     formData.append("name", form.name);
@@ -101,7 +101,7 @@ export default function EnquiryForm() {
           }`}
         >
           {/* Contact Info */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="order-2 sm:order-1 lg:col-span-2 space-y-6">
             <div className="bg-[#1b8ebb] rounded-2xl p-6 text-primary-foreground">
               <h3 className="text-xl font-bold mb-2">Let's Connect!</h3>
               <p className="text-primary-foreground/80 text-sm mb-6">
@@ -187,7 +187,10 @@ export default function EnquiryForm() {
           </div>
 
           {/* Form */}
-          <div className="lg:col-span-3 bg-card rounded-2xl border border-border shadow-lg p-6 md:p-8">
+          <div
+            id="enquiryForm"
+            className="order-1 sm:order-1 lg:col-span-3 bg-card rounded-2xl border border-border shadow-lg p-6 md:p-8"
+          >
             {submitted ? (
               <div className="h-full flex flex-col items-center justify-center text-center py-12">
                 <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-4">

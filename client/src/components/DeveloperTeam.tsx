@@ -180,7 +180,7 @@ export default function DeveloperTeam() {
         >
           <motion.div variants={itemVariants}>
             <div className="relative p-8 md:p-10 rounded-3xl overflow-hidden bg-card/50 ring-1 ring-border/30 shadow-sm">
-              <div className="flex flex-col md:flex-row md:items-center gap-8">
+              <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8">
                 <TeamAvatar
                   name={lead.name}
                   image={lead.image}
@@ -197,7 +197,7 @@ export default function DeveloperTeam() {
                     {lead.role}
                   </p>
 
-                  <p className="text-secondary-foreground/80 leading-relaxed max-w-xl">
+                  <p className="text-foreground leading-relaxed max-w-xl">
                     {lead.desc}
                   </p>
 

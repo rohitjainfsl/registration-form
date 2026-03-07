@@ -1,5 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Play, Users, BookOpen, Award, TrendingUp } from "lucide-react";
+import {
+  ArrowRight,
+  Play,
+  Users,
+  BookOpen,
+  Award,
+  TrendingUp,
+} from "lucide-react";
 import hero1 from "@/assets/hero-bg.jpg";
 import hero2 from "@/assets/placed1.jpg";
 import hero3 from "@/assets/placed2.jpg";
@@ -11,7 +18,11 @@ const stats = [
   { icon: TrendingUp, label: "Avg Salary Hike", value: 85, suffix: "%" },
 ];
 
-function useCountUp(target: number, duration: number = 2000, start: boolean = false) {
+function useCountUp(
+  target: number,
+  duration: number = 2000,
+  start: boolean = false,
+) {
   const [count, setCount] = useState(0);
   useEffect(() => {
     if (!start) return;
@@ -27,20 +38,34 @@ function useCountUp(target: number, duration: number = 2000, start: boolean = fa
   return count;
 }
 
-function StatCard({ icon: Icon, label, value, suffix, animate }: typeof stats[0] & { animate: boolean }) {
+function StatCard({
+  icon: Icon,
+  label,
+  value,
+  suffix,
+  animate,
+}: (typeof stats)[0] & { animate: boolean }) {
   const count = useCountUp(value, 2000, animate);
   return (
     <div className="flex flex-col items-center p-4 bg-background/10 backdrop-blur-sm rounded-xl border border-primary-foreground/20 hover:bg-background/20 transition-all duration-300 hover:-translate-y-1">
       <Icon className="text-brand-orange mb-2" size={24} />
       <span className="text-2xl md:text-3xl font-bold text-primary-foreground">
-        {animate ? count : 0}{suffix}
+        {animate ? count : 0}
+        {suffix}
       </span>
-      <span className="text-xs text-primary-foreground/70 text-center mt-1">{label}</span>
+      <span className="text-xs text-primary-foreground/70 text-center mt-1">
+        {label}
+      </span>
     </div>
   );
 }
 
-const words = ["Full Stack Developer", "Frontend Developer", "Backend Engineer", "Web Developer"];
+const words = [
+  "Full Stack Developer",
+  "Frontend Developer",
+  "Backend Engineer",
+  "Web Developer",
+];
 
 export default function HeroSection() {
   const images = [hero1, hero2, hero3];
@@ -73,8 +98,10 @@ export default function HeroSection() {
   // Intersection observer for stats counter
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setStatsVisible(true); },
-      { threshold: 0.3 }
+      ([entry]) => {
+        if (entry.isIntersecting) setStatsVisible(true);
+      },
+      { threshold: 0.3 },
     );
     if (statsRef.current) observer.observe(statsRef.current);
     return () => observer.disconnect();
@@ -92,8 +119,9 @@ export default function HeroSection() {
             key={i}
             src={src}
             alt={`slide-${i}`}
-            className={`w-full h-full object-cover absolute inset-0 transition-opacity duration-700 ${i === slideIndex ? "opacity-100" : "opacity-0"
-              }`}
+            className={`w-full h-full object-cover absolute inset-0 transition-opacity duration-700 ${
+              i === slideIndex ? "opacity-100" : "opacity-0"
+            }`}
           />
         ))}
         <div className="absolute inset-0 bg-gradient-to-r from-brand-blue-dark/90 via-brand-blue/75 to-brand-orange/60" />
@@ -101,7 +129,10 @@ export default function HeroSection() {
 
       {/* Animated circles */}
       <div className="absolute top-20 right-20 w-64 h-64 rounded-full border-2 border-primary-foreground/10 animate-float opacity-30 hidden lg:block" />
-      <div className="absolute bottom-32 left-10 w-40 h-40 rounded-full border border-brand-orange/30 animate-float opacity-40 hidden lg:block" style={{ animationDelay: "1s" }} />
+      <div
+        className="absolute bottom-32 left-10 w-40 h-40 rounded-full border border-brand-orange/30 animate-float opacity-40 hidden lg:block"
+        style={{ animationDelay: "1s" }}
+      />
 
       <div className="relative container mx-auto px-4 py-24 md:py-32">
         <div className="max-w-3xl">
@@ -117,46 +148,72 @@ export default function HeroSection() {
 
           {/* Animated word */}
           <h1
-            className={`text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6 transition-all duration-400 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-              }`}
+            className={`text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6 transition-all duration-400 ${
+              visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            }`}
             style={{ color: "hsl(var(--brand-orange))" }}
           >
             {words[wordIndex]}
           </h1>
 
-          <div className="flex items-center gap-3 mb-4 animate-slide-up" style={{ animationDelay: "0.2s" }}>
+          <div
+            className="flex items-center gap-3 mb-4 animate-slide-up"
+            style={{ animationDelay: "0.2s" }}
+          >
             <div className="h-0.5 w-16 bg-primary-foreground/60" />
             <p className="text-xl md:text-2xl text-primary-foreground/90 font-light">
-              in just <span className="text-5xl font-bold text-brand-orange">6</span> Months
+              in just{" "}
+              <span className="text-5xl font-bold text-brand-orange">6</span>{" "}
+              Months
             </p>
           </div>
-          <p className="text-primary-foreground/70 text-lg mb-10 animate-slide-up" style={{ animationDelay: "0.3s" }}>
-            That's all the time it takes.. Join 5000+ students who transformed their careers!
+          <p
+            className="text-primary-foreground/70 text-lg mb-10 animate-slide-up"
+            style={{ animationDelay: "0.3s" }}
+          >
+            That's all the time it takes.. Join 5000+ students who transformed
+            their careers!
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-wrap gap-4 mb-16 animate-slide-up" style={{ animationDelay: "0.4s" }}>
+          <div
+            className="flex flex-wrap gap-4 mb-16 animate-slide-up"
+            style={{ animationDelay: "0.4s" }}
+          >
             <a
-              href="https://registration-form-1-mbw5.onrender.com/registration"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="#enquiryForm"
               className="group inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold text-primary-foreground bg-brand-orange hover:bg-brand-orange-dark transition-all duration-300 hover:scale-105 hover:shadow-2xl shadow-lg"
             >
               Join Now
-              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform duration-200" />
+              <ArrowRight
+                size={18}
+                className="group-hover:translate-x-1 transition-transform duration-200"
+              />
             </a>
             <a
               href="#courses"
-              onClick={(e) => { e.preventDefault(); document.querySelector("#courses")?.scrollIntoView({ behavior: "smooth" }); }}
+              onClick={(e) => {
+                e.preventDefault();
+                document
+                  .querySelector("#courses")
+                  ?.scrollIntoView({ behavior: "smooth" });
+              }}
               className="group inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold text-primary-foreground border-2 border-primary-foreground/50 hover:bg-primary-foreground/10 transition-all duration-300 hover:scale-105 hover:border-primary-foreground"
             >
-              <Play size={18} className="group-hover:scale-110 transition-transform duration-200" />
+              <Play
+                size={18}
+                className="group-hover:scale-110 transition-transform duration-200"
+              />
               Explore Courses
             </a>
           </div>
 
           {/* Stats */}
-          <div ref={statsRef} className="grid grid-cols-2 md:grid-cols-4 gap-3 animate-slide-up" style={{ animationDelay: "0.5s" }}>
+          <div
+            ref={statsRef}
+            className="grid grid-cols-2 md:grid-cols-4 gap-3 animate-slide-up"
+            style={{ animationDelay: "0.5s" }}
+          >
             {stats.map((stat) => (
               <StatCard key={stat.label} {...stat} animate={statsVisible} />
             ))}
