@@ -5,6 +5,7 @@ import {
   SiInstagram,
   SiYoutube,
 } from "@icons-pack/react-simple-icons";
+import { useLocation } from "react-router-dom";
 import bundledLogo from "@/assets/logo.png";
 
 const logoSrc = "/images/logo.png";
@@ -58,31 +59,36 @@ const scrollTo = (href: string) => {
 };
 
 export default function Footer() {
+  const location = useLocation();
+  const isRegistrationPage = location.pathname === "/register";
+
   return (
     <footer className="bg-foreground text-primary-foreground">
-      {/* CTA Banner */}
-      <div className="gradient-brand py-12">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-2xl md:text-4xl font-bold text-primary-foreground mb-3">
-            Ready to Start Your Tech Career?
-          </h2>
-          <p className="text-primary-foreground/80 mb-6 text-lg">
-            Join 5000+ students who transformed their lives with FSL
-          </p>
-          <a
-            href="#enquiry"
-            onClick={(e) => {
-              e.preventDefault();
-              scrollTo("#enquiry");
-            }}
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-bold bg-primary-foreground text-brand-blue hover:bg-primary-foreground/90 transition-all duration-300 hover:scale-105 shadow-xl"
-          >
-            Enroll Now — It's Free to Enquire!
-            <ArrowRight size={18} />
-          </a>
+      
+      {/* CTA Banner - Hidden on registration page */}
+      {!isRegistrationPage && (
+        <div className="gradient-brand py-12">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="text-2xl md:text-4xl font-bold text-primary-foreground mb-3">
+              Ready to Start Your Tech Career?
+            </h2>
+            <p className="text-primary-foreground/80 mb-6 text-lg">
+              Join 5000+ students who transformed their lives with FSL
+            </p>
+            <a
+              href="#enquiry"
+              onClick={(e) => {
+                e.preventDefault();
+                scrollTo("#enquiry");
+              }}
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-bold bg-primary-foreground text-brand-blue hover:bg-primary-foreground/90 transition-all duration-300 hover:scale-105 shadow-xl"
+            >
+              Enroll Now — It's Free to Enquire!
+              <ArrowRight size={18} />
+            </a>
+          </div>
         </div>
-      </div>
-
+      )}
       {/* Main footer */}
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
