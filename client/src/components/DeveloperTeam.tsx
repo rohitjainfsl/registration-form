@@ -67,14 +67,13 @@ const devs = [
 ];
 
 function TeamAvatar({ name, image, size = 56, isLead = false }) {
-  console.log("image", image);
   const initials = name
     .split(" ")
     .map((n) => n[0])
     .slice(0, 2)
     .join("");
   const [imgError, setImgError] = useState(false);
-  console.log("imgError", imgError);
+
   return (
     <div className="relative">
       <div

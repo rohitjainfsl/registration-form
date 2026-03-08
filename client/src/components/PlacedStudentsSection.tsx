@@ -8,6 +8,7 @@ import RishabhJangir from "@/assets/Rishabh Jangir.jpg";
 import RiyaAnand from "@/assets/Riya Anand.jpg";
 import DeepeshSuiwal from "@/assets/Deepesh Suiwal.png";
 import TanmayShukla from "@/assets/Tanmay Shukla.jpg";
+import RitikSaluja from "@/assets/Ritik Saluja.jpg";
 
 const placedStudents = [
   {
@@ -58,6 +59,13 @@ const placedStudents = [
     company: "Vaibhav Global",
     location: "Jaipur",
     image: TanmayShukla,
+  },
+  {
+    name: "Ritik Saluja",
+    role: "Full Stack Dev",
+    company: "Dev Technosys",
+    location: "Jaipur",
+    image: RitikSaluja,
   },
   {
     name: "Rishabh Jangir",
