@@ -15,7 +15,7 @@ const placedStudents = [
     name: "Nishita Gupta",
     role: "Software Engineer",
     company: "Accenture",
-    location: "Jaipur",
+    location: "Gurugram",
     image: NishitaGupta,
   },
   {
@@ -108,7 +108,7 @@ function PlacedCard({
         <img
           src={s.image}
           alt={s.name}
-          className="w-full h-full group-hover:scale-110 transition-transform duration-500"
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 to-transparent" />
         <div className="absolute bottom-3 left-3 right-3">
