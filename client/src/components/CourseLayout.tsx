@@ -19,7 +19,7 @@ export default function CourseLayout({ course }: CourseLayoutProps) {
         <div className="md:flex md:items-center md:justify-between gap-6">
           <div className="md:w-2/3">
             <nav className="text-sm text-muted-foreground mb-4">
-              <Link to="/courses" className="inline-flex items-center gap-2 hover:underline">← Back to Courses</Link>
+              <Link to="/" className="inline-flex items-center gap-2 hover:underline">← Back to Courses</Link>
             </nav>
 
             <h1 className="text-3xl md:text-4xl font-extrabold text-foreground leading-tight">{course.title}</h1>

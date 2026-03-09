@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { format } from "date-fns";
 import { CalendarIcon, Upload, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
@@ -22,6 +23,16 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -50,6 +61,8 @@ const Index = () => {
   // Card 3
   const [aadharFront, setAadharFront] = useState<string | null>(null);
   const [aadharBack, setAadharBack] = useState<string | null>(null);
+  const [aadharFrontFile, setAadharFrontFile] = useState<File | null>(null);
+  const [aadharBackFile, setAadharBackFile] = useState<File | null>(null);
   const frontRef = useRef<HTMLInputElement>(null);
   const backRef = useRef<HTMLInputElement>(null);
 
@@ -65,6 +78,12 @@ const Index = () => {
   const [course, setCourse] = useState("");
   const [referral, setReferral] = useState("");
   const [friendName, setFriendName] = useState("");
+  const [tcChecked, setTcChecked] = useState(false);
+  const [openTc, setOpenTc] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+
+
 
   const handleSameAsLocal = (checked: boolean) => {
     setSameAsLocal(checked);
@@ -81,6 +100,7 @@ const Index = () => {
   const handleImageUpload = (
     e: React.ChangeEvent<HTMLInputElement>,
     setter: (val: string | null) => void,
+    fileSetter?: (file: File | null) => void,
   ) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -92,6 +112,7 @@ const Index = () => {
         });
         return;
       }
+      fileSetter?.(file);
       const reader = new FileReader();
       reader.onload = () => setter(reader.result as string);
       reader.readAsDataURL(file);
@@ -150,12 +171,42 @@ const Index = () => {
     return e;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const validationErrors = useMemo(
+    () => validate(),
+    [
+      name,
+      email,
+      phone,
+      dob,
+      gender,
+      fatherName,
+      fatherPhone,
+      localAddress,
+      sameAsLocal,
+      permanentAddress,
+      aadharFront,
+      aadharBack,
+      profession,
+      qualification,
+      qualYear,
+      college,
+      designation,
+      company,
+      course,
+      referral,
+      friendName,
+    ],
+  );
+
+  const isFormValid = Object.keys(validationErrors).length === 0 && tcChecked;
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
-    const validationErrors = validate();
-    setErrors(validationErrors);
-    if (Object.keys(validationErrors).length > 0) {
+    const currentErrors = validate();
+    setErrors(currentErrors);
+
+    if (Object.keys(currentErrors).length > 0 || !tcChecked) {
       toast({
         title: "Validation Error",
         description: "Please fix the highlighted fields.",
@@ -163,10 +214,60 @@ const Index = () => {
       });
       return;
     }
-    toast({
-      title: "Registration Submitted!",
-      description: "Your registration has been received successfully.",
-    });
+
+    try {
+      setIsSubmitting(true);
+      const payload = {
+        name,
+        email,
+        phone,
+        dob: dob ? dob.toISOString() : null,
+        gender,
+        fatherName,
+        fatherPhone,
+        localAddress,
+        sameAsLocal,
+        permanentAddress,
+        aadharFront,
+        aadharBack,
+        profession,
+        qualification,
+        qualYear,
+        college,
+        designation,
+        company,
+        course,
+        referral,
+        friendName,
+        tcAccepted: tcChecked,
+      };
+
+      const res = await fetch("/api/students/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const msg = await res.text();
+        throw new Error(msg || "Failed to submit registration");
+      }
+
+      toast({
+        title: "Registration Submitted!",
+        description: "Your registration has been received successfully.",
+      });
+    } catch (err) {
+      console.error(err);
+      toast({
+        title: "Submission Failed",
+        description:
+          err instanceof Error ? err.message : "Unable to submit right now.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const FieldError = ({ field }: { field: string }) => {
@@ -175,12 +276,11 @@ const Index = () => {
   };
 
   const hasError = (field: string) => submitted && !!errors[field];
-
   return (
     <>
       <Header />
       <div className="min-h-screen bg-background py-8 sm:py-12 px-3 sm:px-4">
-        <div className="mx-auto ">
+        <div className="mx-auto p-[60px]">
           <h1 className="mb-2 text-center text-3xl sm:text-4xl font-bold text-foreground">
             Registration <span className="text-primary">Form</span>
           </h1>
@@ -190,7 +290,7 @@ const Index = () => {
 
           <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
             {/* Card 1 — Personal Details */}
-            <Card className="shadow-lg">
+            <Card className="shadow-lg ">
               <CardHeader className="pb-4">
                 <CardTitle className="text-base sm:text-lg font-semibold text-card-foreground">
                   Personal Details
@@ -203,6 +303,7 @@ const Index = () => {
                       Name <span className="text-destructive">*</span>
                     </Label>
                     <Input
+                      name="name"
                       placeholder="Full Name"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
@@ -215,6 +316,7 @@ const Index = () => {
                       Email <span className="text-destructive">*</span>
                     </Label>
                     <Input
+                      name="email"
                       type="email"
                       placeholder="Email Address"
                       value={email}
@@ -228,6 +330,7 @@ const Index = () => {
                       Phone <span className="text-destructive">*</span>
                     </Label>
                     <Input
+                      name="phone"
                       type="tel"
                       placeholder="Phone Number"
                       value={phone}
@@ -243,6 +346,7 @@ const Index = () => {
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
+                          name="dob"
                           variant="outline"
                           className={cn(
                             "w-full justify-start text-left font-normal",
@@ -272,6 +376,7 @@ const Index = () => {
                       Gender <span className="text-destructive">*</span>
                     </Label>
                     <RadioGroup
+                      name="gender"
                       value={gender}
                       onValueChange={setGender}
                       className="flex flex-wrap gap-4 sm:gap-6"
@@ -312,6 +417,7 @@ const Index = () => {
                       Father's Phone <span className="text-destructive">*</span>
                     </Label>
                     <Input
+                      name="phone"
                       type="tel"
                       placeholder="Father's Phone"
                       value={fatherPhone}
@@ -339,6 +445,7 @@ const Index = () => {
                     Local Address <span className="text-destructive">*</span>
                   </Label>
                   <Textarea
+                    name="localAddress"
                     placeholder="Enter local address"
                     value={localAddress}
                     onChange={(e) => handleLocalChange(e.target.value)}
@@ -363,6 +470,7 @@ const Index = () => {
                     <span className="text-destructive">*</span>
                   </Label>
                   <Textarea
+                    name="permanentAddress"
                     placeholder="Enter permanent address"
                     value={permanentAddress}
                     onChange={(e) => setPermanentAddress(e.target.value)}
@@ -391,13 +499,17 @@ const Index = () => {
                       label: "Aadhar Card (Front)",
                       value: aadharFront,
                       setter: setAadharFront,
+                      fileSetter: setAadharFrontFile,
                       ref: frontRef,
                       key: "aadharFront",
+                      name: "aadharFront",
                     },
                     {
                       label: "Aadhar Card (Back)",
                       value: aadharBack,
+                      name: "aadharBack",
                       setter: setAadharBack,
+                      fileSetter: setAadharBackFile,
                       ref: backRef,
                       key: "aadharBack",
                     },
@@ -407,11 +519,14 @@ const Index = () => {
                         {item.label} <span className="text-destructive">*</span>
                       </Label>
                       <input
+                        // name="aadharFront"
                         type="file"
                         accept="image/*"
                         className="hidden"
                         ref={item.ref}
-                        onChange={(e) => handleImageUpload(e, item.setter)}
+                        onChange={(e) =>
+                          handleImageUpload(e, item.setter, item.fileSetter)
+                        }
                       />
                       {item.value ? (
                         <div className="relative rounded-lg border border-border overflow-hidden">
@@ -422,7 +537,10 @@ const Index = () => {
                           />
                           <button
                             type="button"
-                            onClick={() => item.setter(null)}
+                            onClick={() => {
+                              item.setter(null);
+                              item.fileSetter?.(null);
+                            }}
                             className="absolute top-2 right-2 rounded-full bg-destructive p-1 text-destructive-foreground hover:opacity-80"
                           >
                             <X className="h-4 w-4" />
@@ -494,6 +612,7 @@ const Index = () => {
                         <span className="text-destructive">*</span>
                       </Label>
                       <Input
+                        name="qualification"
                         placeholder="e.g. B.Tech"
                         value={qualification}
                         onChange={(e) => setQualification(e.target.value)}
@@ -508,6 +627,7 @@ const Index = () => {
                         Year <span className="text-destructive">*</span>
                       </Label>
                       <Input
+                        name="qualYear"
                         placeholder="e.g. 2024"
                         value={qualYear}
                         onChange={(e) => setQualYear(e.target.value)}
@@ -522,6 +642,7 @@ const Index = () => {
                         College <span className="text-destructive">*</span>
                       </Label>
                       <Input
+                        name="college"
                         placeholder="College Name"
                         value={college}
                         onChange={(e) => setCollege(e.target.value)}
@@ -541,6 +662,7 @@ const Index = () => {
                         Designation <span className="text-destructive">*</span>
                       </Label>
                       <Input
+                        name="designation"
                         placeholder="Your Designation"
                         value={designation}
                         onChange={(e) => setDesignation(e.target.value)}
@@ -555,6 +677,7 @@ const Index = () => {
                         Company <span className="text-destructive">*</span>
                       </Label>
                       <Input
+                        name="company"
                         placeholder="Company Name"
                         value={company}
                         onChange={(e) => setCompany(e.target.value)}
@@ -581,7 +704,7 @@ const Index = () => {
                   <Label className="text-card-foreground">
                     Course <span className="text-destructive">*</span>
                   </Label>
-                  <Select value={course} onValueChange={setCourse}>
+                  <Select name="course" value={course} onValueChange={setCourse}>
                     <SelectTrigger
                       className={cn(hasError("course") && "border-destructive")}
                     >
@@ -610,6 +733,7 @@ const Index = () => {
                     <span className="text-destructive">*</span>
                   </Label>
                   <RadioGroup
+                    name="referral"
                     value={referral}
                     onValueChange={setReferral}
                     className="flex flex-wrap gap-3 sm:gap-4"
@@ -640,6 +764,7 @@ const Index = () => {
                 {referral === "friend" && (
                   <div className="space-y-1.5">
                     <Input
+                      name="friendName"
                       placeholder="Friend Name"
                       value={friendName}
                       onChange={(e) => setFriendName(e.target.value)}
@@ -650,14 +775,109 @@ const Index = () => {
                     <FieldError field="friendName" />
                   </div>
                 )}
+
+
               </CardContent>
             </Card>
+
+            <div className="pt-2">
+              <div className="rounded-lg border border-border p-4 sm:p-5 space-y-3">
+                <p className="text-sm font-semibold text-card-foreground">
+                  Terms & Conditions
+                </p>
+                <div className="flex items-start space-x-3">
+                  {/* <Checkbox
+                    checked={tcChecked}
+                    onCheckedChange={() => {
+                      setOpenTc(true);
+                    }}
+                    id="tc-checkbox"
+                  /> */}
+
+
+                  <Checkbox
+                    checked={tcChecked}
+                    onCheckedChange={(val) => {
+                      setTcChecked(Boolean(val));
+                      setOpenTc(true);
+                    }}
+                  />
+                  <div className="text-sm text-card-foreground leading-snug">
+                    <label htmlFor="tc-checkbox" className="cursor-pointer">
+                      I agree to the{" "}
+                      <a
+                        href="#terms"
+                        className="text-primary font-medium underline underline-offset-4 hover:opacity-90"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setOpenTc(true);
+                        }}
+                      >
+                        Terms and Conditions
+                      </a>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <Dialog open={openTc} onOpenChange={setOpenTc}>
+                <DialogContent className="sm:max-w-lg">
+                  <DialogHeader>
+                    <DialogTitle>Terms & Conditions</DialogTitle>
+                    <DialogDescription>
+                      Please read and accept our terms to proceed with registration.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="max-h-[60vh] overflow-y-auto text-sm text-muted-foreground space-y-4 pt-2">
+                    <p>
+                      By registering you agree to abide by the rules and policies of the institute. You confirm that
+                      the information provided is true and accurate to the best of your knowledge.
+                    </p>
+                    <p>
+                      Fee, refund and attendance policies apply as per the course specific guidelines. Any
+                      fraudulent activity may lead to cancellation of registration.
+                    </p>
+                    <p>
+                      Personal data will be processed in accordance with our privacy practices.
+                    </p>
+                  </div>
+                  <DialogFooter className="gap-2 sm:gap-3">
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setTcChecked(false);
+                        setOpenTc(false);
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setTcChecked(true);
+                        setOpenTc(false);
+                      }}
+                    >
+                      Agree
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
+
+            {/* <Button
+              type="submit"
+              className="w-full h-11 sm:h-12 text-base sm:text-lg font-semibold"
+              disabled={!isFormValid || isSubmitting}
+            >
+              Submit Registration
+            </Button> */}
 
             <Button
               type="submit"
               className="w-full h-11 sm:h-12 text-base sm:text-lg font-semibold"
+              disabled={isSubmitting}
             >
-              Submit Registration
+              {isSubmitting ? "Submitting..." : "Submit Registration"}
             </Button>
           </form>
         </div>
