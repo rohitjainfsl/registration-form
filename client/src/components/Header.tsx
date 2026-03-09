@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, Phone } from "lucide-react";
 import bundledLogo from "@/assets/logo.png";
+import { useNavigate } from "react-router-dom";
 
 // Use public images to allow Vercel to serve retina variants from /public/images/
 const logoSrc = "/images/logo.png";
@@ -13,6 +14,7 @@ const navLinks = [
   { label: "Courses", href: "#courses" },
   { label: "Placements", href: "#placements" },
   { label: "Testimonials", href: "#testimonials" },
+  { label: "LifeAtFSL", href: "#lifeatfsl" }, // We'll handle this differently!
   { label: "Contact", href: "#enquiry" },
 ];
 
@@ -28,31 +30,15 @@ export default function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const scrollToSection = (href: string) => {
-    const el = document.querySelector(href);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
-    } else if (href === "#home") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  };
-
-  const handleNavClick = (href: string) => {
+  const handleNavClick = (href: string, isLiveAtFSL?: boolean) => {
     setMobileOpen(false);
-    if (location.pathname !== "/") {
-      navigate(href.startsWith("#") ? `/${href}` : "/");
+    if (isLiveAtFSL) {
+      // Navigate to another page, e.g., "/liveatfsl"
+      navigate("/lifeatfsl");
       return;
     }
-    scrollToSection(href);
-  };
-
-  const handleLogoClick = () => {
-    setMobileOpen(false);
-    if (location.pathname !== "/") {
-      navigate("/");
-    } else {
-      scrollToSection("#home");
-    }
+    const el = document.querySelector(href);
+    if (el) el.scrollIntoView({ behavior: "smooth" });
   };
 
   const handleEnrollClick = () => {
@@ -92,11 +78,10 @@ export default function Header() {
 
       {/* Main header */}
       <header
-        className={`sticky top-0 z-50 w-full transition-all duration-400 ${
-          scrolled
-            ? "bg-background/95 backdrop-blur-md shadow-lg"
-            : "bg-background shadow-sm"
-        }`}
+        className={`sticky top-0 z-50 w-full transition-all duration-400 ${scrolled
+          ? "bg-background/95 backdrop-blur-md shadow-lg"
+          : "bg-background shadow-sm"
+          }`}
       >
         <div className="container mx-auto px-4 flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
@@ -135,7 +120,11 @@ export default function Header() {
                 href={link.href}
                 onClick={(e) => {
                   e.preventDefault();
-                  handleNavClick(link.href);
+                  if (link.label === "LifeAtFSL") {
+                    handleNavClick(link.href, true);
+                  } else {
+                    handleNavClick(link.href);
+                  }
                 }}
                 className="relative px-4 py-2 text-sm font-medium text-foreground/80 hover:text-brand-blue transition-colors duration-200 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-brand-orange after:transition-all after:duration-300 hover:after:w-full"
               >
@@ -164,9 +153,8 @@ export default function Header() {
 
         {/* Mobile Nav */}
         <div
-          className={`md:hidden overflow-hidden transition-all duration-300 bg-background border-t border-border ${
-            mobileOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-          }`}
+          className={`md:hidden overflow-hidden transition-all duration-300 bg-background border-t border-border ${mobileOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+            }`}
         >
           <nav className="container mx-auto px-4 py-4 flex flex-col gap-2">
             {navLinks.map((link) => (
@@ -175,7 +163,11 @@ export default function Header() {
                 href={link.href}
                 onClick={(e) => {
                   e.preventDefault();
-                  handleNavClick(link.href);
+                  if (link.label === "LiveAtFSL") {
+                    handleNavClick(link.href, true);
+                  } else {
+                    handleNavClick(link.href);
+                  }
                 }}
                 className="px-4 py-3 rounded-lg text-sm font-medium text-foreground/80 hover:text-brand-blue hover:bg-brand-blue-light transition-colors duration-200"
               >
