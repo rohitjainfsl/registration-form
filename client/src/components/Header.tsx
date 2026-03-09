@@ -34,7 +34,7 @@ export default function Header() {
   const handleEnrollClick = () => {
     window.open(
       "https://registration-form-1-mbw5.onrender.com/registration",
-      "_blank"
+      "_blank",
     );
   };
 
@@ -51,10 +51,10 @@ export default function Header() {
         </a>
         <span className="text-primary-foreground/50">|</span>
         <a
-          href="mailto:info@fullstacklearning.com"
+          href="mailto:rohit@fullstacklearning.com"
           className="hover:text-brand-orange transition-colors duration-200"
         >
-          info@fullstacklearning.com
+          rohit@fullstacklearning.com
         </a>
       </div>
 
@@ -113,11 +113,7 @@ export default function Header() {
 
             {/* Updated Enroll Now Button */}
             <a
-              href="https://registration-form-1-mbw5.onrender.com/registration"
-              onClick={(e) => {
-                e.preventDefault();
-                handleEnrollClick();
-              }}
+              href="/register"
               className="ml-4 px-5 py-2.5 rounded-lg text-sm font-semibold text-primary-foreground gradient-brand hover:opacity-90 transition-all duration-200 hover:shadow-lg hover:scale-105"
             >
               Enroll Now
@@ -157,11 +153,7 @@ export default function Header() {
 
             {/* Updated Enroll Now Button */}
             <a
-              href="https://registration-form-1-mbw5.onrender.com/registration"
-              onClick={(e) => {
-                e.preventDefault();
-                handleEnrollClick();
-              }}
+              href="/register"
               className="mt-2 px-5 py-3 rounded-lg text-sm font-semibold text-center text-primary-foreground gradient-brand hover:opacity-90 transition-all duration-200"
             >
               Enroll Now
