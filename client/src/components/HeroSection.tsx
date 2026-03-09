@@ -8,8 +8,11 @@ import {
   TrendingUp,
 } from "lucide-react";
 import hero1 from "@/assets/hero-bg.jpg";
-import hero2 from "@/assets/placed1.jpg";
-import hero3 from "@/assets/placed2.jpg";
+// import hero2 from "@/assets/placed1.jpg";
+// import hero3 from "@/assets/placed2.jpg";
+import hero4 from "@/assets/Hero-bg2.jpeg";
+import hero5 from "@/assets/Hero-bg3.jpg";
+import hero6 from "@/assets/Hero-bg4.jpg";
 
 const stats = [
   { icon: Users, label: "Students Trained", value: 5000, suffix: "+" },
@@ -68,7 +71,7 @@ const words = [
 ];
 
 export default function HeroSection() {
-  const images = [hero1, hero2, hero3];
+  const images = [hero1, hero4, hero5, hero6];
   const [wordIndex, setWordIndex] = useState(0);
   const [visible, setVisible] = useState(true);
   const [statsVisible, setStatsVisible] = useState(false);
