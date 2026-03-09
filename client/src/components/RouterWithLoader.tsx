@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import Index from "@/pages/Index";
 import NotFound from "@/pages/NotFound";
@@ -16,9 +16,12 @@ export default function RouterWithLoader() {
   const location = useLocation();
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     // show loader for 2s on initial load and on route changes
     setLoading(true);
+  }, [location.pathname]);
+
+  useEffect(() => {
     const t = setTimeout(() => setLoading(false), 2000);
     return () => clearTimeout(t);
   }, [location.pathname]);
