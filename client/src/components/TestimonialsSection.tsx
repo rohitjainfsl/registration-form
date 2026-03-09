@@ -1,9 +1,8 @@
 import { useRef, useEffect, useState } from "react";
 import { Quote, Star } from "lucide-react";
 import student1 from "@/assets/student1.jpg"; // ✅ fallback fix
-
-import student2 from "@/assets/student2.jpg";
-import student3 from "@/assets/student3.jpg";
+import NishitaGupta from "@/assets/Nishita Gupta.jpg";
+import SuhaniJain from "@/assets/Suhani Jain.jpg";
 
 const Jatin = "/images/jatin.jpeg";
 const Dron = "/images/dron.png";
@@ -49,9 +48,27 @@ const testimonials = [
     rating: 5,
     text: "I had the privilege of enrolling in the Full Stack Learning program in Jaipur, and I can affirm that it has been an enlightening experience.",
   },
+  {
+    name: "Nishita Gupta",
+    image: NishitaGupta,
+    rating: 5,
+    text: "Rohit Sir is a really great teacher. He focuses on practical learning, pays attention to every student, and he's always kind so you never feel discouraged. I finished a full stack development course with him and now I'm working in a company. Even now, he's always there to help. I really suggest him to anyone who wants to learn and improve in this field.",
+  },
+  {
+    name: "Suhani Jain",
+    image: SuhaniJain,
+    rating: 5,
+    text: "I enrolled myself in the front end developer course at Full stack learning that made me equipped with skills . Their teaching methodology is interactive and up-to-date rather than being a note-taking lecture. It will benefit you in the long run in this regularly updating tech world. I supremely advocate Full stack learning ...",
+  },
 ];
 
-function TestimonialCard({ t, index }: { t: typeof testimonials[0]; index: number }) {
+function TestimonialCard({
+  t,
+  index,
+}: {
+  t: (typeof testimonials)[0];
+  index: number;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
   const [imgSrc, setImgSrc] = useState<string>(t.image);
@@ -61,7 +78,7 @@ function TestimonialCard({ t, index }: { t: typeof testimonials[0]; index: numbe
       ([entry]) => {
         if (entry.isIntersecting) setVisible(true);
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
 
     if (ref.current) observer.observe(ref.current);
@@ -76,7 +93,7 @@ function TestimonialCard({ t, index }: { t: typeof testimonials[0]; index: numbe
       }`}
       style={{ transitionDelay: `${index * 100}ms` }}
     >
-      <Quote className="text-brand-orange mb-4 opacity-60" size={32} />
+      <Quote className="text-brand-orange mb-2 opacity-60" size={24} />
 
       <p className="text-muted-foreground text-sm leading-relaxed mb-6 italic">
         "{t.text}"
@@ -120,7 +137,8 @@ export default function TestimonialsSection() {
           </h2>
 
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Real stories from real students who transformed their careers with FSL
+            Real stories from real students who transformed their careers with
+            FSL
           </p>
 
           <div className="flex items-center justify-center gap-2 mt-4">

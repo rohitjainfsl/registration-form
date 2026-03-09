@@ -9,6 +9,7 @@ import BackendDevelopment from "@/pages/courses/BackendDevelopment";
 import DatabaseManagement from "@/pages/courses/DatabaseManagement";
 import ReactNativeMobile from "@/pages/courses/ReactNativeMobile";
 import DevOpsCloud from "@/pages/courses/DevOpsCloud";
+import RegistrationForm from "@/pages/RegistrationForm";
 import Loader from "./Loader";
 import LifeAtFSL from "@/pages/LifeAtFSL.tsx";
 
@@ -36,6 +37,7 @@ export default function RouterWithLoader() {
           <Route path="/courses/database-management" element={<DatabaseManagement />} />
           <Route path="/courses/react-native-mobile" element={<ReactNativeMobile />} />
           <Route path="/courses/devops-cloud" element={<DevOpsCloud />} />
+          <Route path="/register" element={<RegistrationForm />} />
           {/* dynamic fallback */}
           <Route path="/courses/:slug" element={<CoursePage />} />
           <Route path="*" element={<NotFound />} />

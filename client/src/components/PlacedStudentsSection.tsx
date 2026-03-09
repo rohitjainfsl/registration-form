@@ -1,27 +1,96 @@
 import { useRef, useEffect, useState } from "react";
 import { Briefcase, MapPin, TrendingUp } from "lucide-react";
-import placed1 from "@/assets/placed1.jpg";
-import placed2 from "@/assets/placed2.jpg";
-import student1 from "@/assets/student1.jpg";
-import student2 from "@/assets/student2.jpg";
-import student3 from "@/assets/student3.jpg";
+import BharatPareek from "@/assets/Bharat Pareek.jpg";
+import NishitaGupta from "@/assets/Nishita Gupta.jpg";
+import SuhaniJain from "@/assets/Suhani Jain.jpg";
+import RanveerSingh from "@/assets/Ranveer Singh.jpg";
+import RishabhJangir from "@/assets/Rishabh Jangir.jpg";
+import RiyaAnand from "@/assets/Riya Anand.jpg";
+import DeepeshSuiwal from "@/assets/Deepesh Suiwal.png";
+import TanmayShukla from "@/assets/Tanmay Shukla.jpg";
+import RitikSaluja from "@/assets/Ritik Saluja.jpg";
 
 const placedStudents = [
-  { name: "Arjun Meena", role: "Software Engineer", company: "TCS", package: "6.5 LPA", location: "Bangalore", image: student1 },
-  { name: "Pooja Gupta", role: "Frontend Dev", company: "Infosys", package: "5.8 LPA", location: "Pune", image: placed1 },
-  { name: "Nikhil Sharma", role: "Full Stack Dev", company: "Wipro", package: "7.2 LPA", location: "Hyderabad", image: placed2 },
-  { name: "Anita Singh", role: "React Developer", company: "HCL", package: "6.0 LPA", location: "Noida", image: student2 },
-  { name: "Rohit Jain", role: "Backend Engineer", company: "Capgemini", package: "8.0 LPA", location: "Mumbai", image: student3 },
-  { name: "Meenal Rathore", role: "UI/UX Engineer", company: "Tech Mahindra", package: "5.5 LPA", location: "Jaipur", image: placed1 },
+  {
+    name: "Nishita Gupta",
+    role: "Software Engineer",
+    company: "Accenture",
+    location: "Gurugram",
+    image: NishitaGupta,
+  },
+  {
+    name: "Deepesh Suiwal",
+    role: "Full Stack Dev",
+    company: "Hidden Mind Solutions",
+    location: "Udaipur",
+    image: DeepeshSuiwal,
+  },
+  {
+    name: "Suhani Jain",
+    role: "Full Stack Dev",
+    company: "Celebal",
+    location: "Jaipur",
+    image: SuhaniJain,
+  },
+  {
+    name: "Ranveer Singh",
+    role: "Frontend Developer",
+    company: "Vaibhav Global",
+    location: "Jaipur",
+    image: RanveerSingh,
+  },
+  {
+    name: "Riya Anand",
+    role: "SEO",
+    company: "Vaibhav Global",
+    location: "Jaipur",
+    image: RiyaAnand,
+  },
+  {
+    name: "Bharat Pareek",
+    role: "Full Stack Dev",
+    company: "My Saathi Tech",
+    location: "Bikaner",
+    image: BharatPareek,
+  },
+  {
+    name: "Tanmay Shukla",
+    role: "UI/UX Engineer",
+    company: "Vaibhav Global",
+    location: "Jaipur",
+    image: TanmayShukla,
+  },
+  {
+    name: "Ritik Saluja",
+    role: "Full Stack Dev",
+    company: "Dev Technosys",
+    location: "Jaipur",
+    image: RitikSaluja,
+  },
+  {
+    name: "Rishabh Jangir",
+    role: "UI/UX Engineer",
+    company: "Vaibhav Global",
+    location: "Jaipur",
+    image: RishabhJangir,
+  },
 ];
 
-function PlacedCard({ s, index }: { s: typeof placedStudents[0]; index: number }) {
+function PlacedCard({
+  s,
+  index,
+}: {
+  s: (typeof placedStudents)[0];
+  index: number;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
-      { threshold: 0.1 }
+      ([entry]) => {
+        if (entry.isIntersecting) setVisible(true);
+      },
+      { threshold: 0.1 },
     );
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
@@ -53,10 +122,6 @@ function PlacedCard({ s, index }: { s: typeof placedStudents[0]; index: number }
         <p className="text-sm text-brand-blue mb-3">{s.role}</p>
         <div className="flex items-center justify-between text-xs text-muted-foreground">
           <span className="flex items-center gap-1">
-            <TrendingUp size={12} className="text-green-500" />
-            <span className="text-green-600 font-semibold">{s.package}</span>
-          </span>
-          <span className="flex items-center gap-1">
             <MapPin size={12} className="text-brand-orange" /> {s.location}
           </span>
           <span className="flex items-center gap-1">
@@ -80,14 +145,15 @@ export default function PlacedStudentsSection() {
             Success is <span className="text-gradient-brand">Our Story</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            2500+ students placed in top companies. Join our growing family of successful tech professionals!
+            2500+ students placed in top companies. Join our growing family of
+            successful tech professionals!
           </p>
           <div className="flex items-center justify-center gap-2 mt-4">
             <div className="h-1 w-12 rounded-full bg-brand-blue" />
             <div className="h-1 w-4 rounded-full bg-brand-orange" />
           </div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
           {placedStudents.map((s, i) => (
             <PlacedCard key={s.name} s={s} index={i} />
           ))}
