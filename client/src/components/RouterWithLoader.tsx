@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import Index from "@/pages/Index";
 import NotFound from "@/pages/NotFound";
@@ -11,14 +11,18 @@ import ReactNativeMobile from "@/pages/courses/ReactNativeMobile";
 import DevOpsCloud from "@/pages/courses/DevOpsCloud";
 import RegistrationForm from "@/pages/RegistrationForm";
 import Loader from "./Loader";
+import LifeAtFSL from "@/pages/LifeAtFSL.tsx";
 
 export default function RouterWithLoader() {
   const location = useLocation();
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     // show loader for 2s on initial load and on route changes
     setLoading(true);
+  }, [location.pathname]);
+
+  useEffect(() => {
     const t = setTimeout(() => setLoading(false), 2000);
     return () => clearTimeout(t);
   }, [location.pathname]);
@@ -29,26 +33,12 @@ export default function RouterWithLoader() {
       <div className={loading ? "pointer-events-none" : ""}>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route
-            path="/courses/full-stack-development"
-            element={<FullStackDevelopment />}
-          />
-          <Route
-            path="/courses/frontend-development"
-            element={<FrontendDevelopment />}
-          />
-          <Route
-            path="/courses/backend-development"
-            element={<BackendDevelopment />}
-          />
-          <Route
-            path="/courses/database-management"
-            element={<DatabaseManagement />}
-          />
-          <Route
-            path="/courses/react-native-mobile"
-            element={<ReactNativeMobile />}
-          />
+          <Route path="/lifeatfsl" element={<LifeAtFSL />} />
+          <Route path="/courses/full-stack-development" element={<FullStackDevelopment />} />
+          <Route path="/courses/frontend-development" element={<FrontendDevelopment />} />
+          <Route path="/courses/backend-development" element={<BackendDevelopment />} />
+          <Route path="/courses/database-management" element={<DatabaseManagement />} />
+          <Route path="/courses/react-native-mobile" element={<ReactNativeMobile />} />
           <Route path="/courses/devops-cloud" element={<DevOpsCloud />} />
           <Route path="/register" element={<RegistrationForm />} />
           {/* dynamic fallback */}

@@ -131,11 +131,11 @@ export default function HeroSection() {
       </div>
 
       {/* Animated circles */}
-      <div className="absolute top-20 right-20 w-64 h-64 rounded-full border-2 border-primary-foreground/10 animate-float opacity-30 hidden lg:block" />
-      <div
-        className="absolute bottom-32 left-10 w-40 h-40 rounded-full border border-brand-orange/30 animate-float opacity-40 hidden lg:block"
-        style={{ animationDelay: "1s" }}
-      />
+        {/* <div className="absolute top-20 right-20 w-64 h-64 rounded-full border-2 border-primary-foreground/10 animate-float opacity-30 hidden lg:block" />
+        <div
+          className="absolute bottom-32 left-10 w-40 h-40 rounded-full border border-brand-orange/30 animate-float opacity-40 hidden lg:block"
+          style={{ animationDelay: "1s" }}
+        /> */}
 
       <div className="relative container mx-auto px-4 py-24 md:py-32">
         <div className="max-w-3xl">
