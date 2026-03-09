@@ -23,6 +23,9 @@ export default function EnquiryForm() {
 
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -45,34 +48,43 @@ export default function EnquiryForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
-    //WEB 3 FORM
-    const formData = new FormData();
-    formData.append("name", form.name);
-    formData.append("email", form.email);
-    formData.append("phone", form.phone);
-    formData.append("course", form.course);
-    formData.append("message", form.message);
+    try {
+      const formData = new FormData();
+      formData.append("name", form.name);
+      formData.append("email", form.email);
+      formData.append("phone", form.phone);
+      formData.append("course", form.course);
+      formData.append("message", form.message);
 
-    formData.append("access_key", "9896dc59-07e4-4630-9b2d-39348c63866c");
+      formData.append("access_key", "9896dc59-07e4-4630-9b2d-39348c63866c");
 
-    const response = await fetch("https://api.web3forms.com/submit", {
-      method: "POST",
-      body: formData,
-    });
-    const data = await response.json();
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData,
+      });
 
-    if (data.success) {
-      setSubmitted(true);
-      setResult("Form Submitted Successfully");
-    } else {
-      console.log("Error", data);
-      setResult(data.message);
+      const data = await response.json();
+
+      if (data.success) {
+        setSubmitted(true);
+        setResult("Form Submitted Successfully");
+        setForm({ name: "", email: "", phone: "", course: "", message: "" });
+      } else {
+        console.log("Error", data);
+        setResult(data.message);
+      }
+
+      setTimeout(() => setSubmitted(false), 4000);
+
+    } catch (error) {
+      console.log(error);
+      setResult("Something went wrong");
+    } finally {
+      setLoading(false);
     }
-    setTimeout(() => setSubmitted(false), 4000);
-    setForm({ name: "", email: "", phone: "", course: "", message: "" });
   };
-
   return (
     <section id="enquiry" className="section-padding bg-muted/30">
       <div className="container mx-auto px-4">
@@ -96,9 +108,8 @@ export default function EnquiryForm() {
 
         <div
           ref={ref}
-          className={`grid grid-cols-1 lg:grid-cols-5 gap-8 max-w-5xl mx-auto transition-all duration-700 ${
-            visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-          }`}
+          className={`grid grid-cols-1 lg:grid-cols-5 gap-8 max-w-5xl mx-auto transition-all duration-700 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+            }`}
         >
           {/* Contact Info */}
           <div className="order-2 sm:order-1 lg:col-span-2 space-y-6">
@@ -281,13 +292,29 @@ export default function EnquiryForm() {
                     className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-brand-blue/40 focus:border-brand-blue transition-all duration-200 resize-none"
                   />
                 </div>
-                <button
+                {/* <button
                   type="submit"
                   className="w-full flex items-center justify-center gap-2 py-4 rounded-xl font-semibold text-primary-foreground bg-[#f16b3d] hover:opacity-90 hover:scale-[1.02] transition-all duration-300 shadow-lg hover:shadow-xl"
                 >
                   <Send size={18} />
                   Submit Enquiry
+                </button> */}
+
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full flex items-center justify-center gap-2 py-4 rounded-xl font-semibold text-primary-foreground bg-[#f16b3d] hover:opacity-90 hover:scale-[1.02] transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-70"
+                >
+                  {loading ? "Submitting..." : (
+                    <>
+                      <Send size={18} />
+                      Submit Enquiry
+                    </>
+                  )}
                 </button>
+
+
                 <p className="text-xs text-center text-muted-foreground">
                   By submitting, you agree to our Terms & Privacy Policy
                 </p>

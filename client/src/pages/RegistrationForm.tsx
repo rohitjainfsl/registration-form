@@ -203,6 +203,7 @@ const Index = () => {
                       Name <span className="text-destructive">*</span>
                     </Label>
                     <Input
+                      name="name"
                       placeholder="Full Name"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
@@ -215,6 +216,7 @@ const Index = () => {
                       Email <span className="text-destructive">*</span>
                     </Label>
                     <Input
+                      name="email"
                       type="email"
                       placeholder="Email Address"
                       value={email}
@@ -228,6 +230,7 @@ const Index = () => {
                       Phone <span className="text-destructive">*</span>
                     </Label>
                     <Input
+                      name="phone"
                       type="tel"
                       placeholder="Phone Number"
                       value={phone}
@@ -243,6 +246,7 @@ const Index = () => {
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
+                          name="dob"
                           variant="outline"
                           className={cn(
                             "w-full justify-start text-left font-normal",
@@ -272,6 +276,7 @@ const Index = () => {
                       Gender <span className="text-destructive">*</span>
                     </Label>
                     <RadioGroup
+                      name="gender"
                       value={gender}
                       onValueChange={setGender}
                       className="flex flex-wrap gap-4 sm:gap-6"
@@ -312,6 +317,7 @@ const Index = () => {
                       Father's Phone <span className="text-destructive">*</span>
                     </Label>
                     <Input
+                      name="phone"
                       type="tel"
                       placeholder="Father's Phone"
                       value={fatherPhone}
@@ -339,6 +345,7 @@ const Index = () => {
                     Local Address <span className="text-destructive">*</span>
                   </Label>
                   <Textarea
+                    name="localAddress"
                     placeholder="Enter local address"
                     value={localAddress}
                     onChange={(e) => handleLocalChange(e.target.value)}
@@ -363,6 +370,7 @@ const Index = () => {
                     <span className="text-destructive">*</span>
                   </Label>
                   <Textarea
+                    name="permanentAddress"
                     placeholder="Enter permanent address"
                     value={permanentAddress}
                     onChange={(e) => setPermanentAddress(e.target.value)}
@@ -393,10 +401,12 @@ const Index = () => {
                       setter: setAadharFront,
                       ref: frontRef,
                       key: "aadharFront",
+                      name: "aadharFront",
                     },
                     {
                       label: "Aadhar Card (Back)",
                       value: aadharBack,
+                      name: "aadharBack",
                       setter: setAadharBack,
                       ref: backRef,
                       key: "aadharBack",
@@ -407,6 +417,7 @@ const Index = () => {
                         {item.label} <span className="text-destructive">*</span>
                       </Label>
                       <input
+                        // name="aadharFront"
                         type="file"
                         accept="image/*"
                         className="hidden"
@@ -494,6 +505,7 @@ const Index = () => {
                         <span className="text-destructive">*</span>
                       </Label>
                       <Input
+                        name="qualification"
                         placeholder="e.g. B.Tech"
                         value={qualification}
                         onChange={(e) => setQualification(e.target.value)}
@@ -508,6 +520,7 @@ const Index = () => {
                         Year <span className="text-destructive">*</span>
                       </Label>
                       <Input
+                        name="qualYear"
                         placeholder="e.g. 2024"
                         value={qualYear}
                         onChange={(e) => setQualYear(e.target.value)}
@@ -522,6 +535,7 @@ const Index = () => {
                         College <span className="text-destructive">*</span>
                       </Label>
                       <Input
+                        name="college"
                         placeholder="College Name"
                         value={college}
                         onChange={(e) => setCollege(e.target.value)}
@@ -541,6 +555,7 @@ const Index = () => {
                         Designation <span className="text-destructive">*</span>
                       </Label>
                       <Input
+                        name="designation"
                         placeholder="Your Designation"
                         value={designation}
                         onChange={(e) => setDesignation(e.target.value)}
@@ -555,6 +570,7 @@ const Index = () => {
                         Company <span className="text-destructive">*</span>
                       </Label>
                       <Input
+                        name="company"
                         placeholder="Company Name"
                         value={company}
                         onChange={(e) => setCompany(e.target.value)}
@@ -581,7 +597,7 @@ const Index = () => {
                   <Label className="text-card-foreground">
                     Course <span className="text-destructive">*</span>
                   </Label>
-                  <Select value={course} onValueChange={setCourse}>
+                  <Select name="course" value={course} onValueChange={setCourse}>
                     <SelectTrigger
                       className={cn(hasError("course") && "border-destructive")}
                     >
@@ -610,6 +626,7 @@ const Index = () => {
                     <span className="text-destructive">*</span>
                   </Label>
                   <RadioGroup
+                    name="referral"
                     value={referral}
                     onValueChange={setReferral}
                     className="flex flex-wrap gap-3 sm:gap-4"
@@ -640,6 +657,7 @@ const Index = () => {
                 {referral === "friend" && (
                   <div className="space-y-1.5">
                     <Input
+                      name="friendName"
                       placeholder="Friend Name"
                       value={friendName}
                       onChange={(e) => setFriendName(e.target.value)}
