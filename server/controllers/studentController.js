@@ -16,7 +16,7 @@ export async function register(req, res) {
       name, email, phone, dob, gender, fname, fphone,
       laddress, paddress, role, qualification,
       qualificationYear, college, designation,
-      company, course, otherCourse, referral, friendName
+      company, course, otherCourse, referral, friendName,termsAccepted
     } = req.body;
 
     const aadharFiles = req.files.filter(
@@ -56,6 +56,7 @@ export async function register(req, res) {
       aadharFront,
       aadharBack,
       firstTimeSignin: true,
+      termsAccepted,
     });
 
     await newRegistration.save();

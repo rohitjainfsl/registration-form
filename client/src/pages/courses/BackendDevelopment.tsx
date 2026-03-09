@@ -1,4 +1,3 @@
-import React from "react";
 import { courses, slugify } from "@/lib/courses";
 import CourseLayout from "@/components/CourseLayout";
 
