@@ -30,10 +30,31 @@ export default function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const scrollToSection = (href: string) => {
+    const el = document.querySelector(href);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    } else if (href === "#home") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   const handleNavClick = (href: string) => {
     setMobileOpen(false);
-    const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
+    if (location.pathname !== "/") {
+      navigate(href.startsWith("#") ? `/${href}` : "/");
+      return;
+    }
+    scrollToSection(href);
+  };
+
+  const handleLogoClick = () => {
+    setMobileOpen(false);
+    if (location.pathname !== "/") {
+      navigate("/");
+    } else {
+      scrollToSection("#home");
+    }
   };
 
   const handleEnrollClick = () => {
@@ -125,10 +146,10 @@ export default function Header() {
         <div className="container mx-auto px-4 flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <a
-            href="#home"
+            href="/"
             onClick={(e) => {
               e.preventDefault();
-              handleNavClick("#home");
+              handleLogoClick();
             }}
             className="flex items-center gap-2 group"
           >
