@@ -242,6 +242,13 @@ const SignupForm = () => {
         title: "Registration Submitted!",
         description: "Your registration has been received successfully.",
       });
+      dispatch({ type: "setMany", payload: initialFormState });
+      setSubmitted(false);
+      setErrors({});
+      setOpenTc(false);
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 400);
     } catch (err) {
       console.error(err);
       toast({
