@@ -140,6 +140,26 @@ export async function fetchStudentById(req, res) {
   }
 }
 
+export async function checkEmailExists(req, res) {
+  try {
+    const rawEmail = typeof req.query.email === "string" ? req.query.email : "";
+    const email = rawEmail.trim().toLowerCase();
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    const exists = await studentModel.exists({ email });
+    return res.status(200).json({ exists: Boolean(exists) });
+  } catch (error) {
+    console.error("Error checking email:", error);
+    return res.status(500).json({
+      message: "Failed to check email",
+      error: error.message,
+    });
+  }
+}
+
 export async function updateStudentDetails(req, res) {
   try {
     const { id } = req.params;

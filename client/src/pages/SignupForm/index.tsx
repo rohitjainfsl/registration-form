@@ -129,13 +129,12 @@ const SignupForm = () => {
   const [formState, dispatch] = useReducer(formReducer, initialFormState);
   const [openTc, setOpenTc] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [emailExists, setEmailExists] = useState(false);
   const frontRef = useRef<HTMLInputElement>(null);
   const backRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
-  const apiBase = (
-    import.meta.env.VITE_API_URL
-  ).replace(/\/$/, "");
+  const apiBase = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
 
   const setField = <K extends keyof RegistrationFormValues>(
     field: K,
@@ -171,6 +170,26 @@ const SignupForm = () => {
     setField("localAddress", val);
   };
 
+  const handleEmailBlur = async (value: string) => {
+    const email = value.trim().toLowerCase();
+    if (!email || !apiBase) {
+      setEmailExists(false);
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `${apiBase}/api/students/email-exists?email=${encodeURIComponent(email)}`,
+        { credentials: "include" },
+      );
+      if (!res.ok) return;
+      const data = await res.json();
+      setEmailExists(Boolean(data?.exists));
+    } catch (error) {
+      console.error("Email check failed", error);
+    }
+  };
+
   const handleImageUpload = (
     e: React.ChangeEvent<HTMLInputElement>,
     field: "aadharFront" | "aadharBack",
@@ -203,6 +222,9 @@ const SignupForm = () => {
         e[key] = issue.message;
       }
     }
+    if (emailExists && !e.email) {
+      e.email = "Email already exists";
+    }
     return e;
   };
 
@@ -212,7 +234,11 @@ const SignupForm = () => {
     const currentErrors = validate();
     setErrors(currentErrors);
 
-    if (Object.keys(currentErrors).length > 0 || !formState.tcAccepted) {
+    if (
+      Object.keys(currentErrors).length > 0 ||
+      !formState.tcAccepted ||
+      emailExists
+    ) {
       toast({
         title: "Validation Error",
         description: "Please fix the highlighted fields.",
@@ -248,7 +274,8 @@ const SignupForm = () => {
       setSubmitted(false);
       setErrors({});
       setOpenTc(false);
-    navigate("/")
+      setEmailExists(false);
+      navigate("/login");
     } catch (err) {
       console.error(err);
       toast({
@@ -309,9 +336,20 @@ const SignupForm = () => {
                       type="email"
                       placeholder="Email Address"
                       value={formState.email}
-                      onChange={(e) => setField("email", e.target.value)}
-                      className={cn(hasError("email") && "border-destructive")}
+                      onChange={(e) => {
+                        setEmailExists(false);
+                        setField("email", e.target.value);
+                      }}
+                      onBlur={(e) => handleEmailBlur(e.target.value)}
+                      className={cn(
+                        (hasError("email") || emailExists) && "border-destructive",
+                      )}
                     />
+                    {emailExists ? (
+                      <p className="text-sm text-destructive mt-1">
+                        Email already exists
+                      </p>
+                    ) : null}
                   </Field>
                   <Field
                     label="Phone"
@@ -860,7 +898,7 @@ const SignupForm = () => {
             <Button
               type="submit"
               className="w-full h-11 sm:h-12 text-base sm:text-lg font-semibold"
-              disabled={isSubmitting || !formState.tcAccepted}
+              disabled={isSubmitting || !formState.tcAccepted || emailExists}
             >
               {isSubmitting ? "Submitting..." : "Submit Registration"}
             </Button>

@@ -3,6 +3,7 @@ import {
   register,
   fetchStudent,
   fetchStudentById,
+  checkEmailExists,
   updateStudentDetails,
   submitAnswer,
   getQuestion,
@@ -22,6 +23,7 @@ import authMiddleware from "../middlewares/authJWT.js";
 const studentRouter = Router();
 
 studentRouter.post("/register", fileArr, register);
+studentRouter.get("/email-exists", checkEmailExists);
 studentRouter.get("/getStudents", authMiddleware("adminToken"), fetchStudent);
 studentRouter.get("/getStudents/:id",authMiddleware("adminToken", "studentToken"),fetchStudentById);
 studentRouter.put("/updateStudent/:id", updateStudentDetails);
