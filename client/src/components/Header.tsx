@@ -13,6 +13,7 @@ const navLinks = [
   { label: "Courses", href: "#courses" },
   { label: "Placements", href: "#placements" },
   { label: "Testimonials", href: "#testimonials" },
+    { label: "LifeAtFSL", href: "/lifeatfsl" },
   { label: "Contact", href: "#enquiry" },
 ];
 
@@ -42,13 +43,17 @@ export default function Header() {
     });
   };
 
-  const handleNavClick = (href: string, isLiveAtFSL?: boolean) => {
+  const handleNavClick = (href: string) => {
     setMobileOpen(false);
-    if (location.pathname !== "/") {
-      navigate(href.startsWith("#") ? `/${href}` : "/");
+    if (href.startsWith("#")) {
+      if (location.pathname !== "/") {
+        navigate(`/${href}`);
+        return;
+      }
+      scrollToSection(href);
       return;
     }
-    scrollToSection(href);
+    navigate(href);
   };
 
 
@@ -115,8 +120,9 @@ export default function Header() {
     }
   };
 
+
   return (
-    <>
+     <>
       {/* Top bar */}
       <div className="bg-brand-blue text-primary-foreground text-sm py-2 px-4 flex items-center justify-center gap-6">
         <a
@@ -137,11 +143,10 @@ export default function Header() {
 
       {/* Main header */}
       <header
-        className={`sticky top-0 z-50 w-full transition-all duration-400 ${
-          scrolled
-            ? "bg-background/95 backdrop-blur-md shadow-lg"
-            : "bg-background shadow-sm"
-        }`}
+        className={`sticky top-0 z-50 w-full transition-all duration-400 ${scrolled
+          ? "bg-background/95 backdrop-blur-md shadow-lg"
+          : "bg-background shadow-sm"
+          }`}
       >
         <div className="container mx-auto px-4 flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
@@ -178,10 +183,10 @@ export default function Header() {
               <a
                 key={link.label}
                 href={link.href}
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleNavClick(link.href);
-                }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavClick(link.href);
+                  }}
                 className="relative px-4 py-2 text-sm font-medium text-foreground/80 hover:text-brand-blue transition-colors duration-200 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-brand-orange after:transition-all after:duration-300 hover:after:w-full"
               >
                 {link.label}
@@ -189,28 +194,18 @@ export default function Header() {
             ))}
 
             {/* Updated Enroll Now Button */}
-            <div className="ml-4 flex items-center gap-2">
-              <a
-                href="/register"
-                className="px-5 py-2.5 rounded-lg text-sm font-semibold text-primary-foreground gradient-brand hover:opacity-90 transition-all duration-200 hover:shadow-lg hover:scale-105"
-              >
-                Enroll Now
-              </a>
-              <button
-                type="button"
-                onClick={openLoginDrawer}
-                className="px-3 py-2 rounded-lg text-sm font-semibold bg-muted hover:bg-muted/80 flex items-center gap-1 text-primary-foreground gradient-brand hover:opacity-90 transition-all duration-200 hover:shadow-lg hover:scale-105"
-                aria-label="Open login drawer"
-              >
-                <LogIn size={16} />
-              </button>
-            </div>
+            <a
+              href="/register"
+              className="ml-4 px-5 py-2.5 rounded-lg text-sm font-semibold text-primary-foreground gradient-brand hover:opacity-90 transition-all duration-200 hover:shadow-lg hover:scale-105"
+            >
+              Enroll Now
+            </a>
           </nav>
 
           {/* Mobile menu button */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden p-2 rounded-lg text-primary-foreground gradient-brand hover:opacity-90 transition-all duration-200 hover:shadow-lg hover:scale-105"
+            className="md:hidden p-2 rounded-lg text-brand-blue hover:bg-brand-blue-light transition-colors duration-200"
             aria-label="Toggle menu"
           >
             {mobileOpen ? <X size={24} /> : <Menu size={24} />}
@@ -219,19 +214,18 @@ export default function Header() {
 
         {/* Mobile Nav */}
         <div
-          className={`md:hidden overflow-hidden transition-all duration-300 bg-background border-t border-border ${
-            mobileOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-          }`}
+          className={`md:hidden overflow-hidden transition-all duration-300 bg-background border-t border-border ${mobileOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+            }`}
         >
           <nav className="container mx-auto px-4 py-4 flex flex-col gap-2">
             {navLinks.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleNavClick(link.href);
-                }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavClick(link.href);
+                  }}
                 className="px-4 py-3 rounded-lg text-sm font-medium text-foreground/80 hover:text-brand-blue hover:bg-brand-blue-light transition-colors duration-200"
               >
                 {link.label}
@@ -239,123 +233,15 @@ export default function Header() {
             ))}
 
             {/* Updated Enroll Now Button */}
-            <div className="mt-2 flex items-center gap-2">
-              <a
-                href="/register"
-                className="flex-1 px-5 py-3 rounded-lg text-sm font-semibold text-center text-primary-foreground gradient-brand hover:opacity-90 transition-all duration-200"
-              >
-                Enroll Now
-              </a>
-              <button
-                type="button"
-                onClick={openLoginDrawer}
-                className="px-3 py-3 rounded-lg text-sm font-semibold text-primary-foreground gradient-brand hover:opacity-90 transition-all duration-200 flex items-center gap-1"
-                aria-label="Open login drawer"
-              >
-                <LogIn size={16} />
-              </button>
-            </div>
+            <a
+              href="/register"
+              className="mt-2 px-5 py-3 rounded-lg text-sm font-semibold text-center text-primary-foreground gradient-brand hover:opacity-90 transition-all duration-200"
+            >
+              Enroll Now
+            </a>
           </nav>
         </div>
       </header>
-
-      {/* Login drawer from right */}
-      <div
-        className={`fixed inset-0 z-50 transform transition-all duration-300 ${
-          loginDrawerOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
-        }`}
-      >
-        <div
-          className="absolute inset-0 bg-black/50"
-          onClick={closeLoginDrawer}
-          aria-hidden="true"
-        />
-
-        <aside
-          className={`absolute right-0 top-0 h-full w-[360px] bg-card border-l border-border shadow-2xl p-6 transition-transform duration-300 ${
-            loginDrawerOpen ? "translate-x-0" : "translate-x-full"
-          }`}
-          role="dialog"
-          aria-modal="true"
-          aria-label="Login drawer"
-        >
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-bold text-foreground">Login</h3>
-            <button
-              type="button"
-              onClick={closeLoginDrawer}
-              className="text-muted-foreground hover:text-foreground"
-              aria-label="Close login drawer"
-            >
-              <X size={18} />
-            </button>
-          </div>
-
-          {loginError && (
-            <div className="mb-3 rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
-              {loginError}
-            </div>
-          )}
-          {loginSuccess && (
-            <div className="mb-3 rounded-lg border border-green-300 bg-green-50 px-3 py-2 text-sm text-green-700">
-              {loginSuccess}
-            </div>
-          )}
-
-          <form onSubmit={handleLoginSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm text-foreground mb-1" htmlFor="header-login-email">
-                Email
-              </label>
-              <input
-                id="header-login-email"
-                type="email"
-                value={loginEmail}
-                onChange={(e) => setLoginEmail(e.target.value)}
-                className="w-full rounded-lg border border-border px-3 py-2 outline-none focus:ring-2 focus:ring-brand-blue"
-                placeholder="you@example.com"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm text-foreground mb-1" htmlFor="header-login-password">
-                Password
-              </label>
-              <input
-                id="header-login-password"
-                type="password"
-                value={loginPassword}
-                onChange={(e) => setLoginPassword(e.target.value)}
-                className="w-full rounded-lg border border-border px-3 py-2 outline-none focus:ring-2 focus:ring-brand-blue"
-                placeholder="••••••••"
-                required
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="w-full rounded-lg bg-brand-blue px-3 py-2 text-white font-semibold hover:opacity-90 transition"
-            >
-              Login
-            </button>
-
-            <p className="text-sm text-muted-foreground">
-              Don't have an account? 
-              <a
-                href="/register"
-                className="text-brand-blue hover:underline"
-                onClick={() => {
-                  setLoginDrawerOpen(false);
-                  setMobileOpen(false);
-                }}
-              >
-                Register
-              </a>
-            </p>
-          </form>
-        </aside>
-      </div>
     </>
   );
 }
