@@ -46,6 +46,7 @@ import type {
   RegistrationFormValues,
   RegistrationPayload,
 } from "./interfaces";
+import { useNavigate } from "react-router-dom";
 
 const initialFormState: RegistrationFormValues = {
   name: "",
@@ -130,9 +131,10 @@ const SignupForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const frontRef = useRef<HTMLInputElement>(null);
   const backRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
+
   const apiBase = (
-    import.meta.env.VITE_API_URL ||
-    "https://registration-form-17dw.onrender.com"
+    import.meta.env.VITE_API_URL
   ).replace(/\/$/, "");
 
   const setField = <K extends keyof RegistrationFormValues>(
@@ -246,9 +248,7 @@ const SignupForm = () => {
       setSubmitted(false);
       setErrors({});
       setOpenTc(false);
-      setTimeout(() => {
-        window.location.href = "/login";
-      }, 400);
+    navigate("/")
     } catch (err) {
       console.error(err);
       toast({
