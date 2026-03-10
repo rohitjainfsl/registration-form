@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import  { useEffect, useLayoutEffect, useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import Index from "@/pages/Index";
 import NotFound from "@/pages/NotFound";
@@ -9,9 +9,10 @@ import BackendDevelopment from "@/pages/courses/BackendDevelopment";
 import DatabaseManagement from "@/pages/courses/DatabaseManagement";
 import ReactNativeMobile from "@/pages/courses/ReactNativeMobile";
 import DevOpsCloud from "@/pages/courses/DevOpsCloud";
-import RegistrationForm from "@/pages/RegistrationForm";
+import LoginPage from "@/pages/Login";
 import Loader from "./Loader";
-import LifeAtFSL from "@/pages/LifeAtFSL.tsx";
+import SignupForm from "@/pages/SignupForm";
+import LifeAtFSL from "@/pages/LiveAtFSL.tsx";
 
 export default function RouterWithLoader() {
   const location = useLocation();
@@ -40,8 +41,8 @@ export default function RouterWithLoader() {
           <Route path="/courses/database-management" element={<DatabaseManagement />} />
           <Route path="/courses/react-native-mobile" element={<ReactNativeMobile />} />
           <Route path="/courses/devops-cloud" element={<DevOpsCloud />} />
-          <Route path="/register" element={<RegistrationForm />} />
-          {/* dynamic fallback */}
+          <Route path="/register" element={<SignupForm />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/courses/:slug" element={<CoursePage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

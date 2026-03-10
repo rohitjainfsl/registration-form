@@ -1,11 +1,73 @@
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter } from "react-router-dom";
-import RouterWithLoader from "@/components/RouterWithLoader";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import Index from "@/pages/Index";
+import NotFound from "@/pages/NotFound";
+import CoursePage from "@/pages/CoursePage";
+import FullStackDevelopment from "@/pages/courses/FullStackDevelopment";
+import FrontendDevelopment from "@/pages/courses/FrontendDevelopment";
+import BackendDevelopment from "@/pages/courses/BackendDevelopment";
+import DatabaseManagement from "@/pages/courses/DatabaseManagement";
+import ReactNativeMobile from "@/pages/courses/ReactNativeMobile";
+import DevOpsCloud from "@/pages/courses/DevOpsCloud";
+import RegistrationForm from "@/pages/SignupForm";
+import LiveAtFSL from "@/pages/LiveAtFSL.jsx";
+import Loader from "@/components/Loader";
 
 const queryClient = new QueryClient();
+
+const AppRoutes = () => {
+  const location = useLocation();
+  const [loading, setLoading] = useState(true);
+
+  useLayoutEffect(() => {
+    setLoading(true);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 2000);
+    return () => clearTimeout(t);
+  }, [location.pathname]);
+
+  return (
+    <>
+      {loading && <Loader />}
+      <div className={loading ? "pointer-events-none" : ""}>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/lifeatfsl" element={<LiveAtFSL />} />
+          <Route
+            path="/courses/full-stack-development"
+            element={<FullStackDevelopment />}
+          />
+          <Route
+            path="/courses/frontend-development"
+            element={<FrontendDevelopment />}
+          />
+          <Route
+            path="/courses/backend-development"
+            element={<BackendDevelopment />}
+          />
+          <Route
+            path="/courses/database-management"
+            element={<DatabaseManagement />}
+          />
+          <Route
+            path="/courses/react-native-mobile"
+            element={<ReactNativeMobile />}
+          />
+          <Route path="/courses/devops-cloud" element={<DevOpsCloud />} />
+          <Route path="/register" element={<RegistrationForm />} />
+          <Route path="/courses/:slug" element={<CoursePage />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </div>
+    </>
+  );
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -13,7 +75,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <RouterWithLoader />
+        <AppRoutes />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
