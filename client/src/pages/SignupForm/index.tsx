@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useReducer, useRef, useState } from "react";
 import { format } from "date-fns";
 import { CalendarIcon, Upload, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -25,82 +25,149 @@ import {
 } from "@/components/ui/popover";
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
   DialogFooter,
-  DialogClose,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import {
+  COURSE_OPTIONS,
+  GENDER_OPTIONS,
+  PROFESSION_OPTIONS,
+  REFERRAL_OPTIONS,
+  registrationFormSchema,
+} from "./constant";
+import type {
+  Errors,
+  RegistrationFormValues,
+  RegistrationPayload,
+} from "./interfaces";
 
-type Errors = Record<string, string>;
+const initialFormState: RegistrationFormValues = {
+  name: "",
+  email: "",
+  phone: "",
+  dob: undefined,
+  gender: "",
+  fatherName: "",
+  fatherPhone: "",
+  localAddress: "",
+  sameAsLocal: false,
+  permanentAddress: "",
+  aadharFront: null,
+  aadharBack: null,
+  profession: "student",
+  qualification: "",
+  qualYear: "",
+  college: "",
+  designation: "",
+  company: "",
+  course: "",
+  referral: "",
+  friendName: "",
+  tcAccepted: false,
+};
 
-const Index = () => {
+type FormAction =
+  | {
+      type: "set";
+      field: keyof RegistrationFormValues;
+      value: RegistrationFormValues[keyof RegistrationFormValues];
+    }
+  | {
+      type: "setMany";
+      payload: Partial<RegistrationFormValues>;
+    };
+
+const formReducer = (
+  state: RegistrationFormValues,
+  action: FormAction,
+): RegistrationFormValues => {
+  switch (action.type) {
+    case "set":
+      return { ...state, [action.field]: action.value };
+    case "setMany":
+      return { ...state, ...action.payload };
+    default:
+      return state;
+  }
+};
+
+type FieldProps = {
+  label: string;
+  required?: boolean;
+  error?: string;
+  className?: string;
+  children: React.ReactNode;
+};
+
+const Field = ({
+  label,
+  required = false,
+  error,
+  className,
+  children,
+}: FieldProps) => (
+  <div className={cn("space-y-1.5", className)}>
+    <Label className="text-card-foreground">
+      {label} {required && <span className="text-destructive">*</span>}
+    </Label>
+    {children}
+    {error ? <p className="text-sm text-destructive mt-1">{error}</p> : null}
+  </div>
+);
+
+const SignupForm = () => {
   const { toast } = useToast();
   const [errors, setErrors] = useState<Errors>({});
   const [submitted, setSubmitted] = useState(false);
-
-  // Card 1
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [dob, setDob] = useState<Date>();
-  const [gender, setGender] = useState("");
-  const [fatherName, setFatherName] = useState("");
-  const [fatherPhone, setFatherPhone] = useState("");
-
-  // Card 2
-  const [localAddress, setLocalAddress] = useState("");
-  const [sameAsLocal, setSameAsLocal] = useState(false);
-  const [permanentAddress, setPermanentAddress] = useState("");
-
-  // Card 3
-  const [aadharFront, setAadharFront] = useState<string | null>(null);
-  const [aadharBack, setAadharBack] = useState<string | null>(null);
-  const [aadharFrontFile, setAadharFrontFile] = useState<File | null>(null);
-  const [aadharBackFile, setAadharBackFile] = useState<File | null>(null);
+  const [formState, dispatch] = useReducer(formReducer, initialFormState);
+  const [openTc, setOpenTc] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const frontRef = useRef<HTMLInputElement>(null);
   const backRef = useRef<HTMLInputElement>(null);
 
-  // Card 4
-  const [profession, setProfession] = useState("student");
-  const [qualification, setQualification] = useState("");
-  const [qualYear, setQualYear] = useState("");
-  const [college, setCollege] = useState("");
-  const [designation, setDesignation] = useState("");
-  const [company, setCompany] = useState("");
+  const setField = <K extends keyof RegistrationFormValues>(
+    field: K,
+    value: RegistrationFormValues[K],
+  ) => {
+    dispatch({ type: "set", field, value });
+  };
 
-  // Card 5
-  const [course, setCourse] = useState("");
-  const [referral, setReferral] = useState("");
-  const [friendName, setFriendName] = useState("");
-  const [tcChecked, setTcChecked] = useState(false);
-  const [openTc, setOpenTc] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-
-
+  const sanitizePhone = (value: string) => value.replace(/\D/g, "").slice(0, 10);
 
   const handleSameAsLocal = (checked: boolean) => {
-    setSameAsLocal(checked);
     if (checked) {
-      setPermanentAddress(localAddress);
+      dispatch({
+        type: "setMany",
+        payload: {
+          sameAsLocal: true,
+          permanentAddress: formState.localAddress,
+        },
+      });
+      return;
     }
+    setField("sameAsLocal", false);
   };
 
   const handleLocalChange = (val: string) => {
-    setLocalAddress(val);
-    if (sameAsLocal) setPermanentAddress(val);
+    if (formState.sameAsLocal) {
+      dispatch({
+        type: "setMany",
+        payload: { localAddress: val, permanentAddress: val },
+      });
+      return;
+    }
+    setField("localAddress", val);
   };
 
   const handleImageUpload = (
     e: React.ChangeEvent<HTMLInputElement>,
-    setter: (val: string | null) => void,
-    fileSetter?: (file: File | null) => void,
+    field: "aadharFront" | "aadharBack",
   ) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -112,93 +179,26 @@ const Index = () => {
         });
         return;
       }
-      fileSetter?.(file);
       const reader = new FileReader();
-      reader.onload = () => setter(reader.result as string);
+      reader.onload = () => setField(field, reader.result as string);
       reader.readAsDataURL(file);
     }
   };
 
   const validate = (): Errors => {
+    const result = registrationFormSchema.safeParse(formState);
+
+    if (result.success) return {};
+
     const e: Errors = {};
-
-    if (!name.trim()) e.name = "Name is required";
-    else if (name.trim().length > 100)
-      e.name = "Name must be under 100 characters";
-
-    if (!email.trim()) e.email = "Email is required";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-      e.email = "Invalid email address";
-
-    if (!phone.trim()) e.phone = "Phone is required";
-    else if (!/^\d{10}$/.test(phone.replace(/\s/g, "")))
-      e.phone = "Enter a valid 10-digit phone number";
-
-    if (!dob) e.dob = "Date of birth is required";
-
-    if (!gender) e.gender = "Gender is required";
-
-    if (!fatherName.trim()) e.fatherName = "Father's name is required";
-
-    if (!fatherPhone.trim()) e.fatherPhone = "Father's phone is required";
-    else if (!/^\d{10}$/.test(fatherPhone.replace(/\s/g, "")))
-      e.fatherPhone = "Enter a valid 10-digit number";
-
-    if (!localAddress.trim()) e.localAddress = "Local address is required";
-
-    if (!sameAsLocal && !permanentAddress.trim())
-      e.permanentAddress = "Permanent address is required";
-
-    if (!aadharFront) e.aadharFront = "Aadhar front image is required";
-    if (!aadharBack) e.aadharBack = "Aadhar back image is required";
-
-    if (profession === "student") {
-      if (!qualification.trim()) e.qualification = "Qualification is required";
-      if (!qualYear.trim()) e.qualYear = "Year is required";
-      else if (!/^\d{4}$/.test(qualYear)) e.qualYear = "Enter a valid year";
-      if (!college.trim()) e.college = "College is required";
-    } else {
-      if (!designation.trim()) e.designation = "Designation is required";
-      if (!company.trim()) e.company = "Company is required";
+    for (const issue of result.error.issues) {
+      const key = issue.path[0];
+      if (typeof key === "string" && !e[key]) {
+        e[key] = issue.message;
+      }
     }
-
-    if (!course) e.course = "Please select a course";
-
-    if (!referral) e.referral = "Please select how you heard about us";
-    if (referral === "friend" && !friendName.trim())
-      e.friendName = "Friend name is required";
-
     return e;
   };
-
-  const validationErrors = useMemo(
-    () => validate(),
-    [
-      name,
-      email,
-      phone,
-      dob,
-      gender,
-      fatherName,
-      fatherPhone,
-      localAddress,
-      sameAsLocal,
-      permanentAddress,
-      aadharFront,
-      aadharBack,
-      profession,
-      qualification,
-      qualYear,
-      college,
-      designation,
-      company,
-      course,
-      referral,
-      friendName,
-    ],
-  );
-
-  const isFormValid = Object.keys(validationErrors).length === 0 && tcChecked;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -206,7 +206,7 @@ const Index = () => {
     const currentErrors = validate();
     setErrors(currentErrors);
 
-    if (Object.keys(currentErrors).length > 0 || !tcChecked) {
+    if (Object.keys(currentErrors).length > 0 || !formState.tcAccepted) {
       toast({
         title: "Validation Error",
         description: "Please fix the highlighted fields.",
@@ -217,29 +217,9 @@ const Index = () => {
 
     try {
       setIsSubmitting(true);
-      const payload = {
-        name,
-        email,
-        phone,
-        dob: dob ? dob.toISOString() : null,
-        gender,
-        fatherName,
-        fatherPhone,
-        localAddress,
-        sameAsLocal,
-        permanentAddress,
-        aadharFront,
-        aadharBack,
-        profession,
-        qualification,
-        qualYear,
-        college,
-        designation,
-        company,
-        course,
-        referral,
-        friendName,
-        tcAccepted: tcChecked,
+      const payload: RegistrationPayload = {
+        ...formState,
+        dob: formState.dob ? formState.dob.toISOString() : null,
       };
 
       const res = await fetch("/api/students/register", {
@@ -270,12 +250,8 @@ const Index = () => {
     }
   };
 
-  const FieldError = ({ field }: { field: string }) => {
-    if (!submitted || !errors[field]) return null;
-    return <p className="text-sm text-destructive mt-1">{errors[field]}</p>;
-  };
-
-  const hasError = (field: string) => submitted && !!errors[field];
+  const getError = (field: string) => (submitted ? errors[field] : undefined);
+  const hasError = (field: string) => Boolean(getError(field));
   return (
     <>
       <Header />
@@ -298,51 +274,57 @@ const Index = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div className="space-y-1.5">
-                    <Label className="text-card-foreground">
-                      Name <span className="text-destructive">*</span>
-                    </Label>
+                  <Field
+                    label="Name"
+                    required
+                    error={getError("name")}
+                  >
                     <Input
                       name="name"
                       placeholder="Full Name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
+                      value={formState.name}
+                      onChange={(e) => setField("name", e.target.value)}
                       className={cn(hasError("name") && "border-destructive")}
                     />
-                    <FieldError field="name" />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-card-foreground">
-                      Email <span className="text-destructive">*</span>
-                    </Label>
+                  </Field>
+                  <Field
+                    label="Email"
+                    required
+                    error={getError("email")}
+                  >
                     <Input
                       name="email"
                       type="email"
                       placeholder="Email Address"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      value={formState.email}
+                      onChange={(e) => setField("email", e.target.value)}
                       className={cn(hasError("email") && "border-destructive")}
                     />
-                    <FieldError field="email" />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-card-foreground">
-                      Phone <span className="text-destructive">*</span>
-                    </Label>
+                  </Field>
+                  <Field
+                    label="Phone"
+                    required
+                    error={getError("phone")}
+                  >
                     <Input
                       name="phone"
                       type="tel"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      maxLength={10}
                       placeholder="Phone Number"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
+                      value={formState.phone}
+                      onChange={(e) =>
+                        setField("phone", sanitizePhone(e.target.value))
+                      }
                       className={cn(hasError("phone") && "border-destructive")}
                     />
-                    <FieldError field="phone" />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-card-foreground">
-                      Date of Birth <span className="text-destructive">*</span>
-                    </Label>
+                  </Field>
+                  <Field
+                    label="Date of Birth"
+                    required
+                    error={getError("dob")}
+                  >
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
@@ -350,38 +332,41 @@ const Index = () => {
                           variant="outline"
                           className={cn(
                             "w-full justify-start text-left font-normal",
-                            !dob && "text-muted-foreground",
+                            !formState.dob && "text-muted-foreground",
                             hasError("dob") && "border-destructive",
                           )}
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
-                          {dob ? format(dob, "PPP") : "Pick a date"}
+                          {formState.dob
+                            ? format(formState.dob, "PPP")
+                            : "Pick a date"}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                           mode="single"
-                          selected={dob}
-                          onSelect={setDob}
+                          selected={formState.dob}
+                          onSelect={(val) => setField("dob", val)}
                           disabled={(date) => date > new Date()}
                           initialFocus
                           className="p-3 pointer-events-auto"
                         />
                       </PopoverContent>
                     </Popover>
-                    <FieldError field="dob" />
-                  </div>
-                  <div className="space-y-1.5 sm:col-span-2">
-                    <Label className="text-card-foreground">
-                      Gender <span className="text-destructive">*</span>
-                    </Label>
+                  </Field>
+                  <Field
+                    label="Gender"
+                    required
+                    error={getError("gender")}
+                    className="sm:col-span-2"
+                  >
                     <RadioGroup
                       name="gender"
-                      value={gender}
-                      onValueChange={setGender}
+                      value={formState.gender}
+                      onValueChange={(val) => setField("gender", val)}
                       className="flex flex-wrap gap-4 sm:gap-6"
                     >
-                      {["Male", "Female", "Other"].map((g) => (
+                      {GENDER_OPTIONS.map((g) => (
                         <div key={g} className="flex items-center space-x-2">
                           <RadioGroupItem
                             value={g.toLowerCase()}
@@ -396,38 +381,47 @@ const Index = () => {
                         </div>
                       ))}
                     </RadioGroup>
-                    <FieldError field="gender" />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-card-foreground">
-                      Father's Name <span className="text-destructive">*</span>
-                    </Label>
+                  </Field>
+                  <Field
+                    label="Father's Name"
+                    required
+                    error={getError("fatherName")}
+                  >
                     <Input
                       placeholder="Father's Name"
-                      value={fatherName}
-                      onChange={(e) => setFatherName(e.target.value)}
+                      value={formState.fatherName}
+                      onChange={(e) =>
+                        setField("fatherName", e.target.value)
+                      }
                       className={cn(
                         hasError("fatherName") && "border-destructive",
                       )}
                     />
-                    <FieldError field="fatherName" />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-card-foreground">
-                      Father's Phone <span className="text-destructive">*</span>
-                    </Label>
+                  </Field>
+                  <Field
+                    label="Father's Phone"
+                    required
+                    error={getError("fatherPhone")}
+                  >
                     <Input
                       name="phone"
                       type="tel"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      maxLength={10}
                       placeholder="Father's Phone"
-                      value={fatherPhone}
-                      onChange={(e) => setFatherPhone(e.target.value)}
+                      value={formState.fatherPhone}
+                      onChange={(e) =>
+                        setField(
+                          "fatherPhone",
+                          sanitizePhone(e.target.value),
+                        )
+                      }
                       className={cn(
                         hasError("fatherPhone") && "border-destructive",
                       )}
                     />
-                    <FieldError field="fatherPhone" />
-                  </div>
+                  </Field>
                 </div>
               </CardContent>
             </Card>
@@ -440,48 +434,49 @@ const Index = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="space-y-1.5">
-                  <Label className="text-card-foreground">
-                    Local Address <span className="text-destructive">*</span>
-                  </Label>
+                <Field
+                  label="Local Address"
+                  required
+                  error={getError("localAddress")}
+                >
                   <Textarea
                     name="localAddress"
                     placeholder="Enter local address"
-                    value={localAddress}
+                    value={formState.localAddress}
                     onChange={(e) => handleLocalChange(e.target.value)}
                     className={cn(
                       hasError("localAddress") && "border-destructive",
                     )}
                   />
-                  <FieldError field="localAddress" />
-                </div>
+                </Field>
                 <div className="flex items-center space-x-3">
                   <Switch
-                    checked={sameAsLocal}
+                    checked={formState.sameAsLocal}
                     onCheckedChange={handleSameAsLocal}
                   />
                   <Label className="text-card-foreground font-normal cursor-pointer">
                     Same as Local Address
                   </Label>
                 </div>
-                <div className="space-y-1.5">
-                  <Label className="text-card-foreground">
-                    Permanent Address{" "}
-                    <span className="text-destructive">*</span>
-                  </Label>
+                <Field
+                  label="Permanent Address"
+                  required
+                  error={getError("permanentAddress")}
+                >
                   <Textarea
                     name="permanentAddress"
                     placeholder="Enter permanent address"
-                    value={permanentAddress}
-                    onChange={(e) => setPermanentAddress(e.target.value)}
-                    disabled={sameAsLocal}
+                    value={formState.permanentAddress}
+                    onChange={(e) =>
+                      setField("permanentAddress", e.target.value)
+                    }
+                    disabled={formState.sameAsLocal}
                     className={cn(
-                      sameAsLocal ? "opacity-60" : "",
+                      formState.sameAsLocal ? "opacity-60" : "",
                       hasError("permanentAddress") && "border-destructive",
                     )}
                   />
-                  <FieldError field="permanentAddress" />
-                </div>
+                </Field>
               </CardContent>
             </Card>
 
@@ -497,27 +492,27 @@ const Index = () => {
                   {[
                     {
                       label: "Aadhar Card (Front)",
-                      value: aadharFront,
-                      setter: setAadharFront,
-                      fileSetter: setAadharFrontFile,
+                      value: formState.aadharFront,
+                      field: "aadharFront" as const,
                       ref: frontRef,
                       key: "aadharFront",
                       name: "aadharFront",
                     },
                     {
                       label: "Aadhar Card (Back)",
-                      value: aadharBack,
+                      value: formState.aadharBack,
                       name: "aadharBack",
-                      setter: setAadharBack,
-                      fileSetter: setAadharBackFile,
+                      field: "aadharBack" as const,
                       ref: backRef,
                       key: "aadharBack",
                     },
                   ].map((item) => (
-                    <div key={item.label} className="space-y-1.5">
-                      <Label className="text-card-foreground">
-                        {item.label} <span className="text-destructive">*</span>
-                      </Label>
+                    <Field
+                      key={item.label}
+                      label={item.label}
+                      required
+                      error={getError(item.key)}
+                    >
                       <input
                         // name="aadharFront"
                         type="file"
@@ -525,7 +520,7 @@ const Index = () => {
                         className="hidden"
                         ref={item.ref}
                         onChange={(e) =>
-                          handleImageUpload(e, item.setter, item.fileSetter)
+                          handleImageUpload(e, item.field)
                         }
                       />
                       {item.value ? (
@@ -533,13 +528,12 @@ const Index = () => {
                           <img
                             src={item.value}
                             alt={item.label}
-                            className="w-full h-36 sm:h-40 object-cover"
+                            className="w-full h-36 sm:h-40 object-contain bg-white"
                           />
                           <button
                             type="button"
                             onClick={() => {
-                              item.setter(null);
-                              item.fileSetter?.(null);
+                              setField(item.field, null);
                             }}
                             className="absolute top-2 right-2 rounded-full bg-destructive p-1 text-destructive-foreground hover:opacity-80"
                           >
@@ -562,8 +556,7 @@ const Index = () => {
                           </span>
                         </div>
                       )}
-                      <FieldError field={item.key} />
-                    </div>
+                    </Field>
                   ))}
                 </div>
               </CardContent>
@@ -578,14 +571,13 @@ const Index = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <RadioGroup
-                  value={profession}
-                  onValueChange={setProfession}
+                  value={formState.profession}
+                  onValueChange={(val) =>
+                    setField("profession", val as "student" | "professional")
+                  }
                   className="flex flex-wrap gap-4 sm:gap-6"
                 >
-                  {[
-                    { value: "student", label: "Student" },
-                    { value: "professional", label: "Working Professional" },
-                  ].map((opt) => (
+                  {PROFESSION_OPTIONS.map((opt) => (
                     <div
                       key={opt.value}
                       className="flex items-center space-x-2"
@@ -604,89 +596,92 @@ const Index = () => {
                   ))}
                 </RadioGroup>
 
-                {profession === "student" && (
+                {formState.profession === "student" && (
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 rounded-lg border border-border p-3 sm:p-4">
-                    <div className="space-y-1.5">
-                      <Label className="text-card-foreground">
-                        Qualification{" "}
-                        <span className="text-destructive">*</span>
-                      </Label>
+                    <Field
+                      label="Qualification"
+                      required
+                      error={getError("qualification")}
+                    >
                       <Input
                         name="qualification"
                         placeholder="e.g. B.Tech"
-                        value={qualification}
-                        onChange={(e) => setQualification(e.target.value)}
+                        value={formState.qualification}
+                        onChange={(e) =>
+                          setField("qualification", e.target.value)
+                        }
                         className={cn(
                           hasError("qualification") && "border-destructive",
                         )}
                       />
-                      <FieldError field="qualification" />
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label className="text-card-foreground">
-                        Year <span className="text-destructive">*</span>
-                      </Label>
+                    </Field>
+                    <Field
+                      label="Year"
+                      required
+                      error={getError("qualYear")}
+                    >
                       <Input
                         name="qualYear"
                         placeholder="e.g. 2024"
-                        value={qualYear}
-                        onChange={(e) => setQualYear(e.target.value)}
+                        value={formState.qualYear}
+                        onChange={(e) => setField("qualYear", e.target.value)}
                         className={cn(
                           hasError("qualYear") && "border-destructive",
                         )}
                       />
-                      <FieldError field="qualYear" />
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label className="text-card-foreground">
-                        College <span className="text-destructive">*</span>
-                      </Label>
+                    </Field>
+                    <Field
+                      label="College"
+                      required
+                      error={getError("college")}
+                    >
                       <Input
                         name="college"
                         placeholder="College Name"
-                        value={college}
-                        onChange={(e) => setCollege(e.target.value)}
+                        value={formState.college}
+                        onChange={(e) => setField("college", e.target.value)}
                         className={cn(
                           hasError("college") && "border-destructive",
                         )}
                       />
-                      <FieldError field="college" />
-                    </div>
+                    </Field>
                   </div>
                 )}
 
-                {profession === "professional" && (
+                {formState.profession === "professional" && (
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 rounded-lg border border-border p-3 sm:p-4">
-                    <div className="space-y-1.5">
-                      <Label className="text-card-foreground">
-                        Designation <span className="text-destructive">*</span>
-                      </Label>
+                    <Field
+                      label="Designation"
+                      required
+                      error={getError("designation")}
+                    >
                       <Input
                         name="designation"
                         placeholder="Your Designation"
-                        value={designation}
-                        onChange={(e) => setDesignation(e.target.value)}
+                        value={formState.designation}
+                        onChange={(e) =>
+                          setField("designation", e.target.value)
+                        }
                         className={cn(
                           hasError("designation") && "border-destructive",
                         )}
                       />
-                      <FieldError field="designation" />
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label className="text-card-foreground">
-                        Company <span className="text-destructive">*</span>
-                      </Label>
+                    </Field>
+                    <Field
+                      label="Company"
+                      required
+                      error={getError("company")}
+                    >
                       <Input
                         name="company"
                         placeholder="Company Name"
-                        value={company}
-                        onChange={(e) => setCompany(e.target.value)}
+                        value={formState.company}
+                        onChange={(e) => setField("company", e.target.value)}
                         className={cn(
                           hasError("company") && "border-destructive",
                         )}
                       />
-                      <FieldError field="company" />
-                    </div>
+                    </Field>
                   </div>
                 )}
               </CardContent>
@@ -700,51 +695,42 @@ const Index = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="space-y-1.5">
-                  <Label className="text-card-foreground">
-                    Course <span className="text-destructive">*</span>
-                  </Label>
-                  <Select name="course" value={course} onValueChange={setCourse}>
+                <Field
+                  label="Course"
+                  required
+                  error={getError("course")}
+                >
+                  <Select
+                    name="course"
+                    value={formState.course}
+                    onValueChange={(val) => setField("course", val)}
+                  >
                     <SelectTrigger
                       className={cn(hasError("course") && "border-destructive")}
                     >
                       <SelectValue placeholder="Select a course" />
                     </SelectTrigger>
                     <SelectContent>
-                      {[
-                        "Full Stack Development",
-                        "Frontend Development",
-                        "Backend Development",
-                        "Data Science",
-                        "Machine Learning",
-                        "DevOps",
-                      ].map((c) => (
+                      {COURSE_OPTIONS.map((c) => (
                         <SelectItem key={c} value={c}>
                           {c}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                  <FieldError field="course" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-card-foreground">
-                    How did you hear about us?{" "}
-                    <span className="text-destructive">*</span>
-                  </Label>
+                </Field>
+                <Field
+                  label="How did you hear about us?"
+                  required
+                  error={getError("referral")}
+                >
                   <RadioGroup
                     name="referral"
-                    value={referral}
-                    onValueChange={setReferral}
+                    value={formState.referral}
+                    onValueChange={(val) => setField("referral", val)}
                     className="flex flex-wrap gap-3 sm:gap-4"
                   >
-                    {[
-                      "Google",
-                      "College/TPO",
-                      "LinkedIn",
-                      "Instagram",
-                      "Friend",
-                    ].map((r) => (
+                    {REFERRAL_OPTIONS.map((r) => (
                       <div key={r} className="flex items-center space-x-2">
                         <RadioGroupItem
                           value={r.toLowerCase()}
@@ -759,21 +745,23 @@ const Index = () => {
                       </div>
                     ))}
                   </RadioGroup>
-                  <FieldError field="referral" />
-                </div>
-                {referral === "friend" && (
-                  <div className="space-y-1.5">
+                </Field>
+                {formState.referral === "friend" && (
+                  <Field
+                    label="Friend Name"
+                    required
+                    error={getError("friendName")}
+                  >
                     <Input
                       name="friendName"
                       placeholder="Friend Name"
-                      value={friendName}
-                      onChange={(e) => setFriendName(e.target.value)}
+                      value={formState.friendName}
+                      onChange={(e) => setField("friendName", e.target.value)}
                       className={cn(
                         hasError("friendName") && "border-destructive",
                       )}
                     />
-                    <FieldError field="friendName" />
-                  </div>
+                  </Field>
                 )}
 
 
@@ -786,19 +774,10 @@ const Index = () => {
                   Terms & Conditions
                 </p>
                 <div className="flex items-start space-x-3">
-                  {/* <Checkbox
-                    checked={tcChecked}
-                    onCheckedChange={() => {
-                      setOpenTc(true);
-                    }}
-                    id="tc-checkbox"
-                  /> */}
-
-
                   <Checkbox
-                    checked={tcChecked}
+                    checked={formState.tcAccepted}
                     onCheckedChange={(val) => {
-                      setTcChecked(Boolean(val));
+                      setField("tcAccepted", Boolean(val));
                       setOpenTc(true);
                     }}
                   />
@@ -845,7 +824,7 @@ const Index = () => {
                     <Button
                       variant="outline"
                       onClick={() => {
-                        setTcChecked(false);
+                        setField("tcAccepted", false);
                         setOpenTc(false);
                       }}
                     >
@@ -853,7 +832,7 @@ const Index = () => {
                     </Button>
                     <Button
                       onClick={() => {
-                        setTcChecked(true);
+                        setField("tcAccepted", true);
                         setOpenTc(false);
                       }}
                     >
@@ -864,18 +843,12 @@ const Index = () => {
               </Dialog>
             </div>
 
-            {/* <Button
-              type="submit"
-              className="w-full h-11 sm:h-12 text-base sm:text-lg font-semibold"
-              disabled={!isFormValid || isSubmitting}
-            >
-              Submit Registration
-            </Button> */}
+       
 
             <Button
               type="submit"
               className="w-full h-11 sm:h-12 text-base sm:text-lg font-semibold"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !formState.tcAccepted}
             >
               {isSubmitting ? "Submitting..." : "Submit Registration"}
             </Button>
@@ -887,4 +860,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default SignupForm;
