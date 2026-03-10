@@ -184,7 +184,7 @@ export default function HeroSection() {
             style={{ animationDelay: "0.4s" }}
           >
             <a
-              href="#enquiryForm"
+              href="#enquiry"
               className="group inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold text-primary-foreground bg-brand-orange hover:bg-brand-orange-dark transition-all duration-300 hover:scale-105 hover:shadow-2xl shadow-lg"
             >
               Join Now
