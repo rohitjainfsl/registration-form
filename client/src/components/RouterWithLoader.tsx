@@ -10,8 +10,8 @@ import DatabaseManagement from "@/pages/courses/DatabaseManagement";
 import ReactNativeMobile from "@/pages/courses/ReactNativeMobile";
 import DevOpsCloud from "@/pages/courses/DevOpsCloud";
 import RegistrationForm from "@/pages/RegistrationForm";
+import LoginPage from "@/pages/Login";
 import Loader from "./Loader";
-import LifeAtFSL from "@/pages/LifeAtFSL.tsx";
 
 export default function RouterWithLoader() {
   const location = useLocation();
@@ -33,14 +33,29 @@ export default function RouterWithLoader() {
       <div className={loading ? "pointer-events-none" : ""}>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/lifeatfsl" element={<LifeAtFSL />} />
-          <Route path="/courses/full-stack-development" element={<FullStackDevelopment />} />
-          <Route path="/courses/frontend-development" element={<FrontendDevelopment />} />
-          <Route path="/courses/backend-development" element={<BackendDevelopment />} />
-          <Route path="/courses/database-management" element={<DatabaseManagement />} />
-          <Route path="/courses/react-native-mobile" element={<ReactNativeMobile />} />
+          <Route
+            path="/courses/full-stack-development"
+            element={<FullStackDevelopment />}
+          />
+          <Route
+            path="/courses/frontend-development"
+            element={<FrontendDevelopment />}
+          />
+          <Route
+            path="/courses/backend-development"
+            element={<BackendDevelopment />}
+          />
+          <Route
+            path="/courses/database-management"
+            element={<DatabaseManagement />}
+          />
+          <Route
+            path="/courses/react-native-mobile"
+            element={<ReactNativeMobile />}
+          />
           <Route path="/courses/devops-cloud" element={<DevOpsCloud />} />
           <Route path="/register" element={<RegistrationForm />} />
+          <Route path="/login" element={<LoginPage />} />
           {/* dynamic fallback */}
           <Route path="/courses/:slug" element={<CoursePage />} />
           <Route path="*" element={<NotFound />} />
