@@ -130,6 +130,10 @@ const SignupForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const frontRef = useRef<HTMLInputElement>(null);
   const backRef = useRef<HTMLInputElement>(null);
+  const apiBase = (
+    import.meta.env.VITE_API_URL ||
+    "https://registration-form-17dw.onrender.com"
+  ).replace(/\/$/, "");
 
   const setField = <K extends keyof RegistrationFormValues>(
     field: K,
@@ -222,9 +226,10 @@ const SignupForm = () => {
         dob: formState.dob ? formState.dob.toISOString() : null,
       };
 
-      const res = await fetch("/api/students/register", {
+      const res = await fetch(`${apiBase}/api/students/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(payload),
       });
 

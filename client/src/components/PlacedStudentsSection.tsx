@@ -9,6 +9,7 @@ import RiyaAnand from "@/assets/Riya Anand.jpg";
 import DeepeshSuiwal from "@/assets/Deepesh Suiwal.png";
 import TanmayShukla from "@/assets/Tanmay Shukla.jpg";
 import RitikSaluja from "@/assets/Ritik Saluja.jpg";
+import RajatJain from "@/assets/Rajat Jain.jpg";
 
 const placedStudents = [
   {
@@ -73,6 +74,13 @@ const placedStudents = [
     company: "Vaibhav Global",
     location: "Jaipur",
     image: RishabhJangir,
+  },
+  {
+    name: "Rajat Jain",
+    role: "Unqork developer",
+    company: "Genpact",
+    location: "Jaipur",
+    image: RajatJain,
   },
 ];
 
