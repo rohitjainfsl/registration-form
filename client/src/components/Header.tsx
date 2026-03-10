@@ -178,11 +178,10 @@ export default function Header() {
               <button
                 type="button"
                 onClick={openLoginDrawer}
-                className="px-3 py-2 rounded-lg text-sm font-semibold text-foreground bg-muted hover:bg-muted/80 transition-all duration-200 flex items-center gap-1"
+                className="px-3 py-2 rounded-lg text-sm font-semibold bg-muted hover:bg-muted/80 flex items-center gap-1 text-primary-foreground gradient-brand hover:opacity-90 transition-all duration-200 hover:shadow-lg hover:scale-105"
                 aria-label="Open login drawer"
               >
                 <LogIn size={16} />
-                Login
               </button>
             </div>
           </nav>
