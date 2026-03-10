@@ -14,7 +14,7 @@ import DatabaseManagement from "@/pages/courses/DatabaseManagement";
 import ReactNativeMobile from "@/pages/courses/ReactNativeMobile";
 import DevOpsCloud from "@/pages/courses/DevOpsCloud";
 import RegistrationForm from "@/pages/SignupForm";
-import LiveAtFSL from "@/pages/LiveAtFSL.jsx";
+import LifeAtFSL from "@/pages/LifeAtFSL";
 import Loader from "@/components/Loader";
 
 const queryClient = new QueryClient();
@@ -38,7 +38,7 @@ const AppRoutes = () => {
       <div className={loading ? "pointer-events-none" : ""}>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/lifeatfsl" element={<LiveAtFSL />} />
+          <Route path="/lifeatfsl" element={<LifeAtFSL />} />
           <Route
             path="/courses/full-stack-development"
             element={<FullStackDevelopment />}

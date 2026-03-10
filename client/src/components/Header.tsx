@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, Phone } from "lucide-react";
+import { useState, useEffect, FormEvent } from "react";
+import { Menu, X, Phone, LogIn } from "lucide-react";
 import bundledLogo from "@/assets/logo.png";
+import { useNavigate } from "react-router-dom";
 
 // Use public images to allow Vercel to serve retina variants from /public/images/
 const logoSrc = "/images/logo.png";
@@ -13,15 +13,19 @@ const navLinks = [
   { label: "Courses", href: "#courses" },
   { label: "Placements", href: "#placements" },
   { label: "Testimonials", href: "#testimonials" },
-  { label: "LifeAtFSL", href: "#lifeatfsl" }, // We'll handle this differently!
+    { label: "LifeAtFSL", href: "/lifeatfsl" },
   { label: "Contact", href: "#enquiry" },
 ];
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
+  const [loginDrawerOpen, setLoginDrawerOpen] = useState(false);
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const [loginSuccess, setLoginSuccess] = useState("");
+  const navigate=useNavigate();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -29,34 +33,96 @@ export default function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const handleNavClick = (href: string, isLiveAtFSL?: boolean) => {
+  const scrollToSection = (hash: string) => {
+    if (!hash || !hash.startsWith("#")) return;
+    requestAnimationFrame(() => {
+      const el = document.querySelector(hash);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    });
+  };
+
+  const handleNavClick = (href: string) => {
     setMobileOpen(false);
-    if (isLiveAtFSL) {
-      // Navigate to another page, e.g., "/liveatfsl"
-      navigate("/lifeatfsl");
+    if (href.startsWith("#")) {
+      if (location.pathname !== "/") {
+        navigate(`/${href}`);
+        return;
+      }
+      scrollToSection(href);
       return;
     }
-    const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
+    navigate(href);
   };
 
-  const handleEnrollClick = () => {
-    window.open(
-      "https://registration-form-1-mbw5.onrender.com/registration",
-      "_blank",
-    );
-  };
 
-  // When navigating back to the home route with a hash (#courses etc.),
-  // ensure the page scrolls to the target section after the route renders.
-  useEffect(() => {
-    if (location.pathname === "/" && location.hash) {
-      scrollToSection(location.hash);
+
+  const handleLogoClick = () => {
+    setMobileOpen(false);
+    if (location.pathname !== "/") {
+      navigate("/");
+      return;
     }
-  }, [location.pathname, location.hash]);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+
+
+  const openLoginDrawer = () => {
+    setMobileOpen(false);
+    setLoginDrawerOpen(true);
+    setLoginError("");
+    setLoginSuccess("");
+  };
+
+  const closeLoginDrawer = () => {
+    setLoginDrawerOpen(false);
+  };
+
+  const handleLoginSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoginError("");
+    setLoginSuccess("");
+
+    if (!loginEmail || !loginPassword) {
+      setLoginError("Please enter both email and password.");
+      return;
+    }
+
+    try {
+      const apiBase = import.meta.env.VITE_API_URL || "https://registration-form-17dw.onrender.com";
+      const res = await fetch(`${apiBase}/api/auth/studentLogin`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email: loginEmail, password: loginPassword }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setLoginError(data.message || "Invalid email or password.");
+        return;
+      }
+
+      setLoginSuccess(data.message || "Login successful");
+      setLoginEmail("");
+      setLoginPassword("");
+
+      setTimeout(() => {
+        setLoginDrawerOpen(false);
+        window.location.href = "/";
+      }, 400);
+    } catch (error) {
+      console.error("Login submit failed", error);
+      setLoginError("Server error. Please try again later.");
+    }
+  };
+
 
   return (
-    <>
+     <>
       {/* Top bar */}
       <div className="bg-brand-blue text-primary-foreground text-sm py-2 px-4 flex items-center justify-center gap-6">
         <a
@@ -117,14 +183,10 @@ export default function Header() {
               <a
                 key={link.label}
                 href={link.href}
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (link.label === "LifeAtFSL") {
-                    handleNavClick(link.href, true);
-                  } else {
+                  onClick={(e) => {
+                    e.preventDefault();
                     handleNavClick(link.href);
-                  }
-                }}
+                  }}
                 className="relative px-4 py-2 text-sm font-medium text-foreground/80 hover:text-brand-blue transition-colors duration-200 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-brand-orange after:transition-all after:duration-300 hover:after:w-full"
               >
                 {link.label}
@@ -160,14 +222,10 @@ export default function Header() {
               <a
                 key={link.label}
                 href={link.href}
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (link.label === "LiveAtFSL") {
-                    handleNavClick(link.href, true);
-                  } else {
+                  onClick={(e) => {
+                    e.preventDefault();
                     handleNavClick(link.href);
-                  }
-                }}
+                  }}
                 className="px-4 py-3 rounded-lg text-sm font-medium text-foreground/80 hover:text-brand-blue hover:bg-brand-blue-light transition-colors duration-200"
               >
                 {link.label}
