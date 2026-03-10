@@ -263,7 +263,7 @@ const SignupForm = () => {
       <div className="min-h-screen bg-background py-8 sm:py-12 px-3 sm:px-4">
         <div className="mx-auto p-[60px]">
           <h1 className="mb-2 text-center text-3xl sm:text-4xl font-bold text-foreground">
-            Registration <span className="text-primary">Form</span>
+            Registration <span className="text-gradient-brand">Form</span>
           </h1>
           <p className="mb-6 sm:mb-8 text-center text-sm sm:text-base text-muted-foreground">
             Fill in your details to register

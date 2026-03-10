@@ -32,16 +32,17 @@ export default function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const scrollToSection = (href: string) => {
-    const el = document.querySelector(href);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
-    } else if (href === "#home") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
+  const scrollToSection = (hash: string) => {
+    if (!hash || !hash.startsWith("#")) return;
+    requestAnimationFrame(() => {
+      const el = document.querySelector(hash);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    });
   };
 
-  const handleNavClick = (href: string) => {
+  const handleNavClick = (href: string, isLiveAtFSL?: boolean) => {
     setMobileOpen(false);
     if (location.pathname !== "/") {
       navigate(href.startsWith("#") ? `/${href}` : "/");
@@ -50,21 +51,18 @@ export default function Header() {
     scrollToSection(href);
   };
 
+
+
   const handleLogoClick = () => {
     setMobileOpen(false);
     if (location.pathname !== "/") {
       navigate("/");
-    } else {
-      scrollToSection("#home");
+      return;
     }
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleEnrollClick = () => {
-    window.open(
-      "https://registration-form-1-mbw5.onrender.com/registration",
-      "_blank",
-    );
-  };
+
 
   const openLoginDrawer = () => {
     setMobileOpen(false);

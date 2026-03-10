@@ -10,4 +10,5 @@ loginRouter.get("/checkToken", checkToken)
 loginRouter.post("/registerAdmin", registerAdmin)
 loginRouter.post("/logout", logout)
 
+
 export default loginRouter;
