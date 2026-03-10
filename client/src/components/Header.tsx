@@ -29,6 +29,16 @@ export default function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const scrollToSection = (hash: string) => {
+    if (!hash || !hash.startsWith("#")) return;
+    requestAnimationFrame(() => {
+      const el = document.querySelector(hash);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    });
+  };
+
   const handleNavClick = (href: string, isLiveAtFSL?: boolean) => {
     setMobileOpen(false);
     if (isLiveAtFSL) {
@@ -38,6 +48,15 @@ export default function Header() {
     }
     const el = document.querySelector(href);
     if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleLogoClick = () => {
+    setMobileOpen(false);
+    if (location.pathname !== "/") {
+      navigate("/");
+      return;
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleEnrollClick = () => {
