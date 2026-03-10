@@ -8,8 +8,11 @@ import {
   TrendingUp,
 } from "lucide-react";
 import hero1 from "@/assets/hero-bg.jpg";
-import hero2 from "@/assets/placed1.jpg";
-import hero3 from "@/assets/placed2.jpg";
+// import hero2 from "@/assets/placed1.jpg";
+// import hero3 from "@/assets/placed2.jpg";
+import hero4 from "@/assets/Hero-bg2.jpeg";
+import hero5 from "@/assets/Hero-bg3.jpg";
+import hero6 from "@/assets/Hero-bg4.jpg";
 
 const stats = [
   { icon: Users, label: "Students Trained", value: 5000, suffix: "+" },
@@ -68,7 +71,7 @@ const words = [
 ];
 
 export default function HeroSection() {
-  const images = [hero1, hero2, hero3];
+  const images = [hero1, hero4, hero5, hero6];
   const [wordIndex, setWordIndex] = useState(0);
   const [visible, setVisible] = useState(true);
   const [statsVisible, setStatsVisible] = useState(false);
@@ -128,11 +131,11 @@ export default function HeroSection() {
       </div>
 
       {/* Animated circles */}
-      <div className="absolute top-20 right-20 w-64 h-64 rounded-full border-2 border-primary-foreground/10 animate-float opacity-30 hidden lg:block" />
-      <div
-        className="absolute bottom-32 left-10 w-40 h-40 rounded-full border border-brand-orange/30 animate-float opacity-40 hidden lg:block"
-        style={{ animationDelay: "1s" }}
-      />
+        {/* <div className="absolute top-20 right-20 w-64 h-64 rounded-full border-2 border-primary-foreground/10 animate-float opacity-30 hidden lg:block" />
+        <div
+          className="absolute bottom-32 left-10 w-40 h-40 rounded-full border border-brand-orange/30 animate-float opacity-40 hidden lg:block"
+          style={{ animationDelay: "1s" }}
+        /> */}
 
       <div className="relative container mx-auto px-4 py-24 md:py-32">
         <div className="max-w-3xl">

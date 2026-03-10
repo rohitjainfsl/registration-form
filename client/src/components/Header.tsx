@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, Phone } from "lucide-react";
 import bundledLogo from "@/assets/logo.png";
-import { useNavigate } from "react-router-dom";
 
 // Use public images to allow Vercel to serve retina variants from /public/images/
 const logoSrc = "/images/logo.png";
@@ -21,6 +21,7 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -45,6 +46,14 @@ export default function Header() {
       "_blank",
     );
   };
+
+  // When navigating back to the home route with a hash (#courses etc.),
+  // ensure the page scrolls to the target section after the route renders.
+  useEffect(() => {
+    if (location.pathname === "/" && location.hash) {
+      scrollToSection(location.hash);
+    }
+  }, [location.pathname, location.hash]);
 
   return (
     <>
@@ -76,10 +85,10 @@ export default function Header() {
         <div className="container mx-auto px-4 flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <a
-            href="#home"
+            href="/"
             onClick={(e) => {
               e.preventDefault();
-              handleNavClick("#home");
+              handleLogoClick();
             }}
             className="flex items-center gap-2 group"
           >
