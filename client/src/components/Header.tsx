@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, Phone } from "lucide-react";
 import bundledLogo from "@/assets/logo.png";
-import { useNavigate } from "react-router-dom";
 
 // Use public images to allow Vercel to serve retina variants from /public/images/
 const logoSrc = "/images/logo.png";
