@@ -10,6 +10,7 @@ import DatabaseManagement from "@/pages/courses/DatabaseManagement";
 import ReactNativeMobile from "@/pages/courses/ReactNativeMobile";
 import DevOpsCloud from "@/pages/courses/DevOpsCloud";
 import RegistrationForm from "@/pages/RegistrationForm";
+import LoginPage from "@/pages/Login";
 import Loader from "./Loader";
 
 export default function RouterWithLoader() {
@@ -51,6 +52,7 @@ export default function RouterWithLoader() {
           />
           <Route path="/courses/devops-cloud" element={<DevOpsCloud />} />
           <Route path="/register" element={<RegistrationForm />} />
+          <Route path="/login" element={<LoginPage />} />
           {/* dynamic fallback */}
           <Route path="/courses/:slug" element={<CoursePage />} />
           <Route path="*" element={<NotFound />} />

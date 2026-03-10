@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Menu, X, Phone } from "lucide-react";
+import { useState, useEffect, FormEvent } from "react";
+import { Menu, X, Phone, LogIn } from "lucide-react";
 import bundledLogo from "@/assets/logo.png";
 
 // Use public images to allow Vercel to serve retina variants from /public/images/
@@ -18,6 +18,11 @@ const navLinks = [
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [loginDrawerOpen, setLoginDrawerOpen] = useState(false);
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const [loginSuccess, setLoginSuccess] = useState("");
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -36,6 +41,57 @@ export default function Header() {
       "https://registration-form-1-mbw5.onrender.com/registration",
       "_blank",
     );
+  };
+
+  const openLoginDrawer = () => {
+    setMobileOpen(false);
+    setLoginDrawerOpen(true);
+    setLoginError("");
+    setLoginSuccess("");
+  };
+
+  const closeLoginDrawer = () => {
+    setLoginDrawerOpen(false);
+  };
+
+  const handleLoginSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoginError("");
+    setLoginSuccess("");
+
+    if (!loginEmail || !loginPassword) {
+      setLoginError("Please enter both email and password.");
+      return;
+    }
+
+    try {
+      const apiBase = import.meta.env.VITE_API_URL || "https://registration-form-17dw.onrender.com";
+      const res = await fetch(`${apiBase}/api/auth/studentLogin`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email: loginEmail, password: loginPassword }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setLoginError(data.message || "Invalid email or password.");
+        return;
+      }
+
+      setLoginSuccess(data.message || "Login successful");
+      setLoginEmail("");
+      setLoginPassword("");
+
+      setTimeout(() => {
+        setLoginDrawerOpen(false);
+        window.location.href = "/";
+      }, 400);
+    } catch (error) {
+      console.error("Login submit failed", error);
+      setLoginError("Server error. Please try again later.");
+    }
   };
 
   return (
@@ -112,12 +168,23 @@ export default function Header() {
             ))}
 
             {/* Updated Enroll Now Button */}
-            <a
-              href="/register"
-              className="ml-4 px-5 py-2.5 rounded-lg text-sm font-semibold text-primary-foreground gradient-brand hover:opacity-90 transition-all duration-200 hover:shadow-lg hover:scale-105"
-            >
-              Enroll Now
-            </a>
+            <div className="ml-4 flex items-center gap-2">
+              <a
+                href="/register"
+                className="px-5 py-2.5 rounded-lg text-sm font-semibold text-primary-foreground gradient-brand hover:opacity-90 transition-all duration-200 hover:shadow-lg hover:scale-105"
+              >
+                Enroll Now
+              </a>
+              <button
+                type="button"
+                onClick={openLoginDrawer}
+                className="px-3 py-2 rounded-lg text-sm font-semibold text-foreground bg-muted hover:bg-muted/80 transition-all duration-200 flex items-center gap-1"
+                aria-label="Open login drawer"
+              >
+                <LogIn size={16} />
+                Login
+              </button>
+            </div>
           </nav>
 
           {/* Mobile menu button */}
@@ -152,15 +219,123 @@ export default function Header() {
             ))}
 
             {/* Updated Enroll Now Button */}
-            <a
-              href="/register"
-              className="mt-2 px-5 py-3 rounded-lg text-sm font-semibold text-center text-primary-foreground gradient-brand hover:opacity-90 transition-all duration-200"
-            >
-              Enroll Now
-            </a>
+            <div className="mt-2 flex items-center gap-2">
+              <a
+                href="/register"
+                className="flex-1 px-5 py-3 rounded-lg text-sm font-semibold text-center text-primary-foreground gradient-brand hover:opacity-90 transition-all duration-200"
+              >
+                Enroll Now
+              </a>
+              <button
+                type="button"
+                onClick={openLoginDrawer}
+                className="px-3 py-3 rounded-lg text-sm font-semibold text-foreground bg-muted hover:bg-muted/80 transition-all duration-200 flex items-center gap-1"
+                aria-label="Open login drawer"
+              >
+                <LogIn size={16} />
+              </button>
+            </div>
           </nav>
         </div>
       </header>
+
+      {/* Login drawer from right */}
+      <div
+        className={`fixed inset-0 z-50 transform transition-all duration-300 ${
+          loginDrawerOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      >
+        <div
+          className="absolute inset-0 bg-black/50"
+          onClick={closeLoginDrawer}
+          aria-hidden="true"
+        />
+
+        <aside
+          className={`absolute right-0 top-0 h-full w-[360px] bg-card border-l border-border shadow-2xl p-6 transition-transform duration-300 ${
+            loginDrawerOpen ? "translate-x-0" : "translate-x-full"
+          }`}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Login drawer"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xl font-bold text-foreground">Login</h3>
+            <button
+              type="button"
+              onClick={closeLoginDrawer}
+              className="text-muted-foreground hover:text-foreground"
+              aria-label="Close login drawer"
+            >
+              <X size={18} />
+            </button>
+          </div>
+
+          {loginError && (
+            <div className="mb-3 rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+              {loginError}
+            </div>
+          )}
+          {loginSuccess && (
+            <div className="mb-3 rounded-lg border border-green-300 bg-green-50 px-3 py-2 text-sm text-green-700">
+              {loginSuccess}
+            </div>
+          )}
+
+          <form onSubmit={handleLoginSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm text-foreground mb-1" htmlFor="header-login-email">
+                Email
+              </label>
+              <input
+                id="header-login-email"
+                type="email"
+                value={loginEmail}
+                onChange={(e) => setLoginEmail(e.target.value)}
+                className="w-full rounded-lg border border-border px-3 py-2 outline-none focus:ring-2 focus:ring-brand-blue"
+                placeholder="you@example.com"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm text-foreground mb-1" htmlFor="header-login-password">
+                Password
+              </label>
+              <input
+                id="header-login-password"
+                type="password"
+                value={loginPassword}
+                onChange={(e) => setLoginPassword(e.target.value)}
+                className="w-full rounded-lg border border-border px-3 py-2 outline-none focus:ring-2 focus:ring-brand-blue"
+                placeholder="••••••••"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full rounded-lg bg-brand-blue px-3 py-2 text-white font-semibold hover:opacity-90 transition"
+            >
+              Login
+            </button>
+
+            <p className="text-sm text-muted-foreground">
+              Don't have an account? 
+              <a
+                href="/register"
+                className="text-brand-blue hover:underline"
+                onClick={() => {
+                  setLoginDrawerOpen(false);
+                  setMobileOpen(false);
+                }}
+              >
+                Register
+              </a>
+            </p>
+          </form>
+        </aside>
+      </div>
     </>
   );
 }
