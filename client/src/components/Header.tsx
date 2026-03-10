@@ -1,6 +1,7 @@
 import { useState, useEffect, FormEvent } from "react";
 import { Menu, X, Phone, LogIn } from "lucide-react";
 import bundledLogo from "@/assets/logo.png";
+import { useNavigate } from "react-router-dom";
 
 // Use public images to allow Vercel to serve retina variants from /public/images/
 const logoSrc = "/images/logo.png";
@@ -23,6 +24,7 @@ export default function Header() {
   const [loginPassword, setLoginPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const [loginSuccess, setLoginSuccess] = useState("");
+  const navigate=useNavigate();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
