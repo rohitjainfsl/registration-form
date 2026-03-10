@@ -12,14 +12,13 @@ import adminRoutes from "./routes/adminRoutes.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const PORT = 8081;
+const PORT = 8085;
 const app = express();
 
-// app.use(cors({ origin: process.env.FRONTEND_PATH}));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: process.env.FRONTEND_PATH,
+    origin: [process.env.FRONTEND_PATH, "http://localhost:8081"],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   })
