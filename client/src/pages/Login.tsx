@@ -19,7 +19,7 @@ export default function LoginPage() {
     }
 
     try {
-      const apiBase = import.meta.env.VITE_API_URL || "https://registration-form-17dw.onrender.com";
+      const apiBase = import.meta.env.VITE_API_URL;
       const res = await fetch(`${apiBase}/api/auth/studentLogin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

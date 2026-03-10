@@ -32,16 +32,17 @@ export default function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const scrollToSection = (href: string) => {
-    const el = document.querySelector(href);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
-    } else if (href === "#home") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
+  const scrollToSection = (hash: string) => {
+    if (!hash || !hash.startsWith("#")) return;
+    requestAnimationFrame(() => {
+      const el = document.querySelector(hash);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    });
   };
 
-  const handleNavClick = (href: string) => {
+  const handleNavClick = (href: string, isLiveAtFSL?: boolean) => {
     setMobileOpen(false);
     if (location.pathname !== "/") {
       navigate(href.startsWith("#") ? `/${href}` : "/");
@@ -50,21 +51,18 @@ export default function Header() {
     scrollToSection(href);
   };
 
+
+
   const handleLogoClick = () => {
     setMobileOpen(false);
     if (location.pathname !== "/") {
       navigate("/");
-    } else {
-      scrollToSection("#home");
+      return;
     }
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleEnrollClick = () => {
-    window.open(
-      "https://registration-form-1-mbw5.onrender.com/registration",
-      "_blank",
-    );
-  };
+
 
   const openLoginDrawer = () => {
     setMobileOpen(false);
@@ -212,7 +210,7 @@ export default function Header() {
           {/* Mobile menu button */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden p-2 rounded-lg text-brand-blue hover:bg-brand-blue-light transition-colors duration-200"
+            className="md:hidden p-2 rounded-lg text-primary-foreground gradient-brand hover:opacity-90 transition-all duration-200 hover:shadow-lg hover:scale-105"
             aria-label="Toggle menu"
           >
             {mobileOpen ? <X size={24} /> : <Menu size={24} />}
@@ -251,7 +249,7 @@ export default function Header() {
               <button
                 type="button"
                 onClick={openLoginDrawer}
-                className="px-3 py-3 rounded-lg text-sm font-semibold text-foreground bg-muted hover:bg-muted/80 transition-all duration-200 flex items-center gap-1"
+                className="px-3 py-3 rounded-lg text-sm font-semibold text-primary-foreground gradient-brand hover:opacity-90 transition-all duration-200 flex items-center gap-1"
                 aria-label="Open login drawer"
               >
                 <LogIn size={16} />
