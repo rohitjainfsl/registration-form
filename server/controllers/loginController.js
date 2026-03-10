@@ -16,18 +16,14 @@ export async function studentlogin(req, res) {
         .json({ message: "Email and password are required." });
     }
 
-    const user = await studentModel.findOne({ email });
-
+    const user = await studentModel.findOne({ email, password });
+  
     if (!user) {
-      return res.status(404).json({ message: "No user found." });
+      return res.status(404).json({ message: "Invalid email or password." });
     }
-
-    if (user.password !== password) {
-      return res.status(401).json({ message: "Password does not match." });
-    }
-
+    
     const token = jwt.sign(
-      { id: user._id, role: "student", loginStatus: user.firstTimesignin },
+      { id: user._id, role: "student", loginStatus:user.firstTimesignin},
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
