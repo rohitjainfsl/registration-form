@@ -16,6 +16,10 @@ import DevOpsCloud from "@/pages/courses/DevOpsCloud";
 import RegistrationForm from "@/pages/SignupForm";
 import LifeAtFSL from "@/pages/LifeAtFSL";
 import Loader from "@/components/Loader";
+import AdminLogin from "@/pages/AdminPages/AdminLogin";
+import AdminHome from "@/pages/AdminPages/AdminHome";
+import ProtectedRoute from "@/pages/ProtectedRoute";
+import { AdminProvider } from "@/pages/Context/Admincontext";
 
 const queryClient = new QueryClient();
 
@@ -62,6 +66,17 @@ const AppRoutes = () => {
           <Route path="/courses/devops-cloud" element={<DevOpsCloud />} />
           <Route path="/register" element={<RegistrationForm />} />
           <Route path="/courses/:slug" element={<CoursePage />} />
+
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route
+            path="/admin/home"
+            element={
+              <ProtectedRoute>
+                <AdminHome />
+              </ProtectedRoute>
+            }
+          />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
@@ -72,11 +87,13 @@ const AppRoutes = () => {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
+      <AdminProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AppRoutes />
+        </BrowserRouter>
+      </AdminProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

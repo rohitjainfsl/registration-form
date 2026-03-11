@@ -1,4 +1,6 @@
 import React, { useReducer, useRef, useState } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns";
 import { CalendarIcon, Upload, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -393,14 +395,16 @@ const SignupForm = () => {
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={formState.dob}
-                          onSelect={(val) => setField("dob", val)}
-                          disabled={(date) => date > new Date()}
-                          initialFocus
-                          className="p-3 pointer-events-auto"
-                        />
+                       <DatePicker
+  selected={formState.dob}
+  onChange={(date) => setField("dob", date)}
+  maxDate={new Date()}
+  showYearDropdown
+  showMonthDropdown
+  dropdownMode="select"
+  dateFormat="MM/dd/yyyy"
+  className="w-full border rounded-md p-2"
+/>
                       </PopoverContent>
                     </Popover>
                   </Field>
