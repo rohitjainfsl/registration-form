@@ -17,6 +17,9 @@ import RegistrationForm from "@/pages/SignupForm";
 import LifeAtFSL from "@/pages/LifeAtFSL";
 import Loader from "@/components/Loader";
 import { AdminProvider } from "@/Context/Admincontext";
+// import StudentChangePassword from "@/pages/StudentPages/StudentPanel";
+// import StudentDashboard from "@/pages/StudentPages/StudentPanel/StudentDashboard";
+import PasswordNotFound from '@/pages/PasswordNotFound'
 
 const queryClient = new QueryClient();
 
@@ -62,6 +65,8 @@ const AppRoutes = () => {
           />
           <Route path="/courses/devops-cloud" element={<DevOpsCloud />} />
           <Route path="/register" element={<RegistrationForm />} />
+          <Route path="/student/changePassword" element={<PasswordNotFound />} />
+          {/* <Route path="/student/studentpanel" element={<StudentDashboard />} /> */}
           <Route path="/courses/:slug" element={<CoursePage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

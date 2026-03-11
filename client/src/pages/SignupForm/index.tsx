@@ -269,14 +269,14 @@ const SignupForm = () => {
 
       toast({
         title: "Registration Submitted!",
-        description: "Your registration has been received successfully.Check",
+        description: "Your registration has been received successfully. You can log in now.",
       });
       dispatch({ type: "setMany", payload: initialFormState });
       setSubmitted(false);
       setErrors({});
       setOpenTc(false);
       setEmailExists(false);
-      navigate("/");
+      navigate("/", { state: { openLogin: true } });
     } catch (err) {
       console.error(err);
       toast({

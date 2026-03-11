@@ -142,7 +142,7 @@ export default function HeroSection() {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-orange/20 border border-brand-orange/40 text-primary-foreground text-sm font-medium mb-6 animate-fade-in">
             <span className="w-2 h-2 rounded-full bg-brand-orange animate-pulse" />
-            #1 Full Stack Learning Platform in Rajasthan
+            #1 Learning Platform in Rajasthan
           </div>
 
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-primary-foreground leading-tight mb-4 animate-slide-up">
