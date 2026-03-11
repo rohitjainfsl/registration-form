@@ -1,6 +1,13 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
+import { adminContext } from "@/Context/Admincontext";
+
+type StudentLoginResponse = {
+  message?: string;
+  loginStatus: boolean;
+  firstTimeSignin?: boolean;
+};
 
 type LoginPageProps = {
   onClose?: () => void;
@@ -8,10 +15,12 @@ type LoginPageProps = {
 
 export default function LoginPage({ onClose }: LoginPageProps) {
   const navigate = useNavigate();
+  const { setIsAuthenticated, setRole } = useContext(adminContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const closeTimerRef = useRef<number | null>(null);
 
@@ -45,38 +54,48 @@ export default function LoginPage({ onClose }: LoginPageProps) {
     closeTimerRef.current = window.setTimeout(() => close(), 260);
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (loading) return;
+
     setError("");
     setSuccess("");
-
-    if (!email || !password) {
-      setError("Please enter both email and password.");
-      return;
-    }
+    setLoading(true);
 
     try {
       const apiBase = import.meta.env.VITE_API_URL;
-      const res = await fetch(`${apiBase}/api/auth/studentLogin`, {
+      const response = await fetch(`${apiBase}/api/auth/studentLogin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.message || "Invalid email or password.");
-        return;
-      }
+      const data = (await response.json()) as StudentLoginResponse;
 
-      setSuccess(data.message || "Login successful");
-      setEmail("");
-      setPassword("");
-      setTimeout(() => navigate("/"), 400);
-    } catch (error) {
-      console.error("Login API error", error);
-      setError("Server error. Please try again later.");
+      if (response.ok) {
+        const { message, firstTimeSignin, loginStatus } = data;
+
+        setSuccess(message ?? "Login successful");
+        setIsAuthenticated(!!loginStatus);
+        setRole("student");
+
+        if (firstTimeSignin) {
+          navigate("/student/changePassword");
+        } else {
+          navigate("/student/studentpanel");
+        }
+      } else {
+        setError(data?.message ?? "Unable to login. Please try again.");
+      }
+    } catch (err) {
+      const fallbackMessage =
+        err instanceof Error
+          ? err.message
+          : "Something went wrong. Please try again.";
+      setError(fallbackMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -141,7 +160,7 @@ export default function LoginPage({ onClose }: LoginPageProps) {
                 className="w-full rounded-lg border border-border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-blue"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                placeholder="********"
                 required
               />
             </div>
@@ -169,3 +188,4 @@ export default function LoginPage({ onClose }: LoginPageProps) {
     </div>
   );
 }
+
