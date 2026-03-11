@@ -1,18 +1,8 @@
-import { useState, useEffect, FormEvent } from "react";
+import { useState, useEffect } from "react";
 import { Menu, X, Phone, LogIn } from "lucide-react";
 import bundledLogo from "@/assets/logo.png";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
+import LoginPage from "@/pages/Login";
 
 // Use public images to allow Vercel to serve retina variants from /public/images/
 const logoSrc = "/images/logo.png";
@@ -28,14 +18,10 @@ const navLinks = [
   { label: "Contact", href: "#enquiry" },
 ];
 
-export default function Header() {
+const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [loginDrawerOpen, setLoginDrawerOpen] = useState(false);
-  const [loginEmail, setLoginEmail] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
-  const [loginError, setLoginError] = useState("");
-  const [loginSuccess, setLoginSuccess] = useState("");
+  const [loginOpen, setLoginOpen] = useState(false);
   const navigate=useNavigate();
 
   useEffect(() => {
@@ -80,60 +66,15 @@ export default function Header() {
 
 
 
-  const openLoginDrawer = () => {
+  const openLoginPage = () => {
     setMobileOpen(false);
-    setLoginDrawerOpen(true);
-    setLoginError("");
-    setLoginSuccess("");
-  };
-
-  const closeLoginDrawer = () => {
-    setLoginDrawerOpen(false);
-  };
-
-  const handleLoginSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoginError("");
-    setLoginSuccess("");
-
-    if (!loginEmail || !loginPassword) {
-      setLoginError("Please enter both email and password.");
-      return;
-    }
-
-    try {
-      const apiBase = import.meta.env.VITE_API_URL || "https://registration-form-17dw.onrender.com";
-      const res = await fetch(`${apiBase}/api/auth/studentLogin`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ email: loginEmail, password: loginPassword }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setLoginError(data.message || "Invalid email or password.");
-        return;
-      }
-
-      setLoginSuccess(data.message || "Login successful");
-      setLoginEmail("");
-      setLoginPassword("");
-
-      setTimeout(() => {
-        setLoginDrawerOpen(false);
-        window.location.href = "/";
-      }, 400);
-    } catch (error) {
-      console.error("Login submit failed", error);
-      setLoginError("Server error. Please try again later.");
-    }
+    setLoginOpen(true);
   };
 
 
   return (
      <>
+      {loginOpen && <LoginPage onClose={() => setLoginOpen(false)} />}
       {/* Top bar */}
       <div className="bg-brand-blue text-primary-foreground text-sm py-2 px-4 flex items-center justify-center gap-6">
         <a
@@ -213,9 +154,9 @@ export default function Header() {
             </a>
             <button
               type="button"
-              onClick={openLoginDrawer}
+              onClick={openLoginPage}
               className="px-4 py-2.5 rounded-lg text-sm font-semibold border border-brand-blue text-brand-blue hover:bg-brand-blue hover:text-white transition-all duration-200 flex items-center gap-2"
-              aria-label="Open login drawer"
+              aria-label="Go to login"
             >
               <LogIn size={16} />
               Login
@@ -261,9 +202,9 @@ export default function Header() {
             </a>
             <button
               type="button"
-              onClick={openLoginDrawer}
+              onClick={openLoginPage}
               className="mt-2 px-5 py-3 rounded-lg text-sm font-semibold text-center border border-brand-blue text-brand-blue hover:bg-brand-blue hover:text-white transition-all duration-200 flex items-center justify-center gap-2"
-              aria-label="Open login drawer"
+              aria-label="Go to login"
             >
               <LogIn size={16} />
               Login
@@ -272,56 +213,8 @@ export default function Header() {
         </div>
       </header>
 
-      <Sheet open={loginDrawerOpen} onOpenChange={setLoginDrawerOpen}>
-        <SheetContent side="right" className="w-full sm:max-w-md">
-          <SheetHeader>
-            <SheetTitle>Student Login</SheetTitle>
-            <SheetDescription>
-              Enter your email and password to continue.
-            </SheetDescription>
-          </SheetHeader>
-          <form onSubmit={handleLoginSubmit} className="mt-6 space-y-4">
-            {loginError ? (
-              <div className="rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-700">
-                {loginError}
-              </div>
-            ) : null}
-            {loginSuccess ? (
-              <div className="rounded-lg border border-green-300 bg-green-50 p-3 text-sm text-green-700">
-                {loginSuccess}
-              </div>
-            ) : null}
-            <div className="space-y-2">
-              <Label htmlFor="login-email">Email</Label>
-              <Input
-                id="login-email"
-                type="email"
-                value={loginEmail}
-                onChange={(e) => setLoginEmail(e.target.value)}
-                placeholder="you@example.com"
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="login-password">Password</Label>
-              <Input
-                id="login-password"
-                type="password"
-                value={loginPassword}
-                onChange={(e) => setLoginPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-              />
-            </div>
-            <SheetFooter className="gap-2 sm:gap-3">
-              <Button type="button" variant="outline" onClick={closeLoginDrawer}>
-                Cancel
-              </Button>
-              <Button type="submit">Login</Button>
-            </SheetFooter>
-          </form>
-        </SheetContent>
-      </Sheet>
     </>
   );
-}
+};
+
+export default Header;
