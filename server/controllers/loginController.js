@@ -69,7 +69,8 @@ export async function changePassword(req, res) {
 }
 
 
-export const adminLogin = async (req, res) => {
+export const 
+adminLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
     const admin = await adminModel.findOne({ email });
