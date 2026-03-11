@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Menu, X, Phone, LogIn } from "lucide-react";
 import bundledLogo from "@/assets/logo.png";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import LoginPage from "@/pages/Login";
 
 // Use public images to allow Vercel to serve retina variants from /public/images/
@@ -22,6 +22,7 @@ const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
+  const location = useLocation();
   const navigate=useNavigate();
 
   useEffect(() => {
@@ -70,6 +71,15 @@ const Header = () => {
     setMobileOpen(false);
     setLoginOpen(true);
   };
+
+  // Auto-open login when navigation state requests it (e.g., after registration)
+  useEffect(() => {
+    if ((location.state as { openLogin?: boolean } | null)?.openLogin) {
+      setLoginOpen(true);
+      // Clear the state flag so it doesn't reopen on back/forward
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location, navigate]);
 
 
   return (
