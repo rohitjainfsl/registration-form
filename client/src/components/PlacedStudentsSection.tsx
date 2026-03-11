@@ -10,6 +10,7 @@ import DeepeshSuiwal from "@/assets/Deepesh Suiwal.png";
 import TanmayShukla from "@/assets/Tanmay Shukla.jpg";
 import RitikSaluja from "@/assets/Ritik Saluja.jpg";
 import RajatJain from "@/assets/Rajat Jain.jpg";
+import Blank from "@/assets/blank.png";
 
 const placedStudents = [
   {
@@ -107,9 +108,8 @@ function PlacedCard({
   return (
     <div
       ref={ref}
-      className={`group bg-card rounded-2xl overflow-hidden border border-border shadow-md card-hover transition-all duration-500 ${
-        visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-      }`}
+      className={`group bg-card rounded-2xl overflow-hidden border border-border shadow-md card-hover transition-all duration-500 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+        }`}
       style={{ transitionDelay: `${index * 100}ms` }}
     >
       <div className="relative h-48 overflow-hidden">
@@ -141,6 +141,56 @@ function PlacedCard({
   );
 }
 
+function PlaceholderCard({ index }: { index: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setVisible(true);
+      },
+      { threshold: 0.1 },
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      className={`group bg-card rounded-2xl overflow-hidden border border-border shadow-md card-hover transition-all duration-500 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+        }`}
+      style={{ transitionDelay: `${index * 100}ms` }}
+    >
+      <div className="relative h-48 overflow-hidden bg-muted">
+        <img
+          src={Blank}
+          alt="Future student"
+          className="w-full h-full object-cover opacity-70"
+        />
+        <div className="absolute inset-0 m-2 pointer-events-none" />
+      </div>
+      <div className="p-5 flex flex-col items-center text-center space-y-3">
+        <h3 className="font-bold text-lg text-foreground">
+          This could be you.
+        </h3>
+
+        <p className="text-sm text-muted-foreground max-w-[220px]">
+          Enroll today and join our wall of success.
+        </p>
+
+        <a
+          href="/register"
+          className="mt-2 w-full px-5 py-3 rounded-lg text-sm font-semibold text-primary-foreground gradient-brand hover:opacity-90 transition-all duration-200"
+        >
+          Enroll Now
+        </a>
+      </div>
+    </div>
+  );
+}
+
 export default function PlacedStudentsSection() {
   return (
     <section id="placements" className="section-padding bg-muted/30">
@@ -165,6 +215,7 @@ export default function PlacedStudentsSection() {
           {placedStudents.map((s, i) => (
             <PlacedCard key={s.name} s={s} index={i} />
           ))}
+          <PlaceholderCard index={placedStudents.length} />
         </div>
       </div>
     </section>

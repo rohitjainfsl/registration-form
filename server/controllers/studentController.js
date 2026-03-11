@@ -13,27 +13,6 @@ export async function register(req, res) {
     let aadharFront = "", aadharBack = "";
 
     const {
-      name, email, phone, dob, gender, fname, fphone,
-      laddress, paddress, role, qualification,
-      qualificationYear, college, designation,
-      company, course, otherCourse, referral, friendName,termsAccepted
-    } = req.body;
-
-    const aadharFiles = req.files.filter(
-      (file) => file.fieldname === "aadharFront" || file.fieldname === "aadharBack"
-    );
-
-    const cloudinaryObject = await cloudinaryUpload(aadharFiles);
-
-    cloudinaryObject.forEach((uploaded) => {
-      if (uploaded.fieldname === "aadharFront") {
-        aadharFront = uploaded.secure_url;
-      } else if (uploaded.fieldname === "aadharBack") {
-        aadharBack = uploaded.secure_url;
-      }
-    });
-
-    const newRegistration = new studentModel({
       name,
       email,
       phone,
@@ -53,10 +32,62 @@ export async function register(req, res) {
       otherCourse,
       referral,
       friendName,
+      termsAccepted,
+      aadharFront: aadharFrontBody,
+      aadharBack: aadharBackBody,
+      fatherName,
+      fatherPhone,
+      localAddress,
+      permanentAddress,
+      profession,
+      qualYear,
+      tcAccepted,
+    } = req.body;
+
+    const files = Array.isArray(req.files) ? req.files : [];
+    const aadharFiles = files.filter(
+      (file) => file.fieldname === "aadharFront" || file.fieldname === "aadharBack"
+    );
+
+    if (aadharFiles.length > 0) {
+      const cloudinaryObject = await cloudinaryUpload(aadharFiles);
+
+      cloudinaryObject.forEach((uploaded) => {
+        if (uploaded.fieldname === "aadharFront") {
+          aadharFront = uploaded.secure_url;
+        } else if (uploaded.fieldname === "aadharBack") {
+          aadharBack = uploaded.secure_url;
+        }
+      });
+    } else {
+      aadharFront = aadharFrontBody || "";
+      aadharBack = aadharBackBody || "";
+    }
+
+    const newRegistration = new studentModel({
+      name,
+      email,
+      phone,
+      dob,
+      gender,
+      fname: fname || fatherName,
+      fphone: fphone || fatherPhone,
+      laddress: laddress || localAddress,
+      paddress: paddress || permanentAddress,
+      role: role || profession || "student",
+      qualification,
+      qualificationYear: qualificationYear || qualYear,
+      college,
+      designation,
+      company,
+      course,
+      otherCourse,
+      referral,
+      friendName,
       aadharFront,
       aadharBack,
       firstTimeSignin: true,
-      termsAccepted,
+      termsAccepted: termsAccepted ?? tcAccepted ?? false,
     });
 
     await newRegistration.save();
@@ -106,6 +137,26 @@ export async function fetchStudentById(req, res) {
   } catch (error) {
     console.error("Error fetching student by ID:", error);
     res.status(500).json({ message: "Server error while fetching student." });
+  }
+}
+
+export async function checkEmailExists(req, res) {
+  try {
+    const rawEmail = typeof req.query.email === "string" ? req.query.email : "";
+    const email = rawEmail.trim().toLowerCase();
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    const exists = await studentModel.exists({ email });
+    return res.status(200).json({ exists: Boolean(exists) });
+  } catch (error) {
+    console.error("Error checking email:", error);
+    return res.status(500).json({
+      message: "Failed to check email",
+      error: error.message,
+    });
   }
 }
 

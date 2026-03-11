@@ -46,6 +46,7 @@ import type {
   RegistrationFormValues,
   RegistrationPayload,
 } from "./interfaces";
+import { useNavigate } from "react-router-dom";
 
 const initialFormState: RegistrationFormValues = {
   name: "",
@@ -127,13 +128,14 @@ const SignupForm = () => {
   const [submitted, setSubmitted] = useState(false);
   const [formState, dispatch] = useReducer(formReducer, initialFormState);
   const [openTc, setOpenTc] = useState(false);
+  const [dobOpen, setDobOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [emailExists, setEmailExists] = useState(false);
   const frontRef = useRef<HTMLInputElement>(null);
   const backRef = useRef<HTMLInputElement>(null);
-  const apiBase = (
-    import.meta.env.VITE_API_URL ||
-    "https://registration-form-17dw.onrender.com"
-  ).replace(/\/$/, "");
+  const navigate = useNavigate();
+
+  const apiBase = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
 
   const setField = <K extends keyof RegistrationFormValues>(
     field: K,
@@ -169,6 +171,26 @@ const SignupForm = () => {
     setField("localAddress", val);
   };
 
+  const handleEmailBlur = async (value: string) => {
+    const email = value.trim().toLowerCase();
+    if (!email || !apiBase) {
+      setEmailExists(false);
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `${apiBase}/api/students/email-exists?email=${encodeURIComponent(email)}`,
+        { credentials: "include" },
+      );
+      if (!res.ok) return;
+      const data = await res.json();
+      setEmailExists(Boolean(data?.exists));
+    } catch (error) {
+      console.error("Email check failed", error);
+    }
+  };
+
   const handleImageUpload = (
     e: React.ChangeEvent<HTMLInputElement>,
     field: "aadharFront" | "aadharBack",
@@ -201,6 +223,9 @@ const SignupForm = () => {
         e[key] = issue.message;
       }
     }
+    if (emailExists && !e.email) {
+      e.email = "Email already exists";
+    }
     return e;
   };
 
@@ -210,7 +235,11 @@ const SignupForm = () => {
     const currentErrors = validate();
     setErrors(currentErrors);
 
-    if (Object.keys(currentErrors).length > 0 || !formState.tcAccepted) {
+    if (
+      Object.keys(currentErrors).length > 0 ||
+      !formState.tcAccepted ||
+      emailExists
+    ) {
       toast({
         title: "Validation Error",
         description: "Please fix the highlighted fields.",
@@ -240,8 +269,14 @@ const SignupForm = () => {
 
       toast({
         title: "Registration Submitted!",
-        description: "Your registration has been received successfully.",
+        description: "Your registration has been received successfully. You can log in now.",
       });
+      dispatch({ type: "setMany", payload: initialFormState });
+      setSubmitted(false);
+      setErrors({});
+      setOpenTc(false);
+      setEmailExists(false);
+      navigate("/", { state: { openLogin: true } });
     } catch (err) {
       console.error(err);
       toast({
@@ -302,9 +337,20 @@ const SignupForm = () => {
                       type="email"
                       placeholder="Email Address"
                       value={formState.email}
-                      onChange={(e) => setField("email", e.target.value)}
-                      className={cn(hasError("email") && "border-destructive")}
+                      onChange={(e) => {
+                        setEmailExists(false);
+                        setField("email", e.target.value);
+                      }}
+                      onBlur={(e) => handleEmailBlur(e.target.value)}
+                      className={cn(
+                        (hasError("email") || emailExists) && "border-destructive",
+                      )}
                     />
+                    {emailExists ? (
+                      <p className="text-sm text-destructive mt-1">
+                        Email already exists
+                      </p>
+                    ) : null}
                   </Field>
                   <Field
                     label="Phone"
@@ -330,7 +376,7 @@ const SignupForm = () => {
                     required
                     error={getError("dob")}
                   >
-                    <Popover>
+                    <Popover open={dobOpen} onOpenChange={setDobOpen}>
                       <PopoverTrigger asChild>
                         <Button
                           name="dob"
@@ -351,7 +397,10 @@ const SignupForm = () => {
                         <Calendar
                           mode="single"
                           selected={formState.dob}
-                          onSelect={(val) => setField("dob", val)}
+                          onSelect={(val) => {
+                            setField("dob", val);
+                            if (val) setDobOpen(false);
+                          }}
                           disabled={(date) => date > new Date()}
                           initialFocus
                           className="p-3 pointer-events-auto"
@@ -853,7 +902,7 @@ const SignupForm = () => {
             <Button
               type="submit"
               className="w-full h-11 sm:h-12 text-base sm:text-lg font-semibold"
-              disabled={isSubmitting || !formState.tcAccepted}
+              disabled={isSubmitting || !formState.tcAccepted || emailExists}
             >
               {isSubmitting ? "Submitting..." : "Submit Registration"}
             </Button>
