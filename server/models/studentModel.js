@@ -23,7 +23,11 @@ const studentSchema = new Schema(
     qualification: String,
     qualificationYear: String,
     referral: String,
-    role: { type: String, default: "student", enum: ["student", "admin"] },
+    role: {
+      type: String,
+      default: "student",
+      enum: ["student", "admin", "professional"],
+    },
     password: String,
     newPassword: String,
     firstTimesignin: { type: Boolean, default: true },
