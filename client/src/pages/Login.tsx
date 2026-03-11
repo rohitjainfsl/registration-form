@@ -1,45 +1,66 @@
-import { useState } from "react";
+import { useContext, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import { adminContext } from "@/Context/Admincontext";
+import { Eye, EyeOff } from "lucide-react";
+
+type StudentLoginResponse = {
+  message?: string;
+  loginStatus: boolean;
+  firstTimeSignin?: boolean;
+};
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { setIsAuthenticated, setRole } = useContext(adminContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (loading) return;
+
     setError("");
     setSuccess("");
-
-    if (!email || !password) {
-      setError("Please enter both email and password.");
-      return;
-    }
+    setLoading(true);
 
     try {
       const apiBase = import.meta.env.VITE_API_URL;
-      const res = await fetch(`${apiBase}/api/auth/studentLogin`, {
+      const response = await fetch(`${apiBase}/auth/studentLogin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.message || "Invalid email or password.");
-        return;
-      }
+      const data = (await response.json()) as StudentLoginResponse;
 
-      setSuccess(data.message || "Login successful");
-      setEmail("");
-      setPassword("");
-      setTimeout(() => navigate("/"), 400);
-    } catch (error) {
-      console.error("Login API error", error);
-      setError("Server error. Please try again later.");
+      if (response.ok) {
+        const { message, firstTimeSignin, loginStatus } = data;
+
+        setSuccess(message ?? "Login successful");
+        setIsAuthenticated(!!loginStatus);
+        setRole("student");
+
+        if (firstTimeSignin) {
+          navigate("/student/changePassword");
+        } else {
+          navigate("/student/studentpanel");
+        }
+      } else {
+        setError(data?.message ?? "Unable to login. Please try again.");
+      }
+    } catch (err) {
+      const fallbackMessage =
+        err instanceof Error
+          ? err.message
+          : "Something went wrong. Please try again.";
+      setError(fallbackMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -72,17 +93,27 @@ export default function LoginPage() {
 
           <div>
             <label className="block text-sm font-medium text-foreground mb-1" htmlFor="password">
-              Password
+              Passwo
             </label>
-            <input
-              id="password"
-              type="password"
-              className="w-full rounded-lg border border-border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-blue"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-            />
+            <div className="relative">
+              <input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                className="w-full rounded-lg border border-border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-blue"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+              />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-3 flex items-center text-muted-foreground"
+                onClick={() => setShowPassword((prev) => !prev)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
 
           <button
@@ -94,7 +125,7 @@ export default function LoginPage() {
         </form>
 
         <p className="mt-4 text-sm text-muted-foreground">
-          Don't have an account? 
+          Don't have an account?
           <button
             type="button"
             className="text-brand-blue underline"
@@ -107,3 +138,4 @@ export default function LoginPage() {
     </div>
   );
 }
+
