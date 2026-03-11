@@ -3,6 +3,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { useToast } from "@/hooks/use-toast";
 
 
 type ChangePasswordResponse = {
@@ -14,15 +15,22 @@ const ChangePassword = (): JSX.Element => {
   const [oldPassword, setOldPassword] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
   const [message, setMessage] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
   const [showOld, setShowOld] = useState(false);
   const [showNew, setShowNew] = useState(false);
 
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleChangePassword = async (
     e: FormEvent<HTMLFormElement>
   ): Promise<void> => {
     e.preventDefault();
+
+    if (loading) return; // Prevent multiple submissions
+
+    setLoading(true);
+    setMessage(""); // Clear previous messages
 
     try {
       const apiBase = import.meta.env.VITE_API_URL;
@@ -42,15 +50,33 @@ const ChangePassword = (): JSX.Element => {
       const data = (await response.json()) as ChangePasswordResponse;
 
       if (response.ok) {
+        toast({
+          title: "Success!",
+          description: "Password updated successfully.",
+          variant: "default",
+        });
         setMessage(data.message ?? "Password updated successfully.");
         setTimeout(() => {
           navigate("/student/studentpanel");
         }, 2000);
       } else {
+        toast({
+          title: "Error",
+          description: data.message ?? "Unable to update password.",
+          variant: "destructive",
+        });
         setMessage(data.message ?? "Unable to update password.");
       }
     } catch (error) {
-      setMessage("An error occurred. Please try again.");
+      const errorMessage = "An error occurred. Please try again.";
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+      setMessage(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -145,9 +171,14 @@ const ChangePassword = (): JSX.Element => {
 
             <button
               type="submit"
-              className="w-full rounded-lg bg-brand-blue px-4 py-2.5 text-white text-sm font-semibold hover:opacity-90 transition"
+              disabled={loading}
+              className={`w-full rounded-lg px-4 py-2.5 text-white text-sm font-semibold transition ${
+                loading 
+                  ? "bg-gray-400 cursor-not-allowed" 
+                  : "bg-brand-blue hover:opacity-90"
+              }`}
             >
-              Update Password
+              {loading ? "Updating..." : "Update Password"}
             </button>
           </form>
         </div>
