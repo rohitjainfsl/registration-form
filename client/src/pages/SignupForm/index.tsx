@@ -128,6 +128,7 @@ const SignupForm = () => {
   const [submitted, setSubmitted] = useState(false);
   const [formState, dispatch] = useReducer(formReducer, initialFormState);
   const [openTc, setOpenTc] = useState(false);
+  const [dobOpen, setDobOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [emailExists, setEmailExists] = useState(false);
   const frontRef = useRef<HTMLInputElement>(null);
@@ -375,7 +376,7 @@ const SignupForm = () => {
                     required
                     error={getError("dob")}
                   >
-                    <Popover>
+                    <Popover open={dobOpen} onOpenChange={setDobOpen}>
                       <PopoverTrigger asChild>
                         <Button
                           name="dob"
@@ -396,7 +397,10 @@ const SignupForm = () => {
                         <Calendar
                           mode="single"
                           selected={formState.dob}
-                          onSelect={(val) => setField("dob", val)}
+                          onSelect={(val) => {
+                            setField("dob", val);
+                            if (val) setDobOpen(false);
+                          }}
                           disabled={(date) => date > new Date()}
                           initialFocus
                           className="p-3 pointer-events-auto"
