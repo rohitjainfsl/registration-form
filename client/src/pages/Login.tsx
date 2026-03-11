@@ -74,13 +74,13 @@ export default function LoginPage({ onClose }: LoginPageProps) {
       const data = (await response.json()) as StudentLoginResponse;
 
       if (response.ok) {
-        const { message, firstTimeSignin, loginStatus } = data;
+        const { message, loginStatus } = data;
 
         setSuccess(message ?? "Login successful");
         setIsAuthenticated(!!loginStatus);
         setRole("student");
 
-        if (firstTimeSignin) {
+        if (loginStatus) {
           navigate("/student/changePassword");
         } else {
           navigate("/student/studentpanel");
