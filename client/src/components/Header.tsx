@@ -14,7 +14,7 @@ const navLinks = [
   { label: "Courses", href: "#courses" },
   { label: "Placements", href: "#placements" },
   { label: "Testimonials", href: "#testimonials" },
-    { label: "LifeAtFSL", href: "/lifeatfsl" },
+  { label: "Life at FSL", href: "/lifeatfsl" },
   { label: "Contact", href: "#enquiry" },
 ];
 
@@ -23,7 +23,7 @@ const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
   const location = useLocation();
-  const navigate=useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -54,8 +54,6 @@ const Header = () => {
     navigate(href);
   };
 
-
-
   const handleLogoClick = () => {
     setMobileOpen(false);
     if (location.pathname !== "/") {
@@ -64,8 +62,6 @@ const Header = () => {
     }
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-
-
 
   const openLoginPage = () => {
     setMobileOpen(false);
@@ -81,9 +77,8 @@ const Header = () => {
     }
   }, [location, navigate]);
 
-
   return (
-     <>
+    <>
       {loginOpen && <LoginPage onClose={() => setLoginOpen(false)} />}
       {/* Top bar */}
       <div className="bg-brand-blue text-primary-foreground text-sm py-2 px-4 flex items-center justify-center gap-6">
@@ -105,10 +100,11 @@ const Header = () => {
 
       {/* Main header */}
       <header
-        className={`sticky top-0 z-50 w-full transition-all duration-400 ${scrolled
-          ? "bg-background/95 backdrop-blur-md shadow-lg"
-          : "bg-background shadow-sm"
-          }`}
+        className={`sticky top-0 z-50 w-full transition-all duration-400 ${
+          scrolled
+            ? "bg-background/95 backdrop-blur-md shadow-lg"
+            : "bg-background shadow-sm"
+        }`}
       >
         <div className="container mx-auto px-4 flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
@@ -140,16 +136,16 @@ const Header = () => {
           </a>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-3">
             {navLinks.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleNavClick(link.href);
-                  }}
-                className="relative px-4 py-2 text-sm font-medium text-foreground/80 hover:text-brand-blue transition-colors duration-200 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-brand-orange after:transition-all after:duration-300 hover:after:w-full"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavClick(link.href);
+                }}
+                className="relative px-2 py-2 text-sm font-medium text-foreground/80 hover:text-brand-blue transition-colors duration-200 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-brand-orange after:transition-all after:duration-300 hover:after:w-full"
               >
                 {link.label}
               </a>
@@ -176,7 +172,7 @@ const Header = () => {
           {/* Mobile menu button */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden p-2 rounded-lg text-brand-blue hover:bg-brand-blue-light transition-colors duration-200"
+            className="lg:hidden p-2 rounded-lg text-brand-blue hover:bg-brand-blue-light transition-colors duration-200"
             aria-label="Toggle menu"
           >
             {mobileOpen ? <X size={24} /> : <Menu size={24} />}
@@ -185,18 +181,19 @@ const Header = () => {
 
         {/* Mobile Nav */}
         <div
-          className={`md:hidden overflow-hidden transition-all duration-300 bg-background border-t border-border ${mobileOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-            }`}
+          className={`lg:hidden overflow-hidden transition-all duration-300 bg-background border-t border-border ${
+            mobileOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+          }`}
         >
           <nav className="container mx-auto px-4 py-4 flex flex-col gap-2">
             {navLinks.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleNavClick(link.href);
-                  }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavClick(link.href);
+                }}
                 className="px-4 py-3 rounded-lg text-sm font-medium text-foreground/80 hover:text-brand-blue hover:bg-brand-blue-light transition-colors duration-200"
               >
                 {link.label}
@@ -222,7 +219,6 @@ const Header = () => {
           </nav>
         </div>
       </header>
-
     </>
   );
 };
