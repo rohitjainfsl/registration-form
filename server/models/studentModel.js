@@ -1,5 +1,6 @@
 import { Schema, model } from "mongoose";
 import { generatePassword } from "../services/passwordGenerator.js";
+import bcrypt from "bcrypt";
 
 const studentSchema = new Schema(
   {
@@ -41,11 +42,22 @@ const studentSchema = new Schema(
 );
 
 
-studentSchema.pre("save", function (next) {
-  if (!this.password) {
-    this.password = generatePassword();
+studentSchema.pre("save", async function (next) {
+  try {
+    // Generate password if it doesn't exist
+    if (!this.password) {
+      this.password = generatePassword();
+    }
+    
+    // Hash password if it's new or modified
+    if (this.isNew || this.isModified('password')) {
+      this.password = await bcrypt.hash(this.password, 10);
+    }
+    
+    next();
+  } catch (error) {
+    next(error);
   }
-  next();
 });
 
 const studentModel = model("student", studentSchema);

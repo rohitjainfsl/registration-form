@@ -184,16 +184,27 @@ export default function LoginPage({ onClose }: LoginPageProps) {
             </button>
           </form>
 
-          <p className="mt-4 text-sm text-muted-foreground">
+          <div className="mt-4 flex items-center justify-between">
+       
+
+          <p className="text-sm text-muted-foreground">
             Don't have an account?
             <button
               type="button"
               className="text-brand-blue underline ml-1"
               onClick={() => navigate("/register")}
-            >
+              >
               Create an account
             </button>
           </p>
+               <button
+              type="button"
+              className="text-sm text-brand-blue underline hover:opacity-80 transition"
+              onClick={() => navigate("/student/changepassword")}
+            >
+              Forgot password?
+            </button>
+              </div>
         </div>
       </div>
     </div>
