@@ -1,8 +1,11 @@
 import { useState, useEffect, createContext} from "react";
-import { API_BASE_URL } from "../../axiosConfig";
+
 
 
 export const adminContext = createContext();
+
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 
 export function AdminProvider({ children }) {
   const [students, setStudents] = useState([]);
