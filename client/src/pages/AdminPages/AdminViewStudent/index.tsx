@@ -1,6 +1,16 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { CheckCircle2, Loader2, Search, Trash2, Users, ShieldCheck, X } from "lucide-react";
+import {
+  CheckCircle2,
+  Loader2,
+  Search,
+  Trash2,
+  X,
+  SortAsc,
+  SortDesc,
+  Users,
+  Shield,
+} from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
@@ -13,28 +23,26 @@ type Student = {
 };
 
 const sortOptions = [
-  { value: "name", label: "Name A -> Z" },
-  { value: "opposite", label: "Name Z -> A" },
-  { value: "newest", label: "Newest First" },
-  { value: "oldest", label: "Oldest First" },
+  { value: "name", label: "Name A -> Z", icon: <SortAsc className="h-4 w-4" /> },
+  { value: "opposite", label: "Name Z -> A", icon: <SortDesc className="h-4 w-4" /> },
+  { value: "newest", label: "Newest First", icon: <SortDesc className="h-4 w-4" /> },
+  { value: "oldest", label: "Oldest First", icon: <SortAsc className="h-4 w-4" /> },
 ];
 
 const AdminViewResult = (): JSX.Element => {
   const [students, setStudents] = useState<Student[]>([]);
   const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState("name");
+  const [sortBy, setSortBy] = useState<string>("name");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
-  const [visibleCount, setVisibleCount] = useState(12);
 
-  const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const { toast } = useToast();
   const { isAuthenticated, role, authChecked } = useAdminContext();
   const navigate = useNavigate();
   const apiBase = import.meta.env.VITE_API_URL;
 
-  // Guard route (extra safety in addition to ProtectedRoute)
+  // Redirect if not admin (safety; route should already be protected)
   useEffect(() => {
     if (authChecked && (!isAuthenticated || role !== "admin")) {
       navigate("/admin/login", { replace: true });
@@ -55,7 +63,7 @@ const AdminViewResult = (): JSX.Element => {
       } catch (error) {
         console.error(error);
         toast({
-          title: "Unable to load students",
+          title: "Could not load students",
           description: "Please refresh or check your connection.",
           variant: "destructive",
         });
@@ -67,7 +75,6 @@ const AdminViewResult = (): JSX.Element => {
     fetchStudents();
   }, [apiBase, toast]);
 
-  // Derived lists
   const filteredStudents = useMemo(() => {
     const normalized = search.trim().toLowerCase();
     let result = students.filter((s) => s.name.toLowerCase().includes(normalized));
@@ -95,39 +102,13 @@ const AdminViewResult = (): JSX.Element => {
     return result;
   }, [students, search, sortBy]);
 
-  const studentsToDisplay = useMemo(
-    () => filteredStudents.slice(0, visibleCount),
-    [filteredStudents, visibleCount]
-  );
-
-  const hasMore = visibleCount < filteredStudents.length;
-
-  // Reset pagination on new search/sort
-  useEffect(() => {
-    setVisibleCount(12);
-  }, [search, sortBy]);
-
-  // Intersection observer for auto "load more"
-  useEffect(() => {
-    if (!loadMoreRef.current || !hasMore) return;
-
-    const observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) {
-        setVisibleCount((prev) => prev + 10);
-      }
-    });
-
-    observer.observe(loadMoreRef.current);
-    return () => observer.disconnect();
-  }, [hasMore]);
-
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) =>
       prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]
     );
   };
 
-  const handleDeleteSelected = async () => {
+  const handleDelete = async () => {
     if (!selectedIds.length) return;
     if (!window.confirm("Delete selected students? This cannot be undone.")) return;
 
@@ -139,14 +120,13 @@ const AdminViewResult = (): JSX.Element => {
         credentials: "include",
         body: JSON.stringify({ ids: selectedIds }),
       });
-
       if (!res.ok) throw new Error("Failed to delete students");
 
       setStudents((prev) => prev.filter((s) => !selectedIds.includes(s._id)));
       setSelectedIds([]);
       toast({
-        title: "Deleted",
-        description: "Selected student records were removed.",
+        title: "Students deleted",
+        description: "Selected records were removed successfully.",
       });
     } catch (error) {
       console.error(error);
@@ -160,6 +140,9 @@ const AdminViewResult = (): JSX.Element => {
     }
   };
 
+  const total = students.length;
+  const filtered = filteredStudents.length;
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Header />
@@ -172,7 +155,7 @@ const AdminViewResult = (): JSX.Element => {
               Student Results
             </h1>
             <p className="text-sm text-muted-foreground max-w-2xl">
-              Styled with the logo-inspired blue & orange palette so this page feels native to the rest of the site.
+              Search, sort, and manage student records with the blue-orange palette from the logo.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -192,30 +175,21 @@ const AdminViewResult = (): JSX.Element => {
             </div>
             <div>
               <p className="text-xs text-muted-foreground">Total Students</p>
-              <p className="text-xl font-bold">{students.length}</p>
+              <p className="text-xl font-bold">{total}</p>
             </div>
           </div>
           <div className="rounded-2xl border border-border bg-card p-4 shadow-sm flex items-center gap-3">
             <div className="h-11 w-11 rounded-xl bg-brand-orange/10 text-brand-orange flex items-center justify-center">
-              <ShieldCheck className="h-5 w-5" />
+              <Shield className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">Visible Now</p>
-              <p className="text-xl font-bold">{studentsToDisplay.length}</p>
+              <p className="text-xs text-muted-foreground">Showing</p>
+              <p className="text-xl font-bold">{filtered}</p>
             </div>
           </div>
           <div className="rounded-2xl border border-border bg-card p-4 shadow-sm flex items-center gap-3">
             <div className="h-11 w-11 rounded-xl bg-muted text-muted-foreground flex items-center justify-center">
               <Search className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground">Filtered Results</p>
-              <p className="text-xl font-bold">{filteredStudents.length}</p>
-            </div>
-          </div>
-          <div className="rounded-2xl border border-border bg-card p-4 shadow-sm flex items-center gap-3">
-            <div className="h-11 w-11 rounded-xl bg-red-50 text-red-600 flex items-center justify-center">
-              <Trash2 className="h-5 w-5" />
             </div>
             <div>
               <p className="text-xs text-muted-foreground">Selected</p>
@@ -262,15 +236,11 @@ const AdminViewResult = (): JSX.Element => {
               {selectedIds.length > 0 && (
                 <button
                   type="button"
-                  onClick={handleDeleteSelected}
+                  onClick={handleDelete}
                   disabled={deleting}
                   className="inline-flex items-center gap-2 rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 transition disabled:cursor-not-allowed disabled:opacity-70"
                 >
-                  {deleting ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Trash2 className="h-4 w-4" />
-                  )}
+                  {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
                   Delete ({selectedIds.length})
                 </button>
               )}
@@ -291,39 +261,26 @@ const AdminViewResult = (): JSX.Element => {
                 {loading ? (
                   Array.from({ length: 6 }).map((_, idx) => (
                     <tr key={idx} className="animate-pulse">
-                      <td className="px-6 py-4">
-                        <div className="h-4 w-6 rounded bg-muted" />
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="h-4 w-40 rounded bg-muted" />
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="h-4 w-28 rounded bg-muted" />
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="h-4 w-10 rounded bg-muted" />
-                      </td>
+                      <td className="px-6 py-4"><div className="h-4 w-6 rounded bg-muted" /></td>
+                      <td className="px-6 py-4"><div className="h-4 w-32 rounded bg-muted" /></td>
+                      <td className="px-6 py-4"><div className="h-4 w-24 rounded bg-muted" /></td>
+                      <td className="px-6 py-4"><div className="h-4 w-10 rounded bg-muted" /></td>
                     </tr>
                   ))
-                ) : studentsToDisplay.length ? (
-                  studentsToDisplay.map((student, index) => (
+                ) : filteredStudents.length ? (
+                  filteredStudents.map((student, index) => (
                     <tr key={student._id} className="hover:bg-muted/50 transition">
                       <td className="px-6 py-4 font-semibold text-muted-foreground">
                         {index + 1}
                       </td>
                       <td className="px-6 py-4 font-medium text-foreground">
-                        <a
-                          href={`/getStudents/${student._id}`}
-                          className="text-brand-blue hover:underline"
-                        >
-                          {student.name}
-                        </a>
+                        {student.name}
                       </td>
                       <td className="px-6 py-4 text-muted-foreground">
                         {new Date(student.createdAt).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4">
-                        <label className="inline-flex items-center gap-2 cursor-pointer select-none">
+                        <label className="inline-flex items-center gap-2 cursor-pointer">
                           <input
                             type="checkbox"
                             checked={selectedIds.includes(student._id)}
@@ -347,18 +304,6 @@ const AdminViewResult = (): JSX.Element => {
                 )}
               </tbody>
             </table>
-          </div>
-
-          <div className="flex items-center justify-between px-6 py-4 text-xs text-muted-foreground">
-            <span>
-              Showing {studentsToDisplay.length} of {filteredStudents.length} students
-            </span>
-            {hasMore && (
-              <div ref={loadMoreRef} className="inline-flex items-center gap-2 text-brand-blue">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Loading more...
-              </div>
-            )}
           </div>
         </div>
       </main>
