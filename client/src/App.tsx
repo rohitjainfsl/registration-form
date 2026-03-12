@@ -17,9 +17,10 @@ import RegistrationForm from "@/pages/SignupForm";
 import LifeAtFSL from "@/pages/LifeAtFSL";
 import Loader from "@/components/Loader";
 import { AdminProvider } from "@/Context/Admincontext";
-// import StudentChangePassword from "@/pages/StudentPages/StudentPanel";
-// import StudentDashboard from "@/pages/StudentPages/StudentPanel/StudentDashboard";
+import StudentPanel from "@/pages/StudentPages/StudentPanel";
 import PasswordNotFound from '@/pages/PasswordNotFound'
+import AppLayout from "@/components/AppLayout/index";
+import StudentResult from "@/pages/StudentPages/StudentResult";
 
 const queryClient = new QueryClient();
 
@@ -41,34 +42,37 @@ const AppRoutes = () => {
       {loading && <Loader />}
       <div className={loading ? "pointer-events-none" : ""}>
         <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/lifeatfsl" element={<LifeAtFSL />} />
-          <Route
-            path="/courses/full-stack-development"
-            element={<FullStackDevelopment />}
-          />
-          <Route
-            path="/courses/frontend-development"
-            element={<FrontendDevelopment />}
-          />
-          <Route
-            path="/courses/backend-development"
-            element={<BackendDevelopment />}
-          />
-          <Route
-            path="/courses/database-management"
-            element={<DatabaseManagement />}
-          />
-          <Route
-            path="/courses/react-native-mobile"
-            element={<ReactNativeMobile />}
-          />
-          <Route path="/courses/devops-cloud" element={<DevOpsCloud />} />
-          <Route path="/register" element={<RegistrationForm />} />
-          <Route path="/student/changePassword" element={<PasswordNotFound />} />
-          {/* <Route path="/student/studentpanel" element={<StudentDashboard />} /> */}
-          <Route path="/courses/:slug" element={<CoursePage />} />
-          <Route path="*" element={<NotFound />} />
+          <Route element={<AppLayout />}>
+            <Route path="/" element={<Index />} />
+            <Route path="/lifeatfsl" element={<LifeAtFSL />} />
+            <Route
+              path="/courses/full-stack-development"
+              element={<FullStackDevelopment />}
+            />
+            <Route
+              path="/courses/frontend-development"
+              element={<FrontendDevelopment />}
+            />
+            <Route
+              path="/courses/backend-development"
+              element={<BackendDevelopment />}
+            />
+            <Route
+              path="/courses/database-management"
+              element={<DatabaseManagement />}
+            />
+            <Route
+              path="/courses/react-native-mobile"
+              element={<ReactNativeMobile />}
+            />
+            <Route path="/courses/devops-cloud" element={<DevOpsCloud />} />
+            <Route path="/register" element={<RegistrationForm />} />
+            <Route path="/student/changepassword" element={<PasswordNotFound />} />
+            <Route path="/student/studentpanel" element={<StudentPanel />} />
+            <Route path="/student/result" element={<StudentResult />} />
+            <Route path="/courses/:slug" element={<CoursePage />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
         </Routes>
       </div>
     </>
