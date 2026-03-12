@@ -25,12 +25,9 @@ import StudentResult from "@/pages/StudentPages/StudentResult";
 // import StudentChangePassword from "@/pages/StudentPages/StudentPanel";
 // import StudentDashboard from "@/pages/StudentPages/StudentPanel/StudentDashboard";
 import ResetPassword from '@/pages/ResetPassword'
-<<<<<<< HEAD
-import AdminHome from "@/pages/AdminHome";
-=======
-import { AdminProvider } from "./Context/Admincontext";
 
->>>>>>> 17d2f4b763b2d80766e2b4548c04915cd5b8c072
+
+import { AdminProvider } from "./Context/Admincontext";
 
 const queryClient = new QueryClient();
 
@@ -52,45 +49,6 @@ const AppRoutes = () => {
       {loading && <Loader />}
       <div className={loading ? "pointer-events-none" : ""}>
         <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/lifeatfsl" element={<LifeAtFSL />} />
-          <Route
-            path="/courses/full-stack-development"
-            element={<FullStackDevelopment />}
-          />
-          <Route
-            path="/courses/frontend-development"
-            element={<FrontendDevelopment />}
-          />
-          <Route
-            path="/courses/backend-development"
-            element={<BackendDevelopment />}
-          />
-          <Route
-            path="/courses/database-management"
-            element={<DatabaseManagement />}
-          />
-          <Route
-            path="/courses/react-native-mobile"
-            element={<ReactNativeMobile />}
-          />
-          <Route path="/courses/devops-cloud" element={<DevOpsCloud />} />
-          <Route path="/register" element={<RegistrationForm />} />
-          <Route path="/student/changePassword" element={<ResetPassword />} />
-          {/* <Route path="/student/studentpanel" element={<StudentDashboard />} /> */}
-          <Route path="/courses/:slug" element={<CoursePage />} />
-
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route
-            path="/admin/home"
-            element={
-              <ProtectedRoute>
-                <AdminHome />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route path="*" element={<NotFound />} />
           <Route element={<AppLayout />}>
             <Route path="/" element={<Index />} />
             <Route path="/lifeatfsl" element={<LifeAtFSL />} />
@@ -115,15 +73,23 @@ const AppRoutes = () => {
               element={<ReactNativeMobile />}
             />
             <Route path="/courses/devops-cloud" element={<DevOpsCloud />} />
+            <Route path="/courses/:slug" element={<CoursePage />} />
             <Route path="/register" element={<RegistrationForm />} />
             <Route path="/student/changepassword" element={<ResetPassword />} />
+            <Route path="/student/changePassword" element={<ResetPassword />} />
             <Route path="/student/studentpanel" element={<StudentPanel />} />
             <Route path="/student/result" element={<StudentResult />} />
-            <Route path="/courses/:slug" element={<CoursePage />} />
-            <Route path="*" element={<NotFound />} />
-            <Route path="/admin/home" element={<AdminHome />} />
-
           </Route>
+
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route
+            path="/admin/home"
+            element={
+                      <AdminHome />
+            }
+          />
+
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
     </>
