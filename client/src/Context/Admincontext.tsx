@@ -1,19 +1,27 @@
-import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
 type Role = "student" | "admin" | null;
 
 type AdminContextValue = {
   isAuthenticated: boolean;
   role: Role;
+  authChecked: boolean;
+  checkToken: () => Promise<void>;
   setIsAuthenticated: (value: boolean) => void;
   setRole: (role: Role) => void;
 };
 
 const noop = () => {};
+const storageKeys = {
+  auth: "fsl_isAuthenticated",
+  role: "fsl_role",
+};
 
 export const adminContext = createContext<AdminContextValue>({
   isAuthenticated: false,
   role: null,
+  authChecked: false,
+  checkToken: async () => {},
   setIsAuthenticated: noop,
   setRole: noop,
 });
@@ -21,15 +29,73 @@ export const adminContext = createContext<AdminContextValue>({
 export const AdminProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [role, setRole] = useState<Role>(null);
+  const [authChecked, setAuthChecked] = useState(false);
+  const API_BASE = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || "";
+
+  // Persist to localStorage whenever auth state changes
+  useEffect(() => {
+    localStorage.setItem(storageKeys.auth, String(isAuthenticated));
+    if (role) {
+      localStorage.setItem(storageKeys.role, role);
+    } else {
+      localStorage.removeItem(storageKeys.role);
+    }
+  }, [isAuthenticated, role]);
+
+  const checkToken = async () => {
+    if (!API_BASE) {
+      console.warn("API base URL missing; skip token check");
+      setAuthChecked(true);
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE}/auth/checkToken`, {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        setIsAuthenticated(false);
+        setRole(null);
+        return;
+      }
+
+      const data = await res.json();
+      setIsAuthenticated(true);
+      setRole((data?.role as Role) ?? "admin");
+    } catch (error) {
+      console.error("checkToken failed", error);
+      setIsAuthenticated(false);
+      setRole(null);
+    } finally {
+      setAuthChecked(true);
+    }
+  };
+
+  // On mount: hydrate from storage, then verify with API
+  useEffect(() => {
+    const storedAuth = localStorage.getItem(storageKeys.auth);
+    const storedRole = localStorage.getItem(storageKeys.role) as Role | null;
+
+    if (storedAuth === "true" && storedRole) {
+      setIsAuthenticated(true);
+      setRole(storedRole);
+    }
+
+    checkToken();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const value = useMemo(
     () => ({
       isAuthenticated,
       role,
+      authChecked,
+      checkToken,
       setIsAuthenticated,
       setRole,
     }),
-    [isAuthenticated, role]
+    [isAuthenticated, role, authChecked]
   );
 
   return <adminContext.Provider value={value}>{children}</adminContext.Provider>;

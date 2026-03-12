@@ -1,6 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { CheckCircle2, Loader2, Search, Trash2, X, SortAsc, SortDesc } from "lucide-react";
+import {
+  CheckCircle2,
+  Loader2,
+  Search,
+  Trash2,
+  X,
+  SortAsc,
+  SortDesc,
+  Users,
+  Shield,
+} from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
@@ -13,8 +23,8 @@ type Student = {
 };
 
 const sortOptions = [
-  { value: "name", label: "Name A → Z", icon: <SortAsc className="h-4 w-4" /> },
-  { value: "opposite", label: "Name Z → A", icon: <SortDesc className="h-4 w-4" /> },
+  { value: "name", label: "Name A -> Z", icon: <SortAsc className="h-4 w-4" /> },
+  { value: "opposite", label: "Name Z -> A", icon: <SortDesc className="h-4 w-4" /> },
   { value: "newest", label: "Newest First", icon: <SortDesc className="h-4 w-4" /> },
   { value: "oldest", label: "Oldest First", icon: <SortAsc className="h-4 w-4" /> },
 ];
@@ -28,16 +38,16 @@ const AdminViewResult = (): JSX.Element => {
   const [deleting, setDeleting] = useState(false);
 
   const { toast } = useToast();
-  const { isAuthenticated, role } = useAdminContext();
+  const { isAuthenticated, role, authChecked } = useAdminContext();
   const navigate = useNavigate();
   const apiBase = import.meta.env.VITE_API_URL;
 
   // Redirect if not admin (safety; route should already be protected)
   useEffect(() => {
-    if (!isAuthenticated || role !== "admin") {
+    if (authChecked && (!isAuthenticated || role !== "admin")) {
       navigate("/admin/login", { replace: true });
     }
-  }, [isAuthenticated, role, navigate]);
+  }, [authChecked, isAuthenticated, role, navigate]);
 
   // Fetch students
   useEffect(() => {
@@ -67,9 +77,7 @@ const AdminViewResult = (): JSX.Element => {
 
   const filteredStudents = useMemo(() => {
     const normalized = search.trim().toLowerCase();
-    let result = students.filter((s) =>
-      s.name.toLowerCase().includes(normalized)
-    );
+    let result = students.filter((s) => s.name.toLowerCase().includes(normalized));
 
     switch (sortBy) {
       case "name":
@@ -80,14 +88,12 @@ const AdminViewResult = (): JSX.Element => {
         break;
       case "newest":
         result = [...result].sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
         break;
       case "oldest":
         result = [...result].sort(
-          (a, b) =>
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
         );
         break;
       default:
@@ -134,6 +140,9 @@ const AdminViewResult = (): JSX.Element => {
     }
   };
 
+  const total = students.length;
+  const filtered = filteredStudents.length;
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Header />
@@ -146,7 +155,7 @@ const AdminViewResult = (): JSX.Element => {
               Student Results
             </h1>
             <p className="text-sm text-muted-foreground max-w-2xl">
-              Search, sort, and manage student records. Styled with the same blue–orange palette as the site.
+              Search, sort, and manage student records with the blue-orange palette from the logo.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -156,6 +165,36 @@ const AdminViewResult = (): JSX.Element => {
             >
               Back to Dashboard
             </Link>
+          </div>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-2xl border border-border bg-card p-4 shadow-sm flex items-center gap-3">
+            <div className="h-11 w-11 rounded-xl bg-brand-blue/10 text-brand-blue flex items-center justify-center">
+              <Users className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Total Students</p>
+              <p className="text-xl font-bold">{total}</p>
+            </div>
+          </div>
+          <div className="rounded-2xl border border-border bg-card p-4 shadow-sm flex items-center gap-3">
+            <div className="h-11 w-11 rounded-xl bg-brand-orange/10 text-brand-orange flex items-center justify-center">
+              <Shield className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Showing</p>
+              <p className="text-xl font-bold">{filtered}</p>
+            </div>
+          </div>
+          <div className="rounded-2xl border border-border bg-card p-4 shadow-sm flex items-center gap-3">
+            <div className="h-11 w-11 rounded-xl bg-muted text-muted-foreground flex items-center justify-center">
+              <Search className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Selected</p>
+              <p className="text-xl font-bold">{selectedIds.length}</p>
+            </div>
           </div>
         </div>
 

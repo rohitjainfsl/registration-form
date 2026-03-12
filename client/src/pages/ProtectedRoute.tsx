@@ -10,8 +10,16 @@ type ProtectedRouteProps = {
 };
 
 const ProtectedRoute = ({ children, allowedRoles, redirectTo = "/login" }: ProtectedRouteProps) => {
-  const { isAuthenticated, role } = useAdminContext();
+  const { isAuthenticated, role, authChecked } = useAdminContext();
   const location = useLocation();
+
+  if (!authChecked) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background text-muted-foreground">
+        Checking session...
+      </div>
+    );
+  }
 
   const isAllowed =
     isAuthenticated &&
