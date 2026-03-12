@@ -1,5 +1,6 @@
-import { createContext, useState, useEffect } from "react";
+import { useState, useEffect, createContext } from "react";
 import { API_BASE_URL } from "../../axiosConfig";
+
 
 export const adminContext = createContext();
 
@@ -11,7 +12,7 @@ export function AdminProvider({ children }) {
   const [role, setRole] = useState(null);
   const [firstTimeSignin, setFirstTimeSignin] = useState(null);
 
-  useEffect(() => {
+  useEffect(() => { 
     checkToken();
   }, []);
 

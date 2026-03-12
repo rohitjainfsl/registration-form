@@ -77,14 +77,14 @@ const initialFormState: RegistrationFormValues = {
 
 type FormAction =
   | {
-      type: "set";
-      field: keyof RegistrationFormValues;
-      value: RegistrationFormValues[keyof RegistrationFormValues];
-    }
+    type: "set";
+    field: keyof RegistrationFormValues;
+    value: RegistrationFormValues[keyof RegistrationFormValues];
+  }
   | {
-      type: "setMany";
-      payload: Partial<RegistrationFormValues>;
-    };
+    type: "setMany";
+    payload: Partial<RegistrationFormValues>;
+  };
 
 const formReducer = (
   state: RegistrationFormValues,
@@ -395,16 +395,16 @@ const SignupForm = () => {
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
-                       <DatePicker
-  selected={formState.dob}
-  onChange={(date) => setField("dob", date)}
-  maxDate={new Date()}
-  showYearDropdown
-  showMonthDropdown
-  dropdownMode="select"
-  dateFormat="MM/dd/yyyy"
-  className="w-full border rounded-md p-2"
-/>
+                        <DatePicker
+                          selected={formState.dob}
+                          onChange={(date) => setField("dob", date)}
+                          maxDate={new Date()}
+                          showYearDropdown
+                          showMonthDropdown
+                          dropdownMode="select"
+                          dateFormat="MM/dd/yyyy"
+                          className="w-full border rounded-md p-2"
+                        />
                       </PopoverContent>
                     </Popover>
                   </Field>
@@ -897,7 +897,7 @@ const SignupForm = () => {
               </Dialog>
             </div>
 
-       
+
 
             <Button
               type="submit"
