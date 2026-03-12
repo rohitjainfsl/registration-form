@@ -80,9 +80,8 @@ const AppRoutes = () => {
             <Route
               path="/student/changepassword"
               element={
-                <ProtectedRoute allowedRoles={["student"]} redirectTo="/login">
+                
                   <ResetPassword />
-                </ProtectedRoute>
               }
             />
             <Route

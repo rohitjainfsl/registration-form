@@ -1,19 +1,52 @@
-import { useState, useEffect, createContext, useContext } from "react";
+import { createContext, useEffect, useState, type Dispatch, type ReactNode, type SetStateAction } from "react";
 
+type Role = "student" | "admin" | null;
 
+type AdminContextValue = {
+  students: unknown[];
+  setStudents: Dispatch<SetStateAction<unknown[]>>;
+  filteredStudents: unknown[];
+  setFilteredStudents: Dispatch<SetStateAction<unknown[]>>;
+  visibleCount: number;
+  setVisibleCount: Dispatch<SetStateAction<number>>;
+  isAuthenticated: boolean;
+  setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
+  role: Role;
+  setRole: Dispatch<SetStateAction<Role>>;
+  checkToken: () => Promise<void>;
+  LogOut: () => Promise<void>;
+  firstTimeSignin: boolean | null;
+  setFirstTimeSignin: Dispatch<SetStateAction<boolean | null>>;
+};
 
-export const adminContext = createContext();
+const noop = async () => {};
 
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+export const adminContext = createContext<AdminContextValue>({
+  students: [],
+  setStudents: () => {},
+  filteredStudents: [],
+  setFilteredStudents: () => {},
+  visibleCount: 10,
+  setVisibleCount: () => {},
+  isAuthenticated: false,
+  setIsAuthenticated: () => {},
+  role: null,
+  setRole: () => {},
+  checkToken: noop,
+  LogOut: noop,
+  firstTimeSignin: null,
+  setFirstTimeSignin: () => {},
+});
 
-
-export function AdminProvider({ children }) {
+export function AdminProvider({ children }: { children: ReactNode }) {
   const [students, setStudents] = useState([]);
   const [filteredStudents, setFilteredStudents] = useState([]);
   const [visibleCount, setVisibleCount] = useState(10);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [role, setRole] = useState(null);
-  const [firstTimeSignin, setFirstTimeSignin] = useState(null);
+  const [role, setRole] = useState<Role>(null);
+  const [firstTimeSignin, setFirstTimeSignin] = useState<boolean | null>(null);
+
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => { 
     checkToken();
@@ -82,5 +115,3 @@ export function AdminProvider({ children }) {
     </adminContext.Provider>
   );
 }
-
-export const useAdminContext = () => useContext(adminContext);
