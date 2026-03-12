@@ -112,6 +112,22 @@ const AppRoutes = () => {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/admin/tests"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <AdminViewResult />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/create/test"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <CreateTestForm />
+              </ProtectedRoute>
+            }
+          />
 
           <Route path="*" element={<NotFound />} />
         </Routes>

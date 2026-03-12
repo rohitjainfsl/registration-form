@@ -143,8 +143,8 @@ const AdminHome = (): JSX.Element => {
     ? releaseStatus.toLowerCase().includes("fail")
       ? "border-red-200 bg-red-50 text-red-700"
       : releaseStatus.toLowerCase().includes("unpublish")
-      ? "border-amber-200 bg-amber-50 text-amber-800"
-      : "border-green-200 bg-green-50 text-green-700"
+        ? "border-amber-200 bg-amber-50 text-amber-800"
+        : "border-green-200 bg-green-50 text-green-700"
     : "";
 
   return (
@@ -171,7 +171,7 @@ const AdminHome = (): JSX.Element => {
               Create Test
             </Link>
             <Link
-              to="/admin/fetch/students"
+              to="/admin/tests"
               className="rounded-lg border border-brand-blue px-4 py-2.5 text-sm font-semibold text-brand-blue transition hover:bg-brand-blue hover:text-white"
             >
               View Students
@@ -241,26 +241,26 @@ const AdminHome = (): JSX.Element => {
               <tbody className="divide-y divide-border">
                 {isLoading
                   ? Array.from({ length: 3 }).map((_, idx) => (
-                      <tr key={idx} className="animate-pulse">
-                        <td className="px-6 py-4">
-                          <div className="h-4 w-40 rounded bg-muted" />
-                        </td>
-                        <td className="px-4 py-4">
-                          <div className="h-4 w-16 rounded bg-muted" />
-                        </td>
-                        <td className="px-4 py-4">
-                          <div className="h-4 w-20 rounded bg-muted" />
-                        </td>
-                        <td className="px-4 py-4">
-                          <div className="h-6 w-16 rounded-full bg-muted" />
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="h-4 w-32 rounded bg-muted" />
-                        </td>
-                      </tr>
-                    ))
+                    <tr key={idx} className="animate-pulse">
+                      <td className="px-6 py-4">
+                        <div className="h-4 w-40 rounded bg-muted" />
+                      </td>
+                      <td className="px-4 py-4">
+                        <div className="h-4 w-16 rounded bg-muted" />
+                      </td>
+                      <td className="px-4 py-4">
+                        <div className="h-4 w-20 rounded bg-muted" />
+                      </td>
+                      <td className="px-4 py-4">
+                        <div className="h-6 w-16 rounded-full bg-muted" />
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="h-4 w-32 rounded bg-muted" />
+                      </td>
+                    </tr>
+                  ))
                   : tests.length > 0
-                  ? tests.map((test) => (
+                    ? tests.map((test) => (
                       <tr key={test._id} className="hover:bg-muted/50">
                         <td className="px-6 py-4 font-semibold text-foreground">{test.title}</td>
                         <td className="px-4 py-4 text-muted-foreground">{test.numQuestions}</td>
@@ -308,13 +308,13 @@ const AdminHome = (): JSX.Element => {
                         </td>
                       </tr>
                     ))
-                  : (
-                    <tr>
-                      <td colSpan={5} className="px-6 py-10 text-center text-muted-foreground">
-                        No tests found yet. Create your first assessment to get started.
-                      </td>
-                    </tr>
-                  )}
+                    : (
+                      <tr>
+                        <td colSpan={5} className="px-6 py-10 text-center text-muted-foreground">
+                          No tests found yet. Create your first assessment to get started.
+                        </td>
+                      </tr>
+                    )}
               </tbody>
             </table>
           </div>
