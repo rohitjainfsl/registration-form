@@ -18,7 +18,9 @@ import LifeAtFSL from "@/pages/LifeAtFSL";
 import Loader from "@/components/Loader";
 import AdminLogin from "@/pages/AdminPages/AdminLogin";
 import AdminHome from "@/pages/AdminPages/AdminHome";
-// import ProtectedRoute from "@/pages/ProtectedRoute";
+import CreateTestForm from "@/pages/AdminPages/Admin Create test";
+import AdminViewResult from "@/pages/AdminPages/AdminViewResult";
+import ProtectedRoute from "@/pages/ProtectedRoute";
 import StudentPanel from "@/pages/StudentPages/StudentPanel";
 import AppLayout from "@/components/AppLayout/index";
 import StudentResult from "@/pages/StudentPages/StudentResult";
@@ -86,14 +88,6 @@ const AppRoutes = () => {
               }
             />
             <Route
-              path="/student/changePassword"
-              element={
-                <ProtectedRoute allowedRoles={["student"]} redirectTo="/login">
-                  <ResetPassword />
-                </ProtectedRoute>
-              }
-            />
-            <Route
               path="/student/studentpanel"
               element={
                 <ProtectedRoute allowedRoles={["student"]} redirectTo="/login">
@@ -117,6 +111,22 @@ const AppRoutes = () => {
             element={
               <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
                 <AdminHome />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/tests"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <AdminViewResult />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/create/test"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <CreateTestForm />
               </ProtectedRoute>
             }
           />
