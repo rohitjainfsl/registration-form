@@ -1,147 +1,112 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
-  CheckCircle2,
-  Loader2,
-  Search,
-  Trash2,
-  X,
-  SortAsc,
-  SortDesc,
-  Users,
-  Shield,
-} from "lucide-react";
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { useToast } from "@/hooks/use-toast";
-import { useAdminContext } from "@/Context/Admincontext";
+import { FileText, Clock3, ListChecks } from "lucide-react";
 
-type Student = {
-  _id: string;
-  name: string;
-  createdAt: string;
+type Attempt = {
+  testId: string;
+  startTime: string;
 };
 
-const sortOptions = [
-  { value: "name", label: "Name A -> Z", icon: <SortAsc className="h-4 w-4" /> },
-  { value: "opposite", label: "Name Z -> A", icon: <SortDesc className="h-4 w-4" /> },
-  { value: "newest", label: "Newest First", icon: <SortDesc className="h-4 w-4" /> },
-  { value: "oldest", label: "Oldest First", icon: <SortAsc className="h-4 w-4" /> },
-];
+type Student = {
+  attempts?: Attempt[];
+};
 
-const AdminViewResult = (): JSX.Element => {
-  const [students, setStudents] = useState<Student[]>([]);
-  const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState<string>("name");
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [deleting, setDeleting] = useState(false);
+type TestRecord = {
+  testId: string;
+  date: string;
+  time: string;
+};
 
-  const { toast } = useToast();
-  const { isAuthenticated, role, authChecked } = useAdminContext();
+type TestName = {
+  _id: string;
+  title: string;
+};
+
+export default function AllTests(): JSX.Element {
+  const [tests, setTests] = useState<TestRecord[]>([]);
+  const [testName, setTestName] = useState<TestName[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
   const navigate = useNavigate();
   const apiBase = import.meta.env.VITE_API_URL;
 
-  // Redirect if not admin (safety; route should already be protected)
-  useEffect(() => {
-    if (authChecked && (!isAuthenticated || role !== "admin")) {
-      navigate("/admin/login", { replace: true });
-    }
-  }, [authChecked, isAuthenticated, role, navigate]);
+  async function fetchTests(): Promise<void> {
+    try {
+      const res = await fetch(`${apiBase}/test/allTests`, {
+        credentials: "include",
+      });
 
-  // Fetch students
+      const data = await res.json();
+      setTestName(data.tests);
+    } catch (error) {
+      console.error("Failed to fetch tests", error);
+    }
+  }
+
   useEffect(() => {
-    const fetchStudents = async () => {
+    const fetchScores = async () => {
       try {
-        setLoading(true);
-        const res = await fetch(`${apiBase}/students/getStudents`, {
+        const res = await fetch(`${apiBase}/students/score`, {
           credentials: "include",
         });
-        if (!res.ok) throw new Error("Failed to fetch students");
-        const data = (await res.json()) as Student[];
-        setStudents(data);
-      } catch (error) {
-        console.error(error);
-        toast({
-          title: "Could not load students",
-          description: "Please refresh or check your connection.",
-          variant: "destructive",
-        });
-      } finally {
+
+        const data: Student[] = await res.json();
+
+        const testMap = new Map<string, TestRecord>();
+
+        if (Array.isArray(data)) {
+          data.forEach((student) => {
+            if (student.attempts && Array.isArray(student.attempts)) {
+              student.attempts.forEach((attempt) => {
+                if (attempt.testId && attempt.startTime) {
+                  const testIdStr = attempt.testId.toString();
+
+                  if (!testMap.has(testIdStr)) {
+                    const dateObj = new Date(attempt.startTime);
+
+                    testMap.set(testIdStr, {
+                      testId: testIdStr,
+                      date: dateObj.toLocaleDateString(),
+                      time: dateObj.toLocaleTimeString(),
+                    });
+                  }
+                }
+              });
+            }
+          });
+        }
+
+        setTests(Array.from(testMap.values()));
+        setLoading(false);
+      } catch (err) {
+        console.error("Failed to fetch tests:", err);
+        setError("Failed to fetch tests");
         setLoading(false);
       }
     };
 
-    fetchStudents();
-  }, [apiBase, toast]);
+    fetchScores();
+    fetchTests();
+  }, []);
 
-  const filteredStudents = useMemo(() => {
-    const normalized = search.trim().toLowerCase();
-    let result = students.filter((s) => s.name.toLowerCase().includes(normalized));
-
-    switch (sortBy) {
-      case "name":
-        result = [...result].sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      case "opposite":
-        result = [...result].sort((a, b) => b.name.localeCompare(a.name));
-        break;
-      case "newest":
-        result = [...result].sort(
-          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-        break;
-      case "oldest":
-        result = [...result].sort(
-          (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        );
-        break;
-      default:
-        break;
-    }
-    return result;
-  }, [students, search, sortBy]);
-
-  const toggleSelect = (id: string) => {
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]
-    );
-  };
-
-  const handleDelete = async () => {
-    if (!selectedIds.length) return;
-    if (!window.confirm("Delete selected students? This cannot be undone.")) return;
-
-    try {
-      setDeleting(true);
-      const res = await fetch(`${apiBase}/students/deleteMany`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ ids: selectedIds }),
-      });
-      if (!res.ok) throw new Error("Failed to delete students");
-
-      setStudents((prev) => prev.filter((s) => !selectedIds.includes(s._id)));
-      setSelectedIds([]);
-      toast({
-        title: "Students deleted",
-        description: "Selected records were removed successfully.",
-      });
-    } catch (error) {
-      console.error(error);
-      toast({
-        title: "Delete failed",
-        description: "Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setDeleting(false);
-    }
-  };
-
-  const total = students.length;
-  const filtered = filteredStudents.length;
+  const stats = useMemo(
+    () => ({
+      totalPublished: testName.length,
+      uniqueAttempted: tests.length,
+    }),
+    [testName.length, tests.length],
+  );
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -150,100 +115,69 @@ const AdminViewResult = (): JSX.Element => {
       <main className="container mx-auto px-4 py-10 space-y-8">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="space-y-2">
-            <p className="text-sm text-muted-foreground">Admin / Results</p>
-            <h1 className="text-3xl font-bold leading-tight bg-gradient-to-r from-brand-blue to-brand-orange bg-clip-text text-transparent">
-              Student Results
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/admin/home">Admin</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/admin/tests">Results</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>All Tests</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+            <h1 className="text-3xl font-bold leading-tight text-gradient-brand">
+              All Tests & Attempts
             </h1>
             <p className="text-sm text-muted-foreground max-w-2xl">
-              Search, sort, and manage student records with the blue-orange palette from the logo.
+              Review every test that has been attempted and jump directly to detailed score reports.
             </p>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <Link
-              to="/admin/home"
-              className="rounded-lg border border-border px-4 py-2.5 text-sm font-semibold hover:border-brand-blue hover:text-brand-blue transition"
-            >
-              Back to Dashboard
-            </Link>
           </div>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <div className="rounded-2xl border border-border bg-card p-4 shadow-sm flex items-center gap-3">
             <div className="h-11 w-11 rounded-xl bg-brand-blue/10 text-brand-blue flex items-center justify-center">
-              <Users className="h-5 w-5" />
+              <FileText className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">Total Students</p>
-              <p className="text-xl font-bold">{total}</p>
+              <p className="text-xs text-muted-foreground">Published Tests</p>
+              <p className="text-xl font-bold">{stats.totalPublished}</p>
             </div>
           </div>
           <div className="rounded-2xl border border-border bg-card p-4 shadow-sm flex items-center gap-3">
             <div className="h-11 w-11 rounded-xl bg-brand-orange/10 text-brand-orange flex items-center justify-center">
-              <Shield className="h-5 w-5" />
+              <ListChecks className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">Showing</p>
-              <p className="text-xl font-bold">{filtered}</p>
+              <p className="text-xs text-muted-foreground">Attempted (unique)</p>
+              <p className="text-xl font-bold">{stats.uniqueAttempted}</p>
             </div>
           </div>
           <div className="rounded-2xl border border-border bg-card p-4 shadow-sm flex items-center gap-3">
             <div className="h-11 w-11 rounded-xl bg-muted text-muted-foreground flex items-center justify-center">
-              <Search className="h-5 w-5" />
+              <Clock3 className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">Selected</p>
-              <p className="text-xl font-bold">{selectedIds.length}</p>
+              <p className="text-xs text-muted-foreground">Data status</p>
+              <p className="text-sm font-semibold text-foreground">
+                {loading ? "Loading..." : "Up to date"}
+              </p>
             </div>
           </div>
         </div>
 
         <div className="rounded-2xl border border-border bg-card shadow-lg">
-          <div className="flex flex-wrap items-center gap-3 justify-between border-b border-border px-6 py-4">
-            <div className="relative w-full max-w-md">
-              <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-              <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search by student name..."
-                className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-blue"
-              />
-              {search && (
-                <button
-                  type="button"
-                  onClick={() => setSearch("")}
-                  className="absolute right-2 top-2 rounded-full p-1 text-muted-foreground hover:text-foreground"
-                  aria-label="Clear search"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              )}
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2">
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="rounded-lg border border-border bg-background px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-brand-blue"
-              >
-                {sortOptions.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-
-              {selectedIds.length > 0 && (
-                <button
-                  type="button"
-                  onClick={handleDelete}
-                  disabled={deleting}
-                  className="inline-flex items-center gap-2 rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 transition disabled:cursor-not-allowed disabled:opacity-70"
-                >
-                  {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
-                  Delete ({selectedIds.length})
-                </button>
-              )}
+          <div className="flex items-center justify-between border-b border-border px-6 py-4">
+            <div>
+              <h2 className="text-lg font-semibold">Test Attempts</h2>
+              <p className="text-sm text-muted-foreground">
+                Unique attempts grouped by test. Click through for scores.
+              </p>
             </div>
           </div>
 
@@ -251,57 +185,64 @@ const AdminViewResult = (): JSX.Element => {
             <table className="min-w-full divide-y divide-border text-sm">
               <thead className="bg-muted/60">
                 <tr>
-                  <th className="px-6 py-3 text-left font-semibold">#</th>
-                  <th className="px-6 py-3 text-left font-semibold">Name</th>
-                  <th className="px-6 py-3 text-left font-semibold">Registered</th>
-                  <th className="px-6 py-3 text-left font-semibold">Select</th>
+                  <th className="px-6 py-3 text-left font-semibold text-foreground">S. No.</th>
+                  <th className="px-6 py-3 text-left font-semibold text-foreground">Test Title</th>
+                  <th className="px-6 py-3 text-left font-semibold text-foreground">Date</th>
+                  <th className="px-6 py-3 text-left font-semibold text-foreground">Time</th>
+                  <th className="px-6 py-3 text-left font-semibold text-foreground">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {loading ? (
-                  Array.from({ length: 6 }).map((_, idx) => (
-                    <tr key={idx} className="animate-pulse">
-                      <td className="px-6 py-4"><div className="h-4 w-6 rounded bg-muted" /></td>
-                      <td className="px-6 py-4"><div className="h-4 w-32 rounded bg-muted" /></td>
-                      <td className="px-6 py-4"><div className="h-4 w-24 rounded bg-muted" /></td>
-                      <td className="px-6 py-4"><div className="h-4 w-10 rounded bg-muted" /></td>
-                    </tr>
-                  ))
-                ) : filteredStudents.length ? (
-                  filteredStudents.map((student, index) => (
-                    <tr key={student._id} className="hover:bg-muted/50 transition">
-                      <td className="px-6 py-4 font-semibold text-muted-foreground">
-                        {index + 1}
-                      </td>
-                      <td className="px-6 py-4 font-medium text-foreground">
-                        {student.name}
-                      </td>
-                      <td className="px-6 py-4 text-muted-foreground">
-                        {new Date(student.createdAt).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4">
-                        <label className="inline-flex items-center gap-2 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={selectedIds.includes(student._id)}
-                            onChange={() => toggleSelect(student._id)}
-                            className="h-4 w-4 rounded border-border text-brand-blue focus:ring-brand-blue"
-                          />
-                          <span className="text-xs text-muted-foreground">Select</span>
-                        </label>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={4} className="px-6 py-8 text-center text-muted-foreground">
-                      <div className="inline-flex items-center gap-2 rounded-full bg-muted px-4 py-2 text-sm">
-                        <CheckCircle2 className="h-4 w-4" />
-                        No students found.
-                      </div>
-                    </td>
-                  </tr>
-                )}
+                {loading
+                  ? Array.from({ length: 5 }).map((_, idx) => (
+                      <tr key={idx} className="animate-pulse">
+                        <td className="px-6 py-4">
+                          <div className="h-4 w-10 rounded bg-muted" />
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="h-4 w-48 rounded bg-muted" />
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="h-4 w-28 rounded bg-muted" />
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="h-4 w-24 rounded bg-muted" />
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="h-8 w-24 rounded bg-muted" />
+                        </td>
+                      </tr>
+                    ))
+                  : tests.length === 0 || error ? (
+                      <tr>
+                        <td colSpan={5} className="px-6 py-10 text-center text-muted-foreground">
+                          {error ? `Error: ${error}` : "No tests found."}
+                        </td>
+                      </tr>
+                    )
+                  : tests.map((test, index) => {
+                      const matchingTest = testName.find((t) => t._id === test.testId);
+                      const testTitle = matchingTest ? matchingTest.title : "Unknown Title";
+
+                      return (
+                        <tr key={test.testId} className="hover:bg-muted/50 transition">
+                          <td className="px-6 py-4 font-semibold text-muted-foreground">
+                            {index + 1}
+                          </td>
+                          <td className="px-6 py-4 font-medium text-foreground">{testTitle}</td>
+                          <td className="px-6 py-4 text-muted-foreground">{test.date}</td>
+                          <td className="px-6 py-4 text-muted-foreground">{test.time}</td>
+                          <td className="px-6 py-4">
+                            <button
+                              onClick={() => navigate(`/admin/test/${test.testId}/scores`)}
+                              className="inline-flex items-center gap-2 rounded-lg bg-gradient-brand px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-brand-blue/20 transition hover:opacity-90"
+                            >
+                              View Results
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
               </tbody>
             </table>
           </div>
@@ -311,6 +252,4 @@ const AdminViewResult = (): JSX.Element => {
       <Footer />
     </div>
   );
-};
-
-export default AdminViewResult;
+}

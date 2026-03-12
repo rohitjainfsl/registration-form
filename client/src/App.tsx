@@ -28,7 +28,12 @@ import Login from "@/pages/Login";
 import ResetPassword from '@/pages/ResetPassword'
 
 
-import { AdminProvider } from "./Context/Admincontext";
+import { AdminProvider } from "@/Context/Admincontext";
+import CreateTestForm from "@/pages/AdminPages/Admin Create test";
+import AdminViewStudent from "@/pages/AdminPages/AdminViewStudent";
+import AdminViewResult from "@/pages/AdminPages/AdminViewResult";
+import TestScoresPage from '@/pages/AdminPages/AdminViewResult/testScore/indexView'
+
 
 const queryClient = new QueryClient();
 
@@ -77,12 +82,12 @@ const AppRoutes = () => {
             <Route path="/courses/:slug" element={<CoursePage />} />
             <Route path="/register" element={<RegistrationForm />} />
             <Route path="/login" element={<Login />} />
-           
+
             <Route
               path="/student/changePassword"
               element={
-                  <ResetPassword />
-            
+                <ResetPassword />
+
               }
             />
             <Route
@@ -113,13 +118,30 @@ const AppRoutes = () => {
             }
           />
           <Route
-            path="/admin/tests"
+            path="/admin/ViewStudent"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <AdminViewStudent />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/ViewResult"
             element={
               <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
                 <AdminViewResult />
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/admin/test/:testId/scores"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <TestScoresPage />
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/admin/create/test"
             element={
