@@ -7,7 +7,7 @@ dotenv.config();
 
 
 export async function studentlogin(req, res) {
-  const { email, password,role,firstTimesignin} = req.body;
+  const { email, password, role, firstTimesignin } = req.body;
 
   try {
     if (!email || !password) {
@@ -16,13 +16,15 @@ export async function studentlogin(req, res) {
         .json({ message: "Email and password are required." });
     }
 
-    const user = await studentModel.findOne({ email, password });
+    const user = await studentModel.findOne({ email });
 
-    console.log(user);
-    
-  
     if (!user) {
       return res.status(404).json({ message: "Invalid email or password." });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid email or password." });
     }
     
     const token = jwt.sign(
@@ -54,12 +56,19 @@ export async function changePassword(req, res) {
   const { email, password, newPassword } = req.body;
   
   try {
-    const user = await studentModel.findOne({ email, password: password});
+    const user = await studentModel.findOne({ email });
     
     if (!user) {
       return res.status(400).json({ message: "Old password is incorrect." });
     }
-    user.password = newPassword;
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Old password is incorrect." });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
     user.firstTimesignin = false;
     await user.save();
     

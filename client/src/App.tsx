@@ -18,8 +18,6 @@ import LifeAtFSL from "@/pages/LifeAtFSL";
 import Loader from "@/components/Loader";
 import AdminLogin from "@/pages/AdminPages/AdminLogin";
 import AdminHome from "@/pages/AdminPages/AdminHome";
-import CreateTestForm from "@/pages/AdminPages/Admin Create test";
-import AdminViewResult from "@/pages/AdminPages/AdminViewResult";
 import ProtectedRoute from "@/pages/ProtectedRoute";
 import StudentPanel from "@/pages/StudentPages/StudentPanel";
 import AppLayout from "@/components/AppLayout/index";
@@ -79,12 +77,12 @@ const AppRoutes = () => {
             <Route path="/courses/:slug" element={<CoursePage />} />
             <Route path="/register" element={<RegistrationForm />} />
             <Route path="/login" element={<Login />} />
+           
             <Route
-              path="/student/changepassword"
+              path="/student/changePassword"
               element={
-                <ProtectedRoute allowedRoles={["student"]} redirectTo="/login">
                   <ResetPassword />
-                </ProtectedRoute>
+            
               }
             />
             <Route
