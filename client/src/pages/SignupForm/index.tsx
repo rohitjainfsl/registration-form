@@ -1,4 +1,6 @@
 import React, { useReducer, useRef, useState } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns";
 import { CalendarIcon, Upload, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -75,14 +77,14 @@ const initialFormState: RegistrationFormValues = {
 
 type FormAction =
   | {
-      type: "set";
-      field: keyof RegistrationFormValues;
-      value: RegistrationFormValues[keyof RegistrationFormValues];
-    }
+    type: "set";
+    field: keyof RegistrationFormValues;
+    value: RegistrationFormValues[keyof RegistrationFormValues];
+  }
   | {
-      type: "setMany";
-      payload: Partial<RegistrationFormValues>;
-    };
+    type: "setMany";
+    payload: Partial<RegistrationFormValues>;
+  };
 
 const formReducer = (
   state: RegistrationFormValues,
@@ -128,7 +130,6 @@ const SignupForm = () => {
   const [submitted, setSubmitted] = useState(false);
   const [formState, dispatch] = useReducer(formReducer, initialFormState);
   const [openTc, setOpenTc] = useState(false);
-  const [dobOpen, setDobOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [emailExists, setEmailExists] = useState(false);
   const frontRef = useRef<HTMLInputElement>(null);
@@ -309,14 +310,14 @@ const SignupForm = () => {
 
       toast({
         title: "Registration Submitted!",
-        description: "Your registration has been received successfully. You can log in now.",
+        description: "Your registration has been received successfully.",
       });
       dispatch({ type: "setMany", payload: initialFormState });
       setSubmitted(false);
       setErrors({});
       setOpenTc(false);
       setEmailExists(false);
-      navigate("/", { state: { openLogin: true } });
+      navigate("/login");
     } catch (err) {
       console.error(err);
       toast({
@@ -416,7 +417,7 @@ const SignupForm = () => {
                     required
                     error={getError("dob")}
                   >
-                    <Popover open={dobOpen} onOpenChange={setDobOpen}>
+                    <Popover>
                       <PopoverTrigger asChild>
                         <Button
                           name="dob"
@@ -434,16 +435,15 @@ const SignupForm = () => {
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
+                        <DatePicker
                           selected={formState.dob}
-                          onSelect={(val) => {
-                            setField("dob", val);
-                            if (val) setDobOpen(false);
-                          }}
-                          disabled={(date) => date > new Date()}
-                          initialFocus
-                          className="p-3 pointer-events-auto"
+                          onChange={(date) => setField("dob", date)}
+                          maxDate={new Date()}
+                          showYearDropdown
+                          showMonthDropdown
+                          dropdownMode="select"
+                          dateFormat="MM/dd/yyyy"
+                          className="w-full border rounded-md p-2"
                         />
                       </PopoverContent>
                     </Popover>
@@ -937,7 +937,7 @@ const SignupForm = () => {
               </Dialog>
             </div>
 
-       
+
 
             <Button
               type="submit"
