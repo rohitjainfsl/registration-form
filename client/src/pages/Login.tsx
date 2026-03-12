@@ -75,16 +75,22 @@ export default function LoginPage({ onClose }: LoginPageProps) {
       const data = (await response.json()) as StudentLoginResponse;
 
       if (response.ok) {
-        const { message, loginStatus } = data;
+        const { message, loginStatus, firstTimeSignin } = data;
 
         setSuccess(message ?? "Login successful");
-        setIsAuthenticated(!!loginStatus);
+        setIsAuthenticated(true);
         setRole("student");
 
-        if (loginStatus) {
+        const needsPasswordChange = firstTimeSignin ?? loginStatus ?? false;
+
+        if (needsPasswordChange) {
           navigate("/student/changepassword");
         } else {
           navigate("/student/studentpanel");
+        }
+
+        if (onClose) {
+          handleRequestClose();
         }
       } else {
         setError(data?.message ?? "Unable to login. Please try again.");

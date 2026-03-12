@@ -29,6 +29,8 @@ import ResetPassword from '@/pages/ResetPassword'
 
 
 import { AdminProvider } from "./Context/Admincontext";
+import AdminViewResult from "./pages/AdminPages/Admin View Student";
+import CreateTestForm from "./pages/AdminPages/Admin Create test";
 
 const queryClient = new QueryClient();
 
@@ -79,10 +81,9 @@ const AppRoutes = () => {
             <Route path="/login" element={<Login />} />
            
             <Route
-              path="/student/changePassword"
+              path="/student/changepassword"
               element={
-                  <ResetPassword />
-            
+                <ResetPassword />
               }
             />
             <Route
