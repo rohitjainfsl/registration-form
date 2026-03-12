@@ -35,6 +35,7 @@ import AdminViewResult from "@/pages/AdminPages/AdminViewResult";
 import TestScoresPage from '@/pages/AdminPages/AdminViewResult/testScore/indexView'
 
 
+
 const queryClient = new QueryClient();
 
 const AppRoutes = () => {
@@ -84,10 +85,9 @@ const AppRoutes = () => {
             <Route path="/login" element={<Login />} />
 
             <Route
-              path="/student/changePassword"
+              path="/student/changepassword"
               element={
                 <ResetPassword />
-
               }
             />
             <Route
