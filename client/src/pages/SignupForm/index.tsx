@@ -130,7 +130,6 @@ const SignupForm = () => {
   const [submitted, setSubmitted] = useState(false);
   const [formState, dispatch] = useReducer(formReducer, initialFormState);
   const [openTc, setOpenTc] = useState(false);
-  const [dobOpen, setDobOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [emailExists, setEmailExists] = useState(false);
   const frontRef = useRef<HTMLInputElement>(null);
@@ -271,14 +270,14 @@ const SignupForm = () => {
 
       toast({
         title: "Registration Submitted!",
-        description: "Your registration has been received successfully. You can log in now.",
+        description: "Your registration has been received successfully.",
       });
       dispatch({ type: "setMany", payload: initialFormState });
       setSubmitted(false);
       setErrors({});
       setOpenTc(false);
       setEmailExists(false);
-      navigate("/", { state: { openLogin: true } });
+      navigate("/login");
     } catch (err) {
       console.error(err);
       toast({
@@ -378,7 +377,7 @@ const SignupForm = () => {
                     required
                     error={getError("dob")}
                   >
-                    <Popover open={dobOpen} onOpenChange={setDobOpen}>
+                    <Popover>
                       <PopoverTrigger asChild>
                         <Button
                           name="dob"
@@ -398,48 +397,13 @@ const SignupForm = () => {
                       <PopoverContent className="w-auto p-0" align="start">
                         <DatePicker
                           selected={formState.dob}
-                          onChange={(date) => {
-                            setField("dob", date);
-                            if (date) setDobOpen(false);
-                          }}
+                          onChange={(date) => setField("dob", date)}
                           maxDate={new Date()}
                           showYearDropdown
                           showMonthDropdown
                           dropdownMode="select"
                           dateFormat="MM/dd/yyyy"
-                          isClearable
-                          placeholderText="MM/DD/YYYY"
-                          className="w-full rounded-lg border border-border bg-background px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-                          popperClassName="shadow-xl rounded-xl border border-border bg-card"
-                          calendarClassName="custom-datepicker"
-                          dayClassName={(date) =>
-                            date.toDateString() === new Date().toDateString()
-                              ? "today-highlight"
-                              : undefined
-                          }
-                          renderCustomHeader={({ date, decreaseMonth, increaseMonth, prevMonthButtonDisabled, nextMonthButtonDisabled }) => (
-                            <div className="flex items-center justify-between px-3 py-2 bg-muted border-b border-border text-sm">
-                              <button
-                                type="button"
-                                onClick={decreaseMonth}
-                                disabled={prevMonthButtonDisabled}
-                                className="h-8 w-8 rounded-md border border-border bg-background text-foreground transition hover:bg-accent/20 disabled:opacity-40"
-                              >
-                                ‹
-                              </button>
-                              <span className="font-semibold text-foreground">
-                                {date.toLocaleString("default", { month: "long", year: "numeric" })}
-                              </span>
-                              <button
-                                type="button"
-                                onClick={increaseMonth}
-                                disabled={nextMonthButtonDisabled}
-                                className="h-8 w-8 rounded-md border border-border bg-background text-foreground transition hover:bg-accent/20 disabled:opacity-40"
-                              >
-                                ›
-                              </button>
-                            </div>
-                          )}
+                          className="w-full border rounded-md p-2"
                         />
                       </PopoverContent>
                     </Popover>
