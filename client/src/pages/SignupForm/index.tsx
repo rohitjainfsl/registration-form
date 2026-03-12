@@ -34,8 +34,6 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import {
   COURSE_OPTIONS,
   GENDER_OPTIONS,
@@ -334,8 +332,6 @@ const SignupForm = () => {
   const getError = (field: string) => (submitted ? errors[field] : undefined);
   const hasError = (field: string) => Boolean(getError(field));
   return (
-    <>
-      <Header />
       <div className="min-h-screen bg-background py-8 sm:py-12 px-3 sm:px-4">
         <div className="mx-auto p-[60px]">
           <h1 className="mb-2 text-center text-3xl sm:text-4xl font-bold text-foreground">
@@ -949,8 +945,6 @@ const SignupForm = () => {
           </form>
         </div>
       </div>
-      <Footer />
-    </>
   );
 };
 
