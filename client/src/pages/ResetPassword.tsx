@@ -1,8 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
 
 
@@ -81,10 +79,6 @@ const ChangePassword = (): JSX.Element => {
   };
 
   return (
-
-    <>
-
-      <Header />
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="w-full max-w-md rounded-2xl border border-border bg-card p-8 shadow-lg">
           <h1 className="text-3xl font-bold mb-4 text-foreground text-center">Change Password</h1>
@@ -183,9 +177,6 @@ const ChangePassword = (): JSX.Element => {
           </form>
         </div>
       </div>
-      <Footer />
-
-    </>
   );
 };
 

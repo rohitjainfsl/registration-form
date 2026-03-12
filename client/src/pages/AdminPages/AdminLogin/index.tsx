@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { API_BASE_URL } from "../../axiosConfig";
-import { adminContext } from "../../Context/Admincontext";
+
+import { adminContext } from "@/Context/Admincontext";
 
 function AdminLogin() {
   const { setIsAuthenticated, setRole } = useContext(adminContext);
@@ -15,8 +15,11 @@ function AdminLogin() {
     e.preventDefault();
     setLoading(true);
 
+    const API_BASE_URL = import.meta.env.VITE_API_URL;
+
+
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/admin`, {
+      const response = await fetch(`${API_BASE_URL}/auth/admin`, {
         method: "POST",
         credentials: "include",
         headers: {

@@ -3,14 +3,16 @@ import { useAdminContext } from "@/Context/Admincontext";
 
 type ProtectedRouteProps = {
   children: JSX.Element;
+  allowedRoles: Array<"admin" | "student">;
+  redirectTo: string;
 };
 
-const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+const ProtectedRoute = ({ children, allowedRoles, redirectTo }: ProtectedRouteProps) => {
   const { isAuthenticated, role } = useAdminContext();
   const location = useLocation();
 
-  if (!isAuthenticated || role !== "admin") {
-    return <Navigate to="/admin/login" replace state={{ from: location }} />;
+  if (!isAuthenticated || !role || !allowedRoles.includes(role)) {
+    return <Navigate to={redirectTo} replace state={{ from: location }} />;
   }
 
   return children;

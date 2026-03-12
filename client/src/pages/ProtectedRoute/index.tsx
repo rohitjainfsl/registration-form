@@ -1,18 +1,21 @@
-import { useContext, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { adminContext } from "../Context/Admincontext";
+import { Navigate, useLocation } from "react-router-dom";
+import { useAdminContext } from "@/Context/Admincontext";
 
-function ProtectedRoute({ children }) {
-  const { isAuthenticated, role } = useContext(adminContext);
-  const navigate = useNavigate();
+type ProtectedRouteProps = {
+  children: JSX.Element;
+  allowedRoles: Array<"admin" | "student">;
+  redirectTo: string;
+};
 
-  useEffect(() => {
-    if (!isAuthenticated || role !== "admin") {
-      navigate("/admin/login");
-    }
-  }, [isAuthenticated, role, navigate]);
+const ProtectedRoute = ({ children, allowedRoles, redirectTo }: ProtectedRouteProps) => {
+  const { isAuthenticated, role } = useAdminContext();
+  const location = useLocation();
 
-  return isAuthenticated && role === "admin" ? children : null;
-}
+  if (!isAuthenticated || !role || !allowedRoles.includes(role)) {
+    return <Navigate to={redirectTo} replace state={{ from: location }} />;
+  }
+
+  return children;
+};
 
 export default ProtectedRoute;

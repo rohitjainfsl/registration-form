@@ -72,8 +72,7 @@ export async function changePassword(req, res) {
 }
 
 
-export const 
-adminLogin = async (req, res) => {
+export const adminLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
     const admin = await adminModel.findOne({ email });
@@ -89,7 +88,7 @@ adminLogin = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const token = jwt.sign({ adminId: admin._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ adminId: admin._id, role: "admin" }, process.env.JWT_SECRET, {
       expiresIn: "2h",
     });
 
@@ -100,7 +99,7 @@ adminLogin = async (req, res) => {
       maxAge: 2 * 60 * 60 * 1000,
     });
 
-    res.status(200).json({ message: "User login successfully" });
+    res.status(200).json({ message: "Admin login successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server Error" });

@@ -22,6 +22,7 @@ import AdminHome from "@/pages/AdminPages/AdminHome";
 import StudentPanel from "@/pages/StudentPages/StudentPanel";
 import AppLayout from "@/components/AppLayout/index";
 import StudentResult from "@/pages/StudentPages/StudentResult";
+import Login from "@/pages/Login";
 // import StudentChangePassword from "@/pages/StudentPages/StudentPanel";
 // import StudentDashboard from "@/pages/StudentPages/StudentPanel/StudentDashboard";
 import ResetPassword from '@/pages/ResetPassword'
@@ -75,17 +76,48 @@ const AppRoutes = () => {
             <Route path="/courses/devops-cloud" element={<DevOpsCloud />} />
             <Route path="/courses/:slug" element={<CoursePage />} />
             <Route path="/register" element={<RegistrationForm />} />
-            <Route path="/student/changepassword" element={<ResetPassword />} />
-            <Route path="/student/changePassword" element={<ResetPassword />} />
-            <Route path="/student/studentpanel" element={<StudentPanel />} />
-            <Route path="/student/result" element={<StudentResult />} />
+            <Route path="/login" element={<Login />} />
+            <Route
+              path="/student/changepassword"
+              element={
+                <ProtectedRoute allowedRoles={["student"]} redirectTo="/login">
+                  <ResetPassword />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/student/changePassword"
+              element={
+                <ProtectedRoute allowedRoles={["student"]} redirectTo="/login">
+                  <ResetPassword />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/student/studentpanel"
+              element={
+                <ProtectedRoute allowedRoles={["student"]} redirectTo="/login">
+                  <StudentPanel />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/student/result"
+              element={
+                <ProtectedRoute allowedRoles={["student"]} redirectTo="/login">
+                  <StudentResult />
+                </ProtectedRoute>
+              }
+            />
           </Route>
 
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route
             path="/admin/home"
             element={
-                      <AdminHome />
+              <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <AdminHome />
+              </ProtectedRoute>
             }
           />
 
