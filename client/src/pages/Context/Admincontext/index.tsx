@@ -1,4 +1,4 @@
-import { useState, useEffect, createContext} from "react";
+import { useState, useEffect, createContext, useContext } from "react";
 
 
 
@@ -82,3 +82,5 @@ export function AdminProvider({ children }) {
     </adminContext.Provider>
   );
 }
+
+export const useAdminContext = () => useContext(adminContext);

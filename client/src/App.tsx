@@ -18,7 +18,7 @@ import LifeAtFSL from "@/pages/LifeAtFSL";
 import Loader from "@/components/Loader";
 import AdminLogin from "@/pages/AdminPages/AdminLogin";
 import AdminHome from "@/pages/AdminPages/AdminHome";
-// import ProtectedRoute from "@/pages/ProtectedRoute";
+import ProtectedRoute from "@/pages/ProtectedRoute";
 import StudentPanel from "@/pages/StudentPages/StudentPanel";
 import AppLayout from "@/components/AppLayout/index";
 import StudentResult from "@/pages/StudentPages/StudentResult";
