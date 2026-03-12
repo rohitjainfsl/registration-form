@@ -18,9 +18,11 @@ import LifeAtFSL from "@/pages/LifeAtFSL";
 import Loader from "@/components/Loader";
 import { AdminProvider } from "@/Context/Admincontext";
 import StudentPanel from "@/pages/StudentPages/StudentPanel";
-import PasswordNotFound from '@/pages/PasswordNotFound'
 import AppLayout from "@/components/AppLayout/index";
 import StudentResult from "@/pages/StudentPages/StudentResult";
+// import StudentChangePassword from "@/pages/StudentPages/StudentPanel";
+// import StudentDashboard from "@/pages/StudentPages/StudentPanel/StudentDashboard";
+import ResetPassword from '@/pages/ResetPassword'
 
 const queryClient = new QueryClient();
 
@@ -67,7 +69,7 @@ const AppRoutes = () => {
             />
             <Route path="/courses/devops-cloud" element={<DevOpsCloud />} />
             <Route path="/register" element={<RegistrationForm />} />
-            <Route path="/student/changepassword" element={<PasswordNotFound />} />
+            <Route path="/student/changepassword" element={<ResetPassword />} />
             <Route path="/student/studentpanel" element={<StudentPanel />} />
             <Route path="/student/result" element={<StudentResult />} />
             <Route path="/courses/:slug" element={<CoursePage />} />
