@@ -18,6 +18,12 @@ const navLinks = [
   { label: "Contact", href: "#enquiry" },
 ];
 
+const enrollButtonClasses =
+  "px-5 py-2.5 rounded-lg text-sm font-semibold text-primary-foreground gradient-brand hover:opacity-90 transition-all duration-200 hover:shadow-lg hover:scale-105";
+
+const loginButtonClasses =
+  "px-4 py-2.5 rounded-lg text-sm font-semibold border border-brand-blue text-brand-blue hover:bg-brand-blue hover:text-white transition-all duration-200 flex items-center gap-2";
+
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -154,14 +160,14 @@ const Header = () => {
             {/* Updated Enroll Now Button */}
             <a
               href="/register"
-              className="ml-4 px-5 py-2.5 rounded-lg text-sm font-semibold text-primary-foreground gradient-brand hover:opacity-90 transition-all duration-200 hover:shadow-lg hover:scale-105"
+              className={`ml-4 ${enrollButtonClasses}`}
             >
               Enroll Now
             </a>
             <button
               type="button"
               onClick={openLoginPage}
-              className="px-4 py-2.5 rounded-lg text-sm font-semibold border border-brand-blue text-brand-blue hover:bg-brand-blue hover:text-white transition-all duration-200 flex items-center gap-2"
+              className={loginButtonClasses}
               aria-label="Go to login"
             >
               <LogIn size={16} />
@@ -182,7 +188,7 @@ const Header = () => {
         {/* Mobile Nav */}
         <div
           className={`lg:hidden overflow-hidden transition-all duration-300 bg-background border-t border-border ${
-            mobileOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+            mobileOpen ? "max-h-[700px] opacity-100" : "max-h-0 opacity-0"
           }`}
         >
           <nav className="container mx-auto px-4 py-4 flex flex-col gap-2">
@@ -203,14 +209,14 @@ const Header = () => {
             {/* Updated Enroll Now Button */}
             <a
               href="/register"
-              className="mt-2 px-5 py-3 rounded-lg text-sm font-semibold text-center text-primary-foreground gradient-brand hover:opacity-90 transition-all duration-200"
+              className={`mt-2 w-full text-center ${enrollButtonClasses}`}
             >
               Enroll Now
             </a>
             <button
               type="button"
               onClick={openLoginPage}
-              className="mt-2 px-5 py-3 rounded-lg text-sm font-semibold text-center border border-brand-blue text-brand-blue hover:bg-brand-blue hover:text-white transition-all duration-200 flex items-center justify-center gap-2"
+              className={`mt-2 w-full justify-center ${loginButtonClasses}`}
               aria-label="Go to login"
             >
               <LogIn size={16} />
