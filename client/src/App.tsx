@@ -23,6 +23,7 @@ import StudentResult from "@/pages/StudentPages/StudentResult";
 // import StudentChangePassword from "@/pages/StudentPages/StudentPanel";
 // import StudentDashboard from "@/pages/StudentPages/StudentPanel/StudentDashboard";
 import ResetPassword from '@/pages/ResetPassword'
+import AdminHome from "@/pages/AdminHome";
 
 const queryClient = new QueryClient();
 
@@ -74,6 +75,8 @@ const AppRoutes = () => {
             <Route path="/student/result" element={<StudentResult />} />
             <Route path="/courses/:slug" element={<CoursePage />} />
             <Route path="*" element={<NotFound />} />
+            <Route path="/admin/home" element={<AdminHome />} />
+
           </Route>
         </Routes>
       </div>
