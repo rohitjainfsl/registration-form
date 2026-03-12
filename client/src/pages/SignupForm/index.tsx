@@ -181,7 +181,7 @@ const SignupForm = () => {
 
     try {
       const res = await fetch(
-        `${apiBase}/api/students/email-exists?email=${encodeURIComponent(email)}`,
+        `${apiBase}/students/email-exists?email=${encodeURIComponent(email)}`,
         { credentials: "include" },
       );
       if (!res.ok) return;
@@ -206,9 +206,49 @@ const SignupForm = () => {
         });
         return;
       }
-      const reader = new FileReader();
-      reader.onload = () => setField(field, reader.result as string);
-      reader.readAsDataURL(file);
+      const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+      const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+      if (!cloudName || !uploadPreset) {
+        toast({
+          title: "Cloudinary not configured",
+          description: "Missing Cloudinary environment variables.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", uploadPreset);
+      const folder = import.meta.env.VITE_CLOUDINARY_FOLDER;
+      if (folder) {
+        formData.append("folder", folder);
+      }
+
+      fetch(`https://api.cloudinary.com/v1_1/${cloudName}/upload`, {
+        method: "POST",
+        body: formData,
+      })
+        .then(async (res) => {
+          if (!res.ok) {
+            throw new Error("Cloudinary upload failed");
+          }
+          return res.json();
+        })
+        .then((data: { secure_url?: string }) => {
+          if (!data.secure_url) {
+            throw new Error("Cloudinary did not return a URL");
+          }
+          setField(field, data.secure_url);
+        })
+        .catch((error) => {
+          console.error("Upload failed", error);
+          toast({
+            title: "Upload failed",
+            description: "Unable to upload image. Please try again.",
+            variant: "destructive",
+          });
+        });
     }
   };
 
@@ -256,7 +296,7 @@ const SignupForm = () => {
         dob: formState.dob ? formState.dob.toISOString() : null,
       };
 
-      const res = await fetch(`${apiBase}/api/students/register`, {
+      const res = await fetch(`${apiBase}/students/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

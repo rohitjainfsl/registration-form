@@ -34,7 +34,7 @@ const ChangePassword = (): JSX.Element => {
 
     try {
       const apiBase = import.meta.env.VITE_API_URL;
-      const response = await fetch(`${apiBase}/api/auth/changePassword`, {
+      const response = await fetch(`${apiBase}/auth/changePassword`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

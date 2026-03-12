@@ -65,7 +65,7 @@ export default function LoginPage({ onClose }: LoginPageProps) {
 
     try {
       const apiBase = import.meta.env.VITE_API_URL;
-      const response = await fetch(`${apiBase}/api/auth/studentLogin`, {
+      const response = await fetch(`${apiBase}/auth/studentLogin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -82,7 +82,7 @@ export default function LoginPage({ onClose }: LoginPageProps) {
         setRole("student");
 
         if (loginStatus) {
-          navigate("/student/changePassword");
+          navigate("/student/changepassword");
         } else {
           navigate("/student/studentpanel");
         }

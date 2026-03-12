@@ -19,11 +19,14 @@ import Loader from "@/components/Loader";
 import AdminLogin from "@/pages/AdminPages/AdminLogin";
 import AdminHome from "@/pages/AdminPages/AdminHome";
 import ProtectedRoute from "@/pages/ProtectedRoute";
-import { AdminProvider } from "@/pages/Context/Admincontext";
-import { AdminProvider } from "@/Context/Admincontext";
+import StudentPanel from "@/pages/StudentPages/StudentPanel";
+import AppLayout from "@/components/AppLayout/index";
+import StudentResult from "@/pages/StudentPages/StudentResult";
 // import StudentChangePassword from "@/pages/StudentPages/StudentPanel";
 // import StudentDashboard from "@/pages/StudentPages/StudentPanel/StudentDashboard";
 import ResetPassword from '@/pages/ResetPassword'
+import { AdminProvider } from "./Context/Admincontext";
+
 
 const queryClient = new QueryClient();
 
@@ -84,6 +87,37 @@ const AppRoutes = () => {
           />
 
           <Route path="*" element={<NotFound />} />
+          <Route element={<AppLayout />}>
+            <Route path="/" element={<Index />} />
+            <Route path="/lifeatfsl" element={<LifeAtFSL />} />
+            <Route
+              path="/courses/full-stack-development"
+              element={<FullStackDevelopment />}
+            />
+            <Route
+              path="/courses/frontend-development"
+              element={<FrontendDevelopment />}
+            />
+            <Route
+              path="/courses/backend-development"
+              element={<BackendDevelopment />}
+            />
+            <Route
+              path="/courses/database-management"
+              element={<DatabaseManagement />}
+            />
+            <Route
+              path="/courses/react-native-mobile"
+              element={<ReactNativeMobile />}
+            />
+            <Route path="/courses/devops-cloud" element={<DevOpsCloud />} />
+            <Route path="/register" element={<RegistrationForm />} />
+            <Route path="/student/changepassword" element={<ResetPassword />} />
+            <Route path="/student/studentpanel" element={<StudentPanel />} />
+            <Route path="/student/result" element={<StudentResult />} />
+            <Route path="/courses/:slug" element={<CoursePage />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
         </Routes>
       </div>
     </>
@@ -92,25 +126,15 @@ const AppRoutes = () => {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-<<<<<<< HEAD
     <TooltipProvider>
       <AdminProvider>
-=======
-    <AdminProvider>
-      <TooltipProvider>
->>>>>>> 5def843ed3efefc6e079f993d9a3d3b7c6b0d822
         <Toaster />
         <Sonner />
         <BrowserRouter>
           <AppRoutes />
         </BrowserRouter>
-<<<<<<< HEAD
       </AdminProvider>
     </TooltipProvider>
-=======
-      </TooltipProvider>
-    </AdminProvider>
->>>>>>> 5def843ed3efefc6e079f993d9a3d3b7c6b0d822
   </QueryClientProvider>
 );
 
