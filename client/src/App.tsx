@@ -29,6 +29,8 @@ import ResetPassword from '@/pages/ResetPassword'
 
 
 import { AdminProvider } from "./Context/Admincontext";
+import AdminViewResult from "./pages/AdminPages/Admin View Student";
+import CreateTestForm from "./pages/AdminPages/Admin Create test";
 
 const queryClient = new QueryClient();
 

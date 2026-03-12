@@ -78,7 +78,7 @@ export default function LoginPage({ onClose }: LoginPageProps) {
         const { message, loginStatus } = data;
 
         setSuccess(message ?? "Login successful");
-        setIsAuthenticated(!!loginStatus);
+        setIsAuthenticated(true);
         setRole("student");
 
         if (loginStatus) {
