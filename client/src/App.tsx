@@ -77,19 +77,12 @@ const AppRoutes = () => {
             <Route path="/courses/:slug" element={<CoursePage />} />
             <Route path="/register" element={<RegistrationForm />} />
             <Route path="/login" element={<Login />} />
-            <Route
-              path="/student/changepassword"
-              element={
-                
-                  <ResetPassword />
-              }
-            />
+           
             <Route
               path="/student/changePassword"
               element={
-                <ProtectedRoute allowedRoles={["student"]} redirectTo="/login">
                   <ResetPassword />
-                </ProtectedRoute>
+            
               }
             />
             <Route
