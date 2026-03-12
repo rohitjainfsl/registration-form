@@ -1,6 +1,5 @@
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { API_BASE_URL } from "../../axiosConfig";
 import { adminContext } from "../../Context/Admincontext";
 
 function AdminLogin() {
@@ -10,6 +9,9 @@ function AdminLogin() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
