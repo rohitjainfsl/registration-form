@@ -20,6 +20,10 @@ import AdminLogin from "@/pages/AdminPages/AdminLogin";
 import AdminHome from "@/pages/AdminPages/AdminHome";
 import ProtectedRoute from "@/pages/ProtectedRoute";
 import { AdminProvider } from "@/pages/Context/Admincontext";
+import { AdminProvider } from "@/Context/Admincontext";
+// import StudentChangePassword from "@/pages/StudentPages/StudentPanel";
+// import StudentDashboard from "@/pages/StudentPages/StudentPanel/StudentDashboard";
+import PasswordNotFound from '@/pages/PasswordNotFound'
 
 const queryClient = new QueryClient();
 
@@ -65,6 +69,8 @@ const AppRoutes = () => {
           />
           <Route path="/courses/devops-cloud" element={<DevOpsCloud />} />
           <Route path="/register" element={<RegistrationForm />} />
+          <Route path="/student/changePassword" element={<PasswordNotFound />} />
+          {/* <Route path="/student/studentpanel" element={<StudentDashboard />} /> */}
           <Route path="/courses/:slug" element={<CoursePage />} />
 
           <Route path="/admin/login" element={<AdminLogin />} />
@@ -86,15 +92,25 @@ const AppRoutes = () => {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
+<<<<<<< HEAD
     <TooltipProvider>
       <AdminProvider>
+=======
+    <AdminProvider>
+      <TooltipProvider>
+>>>>>>> 5def843ed3efefc6e079f993d9a3d3b7c6b0d822
         <Toaster />
         <Sonner />
         <BrowserRouter>
           <AppRoutes />
         </BrowserRouter>
+<<<<<<< HEAD
       </AdminProvider>
     </TooltipProvider>
+=======
+      </TooltipProvider>
+    </AdminProvider>
+>>>>>>> 5def843ed3efefc6e079f993d9a3d3b7c6b0d822
   </QueryClientProvider>
 );
 

@@ -17,6 +17,9 @@ export async function studentlogin(req, res) {
     }
 
     const user = await studentModel.findOne({ email, password });
+
+    console.log(user);
+    
   
     if (!user) {
       return res.status(404).json({ message: "Invalid email or password." });
