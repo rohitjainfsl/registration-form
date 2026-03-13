@@ -177,7 +177,7 @@ const AdminHome = (): JSX.Element => {
               View Students
             </Link>
             <Link
-              to="/admin/ViewResult"
+              to="/admin/tests"
               className="rounded-lg border border-border px-4 py-2.5 text-sm font-semibold text-foreground transition hover:border-brand-orange hover:text-brand-orange"
             >
               View Results

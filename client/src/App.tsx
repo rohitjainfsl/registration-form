@@ -33,6 +33,7 @@ import CreateTestForm from "@/pages/AdminPages/Admin Create test";
 import AdminViewStudent from "@/pages/AdminPages/AdminViewStudent";
 import AdminViewResult from "@/pages/AdminPages/AdminViewResult";
 import TestScoresPage from '@/pages/AdminPages/AdminViewResult/testScore/indexView'
+import AdminStudentDetail from "@/pages/AdminPages/AdminStudentDetail";
 
 
 
@@ -126,7 +127,15 @@ const AppRoutes = () => {
             }
           />
           <Route
-            path="/admin/ViewResult"
+            path="/admin/students/:id"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <AdminStudentDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/tests"
             element={
               <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
                 <AdminViewResult />

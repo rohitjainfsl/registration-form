@@ -274,7 +274,12 @@ const AdminViewResult = (): JSX.Element => {
                         {index + 1}
                       </td>
                       <td className="px-6 py-4 font-medium text-foreground">
-                        {student.name}
+                        <Link
+                          to={`/admin/students/${student._id}`}
+                          className="text-brand-blue hover:underline"
+                        >
+                          {student.name}
+                        </Link>
                       </td>
                       <td className="px-6 py-4 text-muted-foreground">
                         {new Date(student.createdAt).toLocaleDateString()}
