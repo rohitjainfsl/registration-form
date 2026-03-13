@@ -15,7 +15,6 @@ export interface RegistrationFormValues {
   permanentAddress: string;
   aadharFront: string | null;
   aadharBack: string | null;
-  profession: "student" | "professional";
   qualification: string;
   qualYear: string;
   college: string;

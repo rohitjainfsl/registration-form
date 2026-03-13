@@ -40,7 +40,6 @@ export async function register(req, res) {
       fatherPhone,
       localAddress,
       permanentAddress,
-      profession,
       qualYear,
       tcAccepted,
     } = req.body;
@@ -75,7 +74,7 @@ export async function register(req, res) {
       fphone: fphone || fatherPhone,
       laddress: laddress || localAddress,
       paddress: paddress || permanentAddress,
-      role: role || profession || "student",
+      role: role || "student",
       qualification,
       qualificationYear: qualificationYear || qualYear,
       college,
