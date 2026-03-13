@@ -7,7 +7,7 @@ dotenv.config();
 
 
 export async function studentlogin(req, res) {
-  const { email, password,role,firstTimesignin} = req.body;
+  const { email, password, role, firstTimesignin } = req.body;
 
   try {
     if (!email || !password) {
@@ -16,14 +16,20 @@ export async function studentlogin(req, res) {
         .json({ message: "Email and password are required." });
     }
 
-    const user = await studentModel.findOne({ email, password });
+    const user = await studentModel.findOne({ email });
 
-    console.log(user);
-    
-  
+
     if (!user) {
       return res.status(404).json({ message: "Invalid email or password." });
     }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid email or password." });
+    }
+    
+    console.log(isMatch);
+    
     
     const token = jwt.sign(
       { id: user._id, role: "student", loginStatus:user.firstTimesignin},
@@ -54,12 +60,19 @@ export async function changePassword(req, res) {
   const { email, password, newPassword } = req.body;
   
   try {
-    const user = await studentModel.findOne({ email, password: password});
+    const user = await studentModel.findOne({ email });
     
     if (!user) {
       return res.status(400).json({ message: "Old password is incorrect." });
     }
-    user.password = newPassword;
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Old password is incorrect." });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
     user.firstTimesignin = false;
     await user.save();
     
@@ -88,7 +101,7 @@ export const adminLogin = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const token = jwt.sign({ adminId: admin._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ adminId: admin._id, role: "admin" }, process.env.JWT_SECRET, {
       expiresIn: "2h",
     });
 
@@ -99,7 +112,7 @@ export const adminLogin = async (req, res) => {
       maxAge: 2 * 60 * 60 * 1000,
     });
 
-    res.status(200).json({ message: "User login successfully" });
+    res.status(200).json({ message: "Admin login successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server Error" });

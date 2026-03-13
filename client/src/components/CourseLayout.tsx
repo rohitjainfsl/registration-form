@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 
 type CourseLayoutProps = {
@@ -15,9 +13,7 @@ export default function CourseLayout({ course }: CourseLayoutProps) {
   if (!course) return null;
 
   return (
-    <>
-      <Header />
-      <main className={`container mx-auto px-4 py-8 transition-all duration-500 ${mounted ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-6"}`}>
+    <main className={`container mx-auto px-4 py-8 transition-all duration-500 ${mounted ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-6"}`}>
         {/* Hero */}
         <section className="rounded-3xl overflow-hidden bg-gradient-to-r from-muted/60 to-muted/40 p-6 md:p-10 mb-8 shadow-md">
           <div className="md:flex md:items-center md:justify-between gap-6">
@@ -123,8 +119,6 @@ export default function CourseLayout({ course }: CourseLayoutProps) {
             </div>
           </aside>
         </div>
-      </main>
-      <Footer />
-    </>
+    </main>
   );
 }

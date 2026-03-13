@@ -4,6 +4,7 @@ import { sendAckEmail, sendDataByEmail } from "../services/acknowledgement.js";
 import Test from "../models/testModel.js";
 import attemptQuiz from "../models/QuizAttempt.js";
 import mongoose from "mongoose";
+import { generatePassword } from "../services/passwordGenerator.js";
 
 
 
@@ -11,6 +12,7 @@ export async function register(req, res) {
   try {
 
     let aadharFront = "", aadharBack = "";
+    const toBool = (value) => value === true || value === "true";
 
     const {
       name,
@@ -22,7 +24,6 @@ export async function register(req, res) {
       fphone,
       laddress,
       paddress,
-      role,
       qualification,
       qualificationYear,
       college,
@@ -39,7 +40,6 @@ export async function register(req, res) {
       fatherPhone,
       localAddress,
       permanentAddress,
-      profession,
       qualYear,
       tcAccepted,
     } = req.body;
@@ -64,6 +64,8 @@ export async function register(req, res) {
       aadharBack = aadharBackBody || "";
     }
 
+    const plainPassword = generatePassword();
+
     const newRegistration = new studentModel({
       name,
       email,
@@ -74,7 +76,7 @@ export async function register(req, res) {
       fphone: fphone || fatherPhone,
       laddress: laddress || localAddress,
       paddress: paddress || permanentAddress,
-      role: role || profession || "student",
+      role: "student",
       qualification,
       qualificationYear: qualificationYear || qualYear,
       college,
@@ -86,13 +88,14 @@ export async function register(req, res) {
       friendName,
       aadharFront,
       aadharBack,
+      password: plainPassword,
       firstTimeSignin: true,
-      termsAccepted: termsAccepted ?? tcAccepted ?? false,
+      termsAccepted: toBool(termsAccepted) || toBool(tcAccepted) || false,
     });
 
     await newRegistration.save();
 
-    sendAckEmail(newRegistration);
+    sendAckEmail({ ...newRegistration.toObject(), plainPassword });
     sendDataByEmail(newRegistration);
 
     return res.status(201).send({ message: "Registration Successful" });

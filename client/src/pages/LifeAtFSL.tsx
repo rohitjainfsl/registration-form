@@ -1,5 +1,3 @@
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 
 interface GalleryImageProps {
     src: string;
@@ -41,10 +39,8 @@ const GalleryImage = ({ src, className }: GalleryImageProps) => (
 
 const Gallery = () => {
     return (
-        <div className="min-h-screen">
-            <Header />
-            <main>
-                <section className="w-full h-auto pt-4 pb-12 flex justify-center overflow-hidden sm:pt-6 md:pt-8 lg:pt-12 lg:pb-16 xl:pt-16 xl:pb-20">
+        <main>
+            <section className="w-full h-auto pt-4 pb-12 flex justify-center overflow-hidden sm:pt-6 md:pt-8 lg:pt-12 lg:pb-16 xl:pt-16 xl:pb-20">
                     <div className="w-full px-3 sm:px-4 md:px-6 lg:max-w-5xl lg:px-4 xl:max-w-7xl">
                         <div className="flex flex-col gap-5">
                             <h1 className="text-center">
@@ -72,9 +68,7 @@ const Gallery = () => {
                         </div>
                     </div>
                 </section>
-            </main>
-            <Footer />
-        </div>
+        </main>
     );
 };
 

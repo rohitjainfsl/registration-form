@@ -1,4 +1,6 @@
 import React, { useReducer, useRef, useState } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns";
 import { CalendarIcon, Upload, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -32,8 +34,6 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import {
   COURSE_OPTIONS,
   GENDER_OPTIONS,
@@ -44,7 +44,6 @@ import {
 import type {
   Errors,
   RegistrationFormValues,
-  RegistrationPayload,
 } from "./interfaces";
 import { useNavigate } from "react-router-dom";
 
@@ -75,14 +74,14 @@ const initialFormState: RegistrationFormValues = {
 
 type FormAction =
   | {
-      type: "set";
-      field: keyof RegistrationFormValues;
-      value: RegistrationFormValues[keyof RegistrationFormValues];
-    }
+    type: "set";
+    field: keyof RegistrationFormValues;
+    value: RegistrationFormValues[keyof RegistrationFormValues];
+  }
   | {
-      type: "setMany";
-      payload: Partial<RegistrationFormValues>;
-    };
+    type: "setMany";
+    payload: Partial<RegistrationFormValues>;
+  };
 
 const formReducer = (
   state: RegistrationFormValues,
@@ -128,9 +127,10 @@ const SignupForm = () => {
   const [submitted, setSubmitted] = useState(false);
   const [formState, dispatch] = useReducer(formReducer, initialFormState);
   const [openTc, setOpenTc] = useState(false);
-  const [dobOpen, setDobOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [emailExists, setEmailExists] = useState(false);
+  const [aadharFrontFile, setAadharFrontFile] = useState<File | null>(null);
+  const [aadharBackFile, setAadharBackFile] = useState<File | null>(null);
   const frontRef = useRef<HTMLInputElement>(null);
   const backRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
@@ -180,7 +180,7 @@ const SignupForm = () => {
 
     try {
       const res = await fetch(
-        `${apiBase}/api/students/email-exists?email=${encodeURIComponent(email)}`,
+        `${apiBase}/students/email-exists?email=${encodeURIComponent(email)}`,
         { credentials: "include" },
       );
       if (!res.ok) return;
@@ -189,6 +189,18 @@ const SignupForm = () => {
     } catch (error) {
       console.error("Email check failed", error);
     }
+  };
+
+  const updatePreview = (
+    field: "aadharFront" | "aadharBack",
+    file: File,
+  ) => {
+    const current = formState[field];
+    if (current && current.startsWith("blob:")) {
+      URL.revokeObjectURL(current);
+    }
+    const previewUrl = URL.createObjectURL(file);
+    setField(field, previewUrl);
   };
 
   const handleImageUpload = (
@@ -205,9 +217,13 @@ const SignupForm = () => {
         });
         return;
       }
-      const reader = new FileReader();
-      reader.onload = () => setField(field, reader.result as string);
-      reader.readAsDataURL(file);
+
+      if (field === "aadharFront") {
+        setAadharFrontFile(file);
+      } else {
+        setAadharBackFile(file);
+      }
+      updatePreview(field, file);
     }
   };
 
@@ -250,16 +266,43 @@ const SignupForm = () => {
 
     try {
       setIsSubmitting(true);
-      const payload: RegistrationPayload = {
-        ...formState,
-        dob: formState.dob ? formState.dob.toISOString() : null,
-      };
+      const formData = new FormData();
+      formData.append("name", formState.name);
+      formData.append("email", formState.email);
+      formData.append("phone", formState.phone);
+      formData.append("dob", formState.dob ? formState.dob.toISOString() : "");
+      formData.append("gender", formState.gender);
+      formData.append("fatherName", formState.fatherName);
+      formData.append("fatherPhone", formState.fatherPhone);
+      formData.append("localAddress", formState.localAddress);
+      formData.append("sameAsLocal", String(formState.sameAsLocal));
+      formData.append("permanentAddress", formState.permanentAddress);
+      formData.append("qualification", formState.qualification);
+      formData.append("qualYear", formState.qualYear);
+      formData.append("college", formState.college);
+      formData.append("designation", formState.designation);
+      formData.append("company", formState.company);
+      formData.append("course", formState.course);
+      formData.append("referral", formState.referral);
+      formData.append("friendName", formState.friendName);
+      formData.append("tcAccepted", String(formState.tcAccepted));
 
-      const res = await fetch(`${apiBase}/api/students/register`, {
+      if (aadharFrontFile) {
+        formData.append("aadharFront", aadharFrontFile);
+      } else if (formState.aadharFront && !formState.aadharFront.startsWith("blob:")) {
+        formData.append("aadharFront", formState.aadharFront);
+      }
+
+      if (aadharBackFile) {
+        formData.append("aadharBack", aadharBackFile);
+      } else if (formState.aadharBack && !formState.aadharBack.startsWith("blob:")) {
+        formData.append("aadharBack", formState.aadharBack);
+      }
+
+      const res = await fetch(`${apiBase}/students/register`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify(payload),
+        body: formData,
       });
 
       if (!res.ok) {
@@ -269,14 +312,16 @@ const SignupForm = () => {
 
       toast({
         title: "Registration Submitted!",
-        description: "Your registration has been received successfully. You can log in now.",
+        description: "Your registration has been received successfully.",
       });
       dispatch({ type: "setMany", payload: initialFormState });
+      setAadharFrontFile(null);
+      setAadharBackFile(null);
       setSubmitted(false);
       setErrors({});
       setOpenTc(false);
       setEmailExists(false);
-      navigate("/", { state: { openLogin: true } });
+      navigate("/login");
     } catch (err) {
       console.error(err);
       toast({
@@ -293,8 +338,6 @@ const SignupForm = () => {
   const getError = (field: string) => (submitted ? errors[field] : undefined);
   const hasError = (field: string) => Boolean(getError(field));
   return (
-    <>
-      <Header />
       <div className="min-h-screen bg-background py-8 sm:py-12 px-3 sm:px-4">
         <div className="mx-auto p-[60px]">
           <h1 className="mb-2 text-center text-3xl sm:text-4xl font-bold text-foreground">
@@ -376,7 +419,7 @@ const SignupForm = () => {
                     required
                     error={getError("dob")}
                   >
-                    <Popover open={dobOpen} onOpenChange={setDobOpen}>
+                    <Popover>
                       <PopoverTrigger asChild>
                         <Button
                           name="dob"
@@ -394,16 +437,15 @@ const SignupForm = () => {
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
+                        <DatePicker
                           selected={formState.dob}
-                          onSelect={(val) => {
-                            setField("dob", val);
-                            if (val) setDobOpen(false);
-                          }}
-                          disabled={(date) => date > new Date()}
-                          initialFocus
-                          className="p-3 pointer-events-auto"
+                          onChange={(date) => setField("dob", date)}
+                          maxDate={new Date()}
+                          showYearDropdown
+                          showMonthDropdown
+                          dropdownMode="select"
+                          dateFormat="MM/dd/yyyy"
+                          className="w-full border rounded-md p-2"
                         />
                       </PopoverContent>
                     </Popover>
@@ -587,7 +629,16 @@ const SignupForm = () => {
                           <button
                             type="button"
                             onClick={() => {
+                              const current = formState[item.field];
+                              if (current && current.startsWith("blob:")) {
+                                URL.revokeObjectURL(current);
+                              }
                               setField(item.field, null);
+                              if (item.field === "aadharFront") {
+                                setAadharFrontFile(null);
+                              } else {
+                                setAadharBackFile(null);
+                              }
                             }}
                             className="absolute top-2 right-2 rounded-full bg-destructive p-1 text-destructive-foreground hover:opacity-80"
                           >
@@ -625,7 +676,7 @@ const SignupForm = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <RadioGroup
-                  value={formState.profession}
+                  value={formState.profession ?? "student"}
                   onValueChange={(val) =>
                     setField("profession", val as "student" | "professional")
                   }
@@ -897,7 +948,7 @@ const SignupForm = () => {
               </Dialog>
             </div>
 
-       
+
 
             <Button
               type="submit"
@@ -909,8 +960,6 @@ const SignupForm = () => {
           </form>
         </div>
       </div>
-      <Footer />
-    </>
   );
 };
 

@@ -16,10 +16,30 @@ import DevOpsCloud from "@/pages/courses/DevOpsCloud";
 import RegistrationForm from "@/pages/SignupForm";
 import LifeAtFSL from "@/pages/LifeAtFSL";
 import Loader from "@/components/Loader";
-import { AdminProvider } from "@/Context/Admincontext";
+import AdminLogin from "@/pages/AdminPages/AdminLogin";
+import AdminHome from "@/pages/AdminPages/AdminHome";
+import ProtectedRoute from "@/pages/ProtectedRoute";
+import StudentPanel from "@/pages/StudentPages/StudentPanel";
+import AppLayout from "@/components/AppLayout/index";
+import StudentResult from "@/pages/StudentPages/StudentResult";
+import ResultDetailPage from "@/pages/StudentPages/ResultDetailPage";
+import StudentQuiz from "@/pages/StudentPages/StudentQuiz";
+import Login from "@/pages/Login";
 // import StudentChangePassword from "@/pages/StudentPages/StudentPanel";
 // import StudentDashboard from "@/pages/StudentPages/StudentPanel/StudentDashboard";
-import PasswordNotFound from '@/pages/PasswordNotFound'
+import ResetPassword from '@/pages/ResetPassword'
+
+
+import { AdminProvider } from "@/Context/Admincontext";
+import CreateTestForm from "@/pages/AdminPages/Admin Create test";
+import AdminViewStudent from "@/pages/AdminPages/AdminViewStudent";
+import AdminViewResult from "@/pages/AdminPages/AdminViewResult";
+import TestScoresPage from '@/pages/AdminPages/AdminViewResult/testScore/indexView'
+import AdminStudentDetail from "@/pages/AdminPages/AdminStudentDetail";
+import ViewTest from "./pages/AdminPages/AdminHome/ViewTest";
+import UpdateTest from "./pages/AdminPages/AdminHome/updateTest";
+
+
 
 const queryClient = new QueryClient();
 
@@ -41,33 +61,145 @@ const AppRoutes = () => {
       {loading && <Loader />}
       <div className={loading ? "pointer-events-none" : ""}>
         <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/lifeatfsl" element={<LifeAtFSL />} />
+          <Route element={<AppLayout />}>
+            <Route path="/" element={<Index />} />
+            <Route path="/lifeatfsl" element={<LifeAtFSL />} />
+            <Route
+              path="/courses/full-stack-development"
+              element={<FullStackDevelopment />}
+            />
+            <Route
+              path="/courses/frontend-development"
+              element={<FrontendDevelopment />}
+            />
+            <Route
+              path="/courses/backend-development"
+              element={<BackendDevelopment />}
+            />
+            <Route
+              path="/courses/database-management"
+              element={<DatabaseManagement />}
+            />
+            <Route
+              path="/courses/react-native-mobile"
+              element={<ReactNativeMobile />}
+            />
+            <Route path="/courses/devops-cloud" element={<DevOpsCloud />} />
+            <Route path="/courses/:slug" element={<CoursePage />} />
+            <Route path="/register" element={<RegistrationForm />} />
+            <Route path="/login" element={<Login />} />
+
+            <Route
+              path="/student/changepassword"
+              element={
+                <ResetPassword />
+              }
+            />
+            <Route
+              path="/student/studentpanel"
+              element={
+                <ProtectedRoute allowedRoles={["student"]} redirectTo="/login">
+                  <StudentPanel />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/student/result"
+              element={
+                <ProtectedRoute allowedRoles={["student"]} redirectTo="/login">
+                  <StudentResult />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/student/result-detail/:quizAttemptId"
+              element={
+                <ProtectedRoute allowedRoles={["student"]} redirectTo="/login">
+                  <ResultDetailPage />
+                </ProtectedRoute>
+              }
+            />
+
+          </Route>
+
           <Route
-            path="/courses/full-stack-development"
-            element={<FullStackDevelopment />}
+            path="/student/quiz/:testId"
+            element={
+              <ProtectedRoute allowedRoles={["student"]} redirectTo="/login">
+                <StudentQuiz />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route
+            path="/admin/home"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <AdminHome />
+              </ProtectedRoute>
+            }
           />
           <Route
-            path="/courses/frontend-development"
-            element={<FrontendDevelopment />}
+            path="/admin/view/test"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <AdminViewStudent />
+              </ProtectedRoute>
+            }
           />
           <Route
-            path="/courses/backend-development"
-            element={<BackendDevelopment />}
+            path="/admin/students/:id"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <AdminStudentDetail />
+              </ProtectedRoute>
+            }
           />
           <Route
-            path="/courses/database-management"
-            element={<DatabaseManagement />}
+            path="/admin/tests"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <AdminViewResult />
+              </ProtectedRoute>
+            }
           />
           <Route
-            path="/courses/react-native-mobile"
-            element={<ReactNativeMobile />}
+            path="/admin/ViewTest/:testId"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <ViewTest />
+              </ProtectedRoute>
+            }
           />
-          <Route path="/courses/devops-cloud" element={<DevOpsCloud />} />
-          <Route path="/register" element={<RegistrationForm />} />
-          <Route path="/student/changePassword" element={<PasswordNotFound />} />
-          {/* <Route path="/student/studentpanel" element={<StudentDashboard />} /> */}
-          <Route path="/courses/:slug" element={<CoursePage />} />
+          <Route
+            path="/admin/update/test/:id"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <UpdateTest />
+              </ProtectedRoute>
+            }
+          />
+
+
+          <Route
+            path="/admin/test/:testId/scores"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <TestScoresPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/create/test"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <CreateTestForm />
+              </ProtectedRoute>
+            }
+          />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
@@ -77,15 +209,15 @@ const AppRoutes = () => {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AdminProvider>
-      <TooltipProvider>
+    <TooltipProvider>
+      <AdminProvider>
         <Toaster />
         <Sonner />
         <BrowserRouter>
           <AppRoutes />
         </BrowserRouter>
-      </TooltipProvider>
-    </AdminProvider>
+      </AdminProvider>
+    </TooltipProvider>
   </QueryClientProvider>
 );
 

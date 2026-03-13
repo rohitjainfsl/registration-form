@@ -65,7 +65,7 @@ export default function LoginPage({ onClose }: LoginPageProps) {
 
     try {
       const apiBase = import.meta.env.VITE_API_URL;
-      const response = await fetch(`${apiBase}/api/auth/studentLogin`, {
+      const response = await fetch(`${apiBase}/auth/studentLogin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -75,16 +75,22 @@ export default function LoginPage({ onClose }: LoginPageProps) {
       const data = (await response.json()) as StudentLoginResponse;
 
       if (response.ok) {
-        const { message, loginStatus } = data;
+        const { message, loginStatus, firstTimeSignin } = data;
 
         setSuccess(message ?? "Login successful");
-        setIsAuthenticated(!!loginStatus);
+        setIsAuthenticated(true);
         setRole("student");
 
-        if (loginStatus) {
-          navigate("/student/changePassword");
+        const needsPasswordChange = firstTimeSignin ?? loginStatus ?? false;
+
+        if (needsPasswordChange) {
+          navigate("/student/changepassword");
         } else {
           navigate("/student/studentpanel");
+        }
+
+        if (onClose) {
+          handleRequestClose();
         }
       } else {
         setError(data?.message ?? "Unable to login. Please try again.");
@@ -162,7 +168,7 @@ export default function LoginPage({ onClose }: LoginPageProps) {
                   className="w-full rounded-lg border border-border px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-brand-blue"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="********"
+                  placeholder="*********"
                   required
                 />
                 <button
