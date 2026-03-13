@@ -11,31 +11,68 @@ type Test = {
 
 function StudentPanel() {
   const [tests, setTests] = useState<Test[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [startingTestId, setStartingTestId] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchTests() {
       try {
+        setLoading(true);
+        setError("");
         const apiBase = import.meta.env.VITE_API_URL;
-        const response = await fetch(`${apiBase}/test/allTests`, {
+        const testsResponse = await fetch(`${apiBase}/test/allTests`, {
           credentials: "include",
         });
-        if (!response.ok) {
+
+        if (!testsResponse.ok) {
           throw new Error("Failed to fetch tests");
         }
-        const data = (await response.json()) as { tests?: Test[] };
+
+        const data = (await testsResponse.json()) as { tests?: Test[] };
         const releasedTests = (data.tests ?? []).filter((test) => test.released);
         setTests(releasedTests);
       } catch (error) {
         console.error("Failed to fetch tests", error);
+        setError("Failed to load tests. Please try again.");
+      } finally {
+        setLoading(false);
       }
     }
 
     fetchTests();
   }, []);
 
-  const handleStartTest = (testId: string) => {
-    navigate(`/student/quiz/${testId}`);
+  const handleStartTest = async (testId: string) => {
+    try {
+      setStartingTestId(testId);
+      setError("");
+      const apiBase = import.meta.env.VITE_API_URL;
+      const response = await fetch(`${apiBase}/students/start-quiz/${testId}`, {
+        method: "POST",
+        credentials: "include",
+      });
+
+      const data = (await response.json()) as { message?: string; quizAttemptId?: string };
+
+      if (!response.ok) {
+        if (response.status === 400 && data.message === "You have already attempted this quiz.") {
+          setError("You have already attempted this quiz.");
+          return;
+        }
+        throw new Error(data.message || "Failed to start quiz");
+      }
+
+      navigate(`/student/quiz/${testId}`, {
+        state: { quizAttemptId: data.quizAttemptId },
+      });
+    } catch (startError) {
+      console.error("Failed to start test", startError);
+      setError("Failed to start quiz. Please try again.");
+    } finally {
+      setStartingTestId(null);
+    }
   };
   const goToResultPage = () => {
     navigate("/student/result");
@@ -61,6 +98,12 @@ function StudentPanel() {
         </button>
       </div>
 
+      {error && !loading && (
+        <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 shadow-sm">
+          {error}
+        </div>
+      )}
+
       <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-slate-200">
@@ -81,7 +124,13 @@ function StudentPanel() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {tests.length > 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan={4} className="px-4 py-6 text-center text-sm text-slate-500">
+                    Loading tests...
+                  </td>
+                </tr>
+              ) : tests.length > 0 ? (
                 tests.map((test) => (
                   <tr key={test._id} className="hover:bg-slate-50">
                     <td className="px-4 py-3 text-sm font-medium text-slate-900">{test.title}</td>
@@ -90,9 +139,10 @@ function StudentPanel() {
                     <td className="px-4 py-3">
                       <button
                         className="inline-flex items-center rounded-lg bg-amber-500 px-3 py-1.5 text-sm font-semibold text-slate-900 shadow hover:bg-amber-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/70"
-                        onClick={() => handleStartTest(test._id)}
+                        onClick={() => void handleStartTest(test._id)}
+                        disabled={startingTestId === test._id}
                       >
-                        Start
+                        {startingTestId === test._id ? "Starting..." : "Start"}
                       </button>
                     </td>
                   </tr>

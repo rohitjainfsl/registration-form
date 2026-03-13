@@ -22,6 +22,8 @@ import ProtectedRoute from "@/pages/ProtectedRoute";
 import StudentPanel from "@/pages/StudentPages/StudentPanel";
 import AppLayout from "@/components/AppLayout/index";
 import StudentResult from "@/pages/StudentPages/StudentResult";
+import ResultDetailPage from "@/pages/StudentPages/ResultDetailPage";
+import StudentQuiz from "@/pages/StudentPages/StudentQuiz";
 import Login from "@/pages/Login";
 // import StudentChangePassword from "@/pages/StudentPages/StudentPanel";
 // import StudentDashboard from "@/pages/StudentPages/StudentPanel/StudentDashboard";
@@ -106,7 +108,25 @@ const AppRoutes = () => {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/student/result-detail/:quizAttemptId"
+              element={
+                <ProtectedRoute allowedRoles={["student"]} redirectTo="/login">
+                  <ResultDetailPage />
+                </ProtectedRoute>
+              }
+            />
+
           </Route>
+
+          <Route
+            path="/student/quiz/:testId"
+            element={
+              <ProtectedRoute allowedRoles={["student"]} redirectTo="/login">
+                <StudentQuiz />
+              </ProtectedRoute>
+            }
+          />
 
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route
