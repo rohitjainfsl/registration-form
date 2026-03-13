@@ -54,6 +54,7 @@ const AdminHome = (): JSX.Element => {
   const [tests, setTests] = useState<TestType[]>([]);
   const [releaseStatus, setReleaseStatus] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const apiBase = import.meta.env.VITE_API_URL;
@@ -86,19 +87,24 @@ const AdminHome = (): JSX.Element => {
   // Toggle Release
   const handleReleasedToggle = async (test: TestType) => {
     try {
-      const updatedTest = {
-        ...test,
-        released: !test.released,
-      };
+      const nextReleased = !test.released;
+      setTogglingId(test._id);
 
-      await fetch(`${apiBase}/test/update/${test._id}`, {
+      const response = await fetch(`${apiBase}/test/update/${test._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         credentials: "include",
-        body: JSON.stringify(updatedTest),
+        body: JSON.stringify({ released: nextReleased }),
       });
+
+      if (!response.ok) {
+        throw new Error("Failed to update release status");
+      }
+
+      const data = await response.json();
+      const updatedTest = data?.test ?? { ...test, released: nextReleased };
 
       setTests((prev) =>
         prev.map((t) => (t._id === test._id ? updatedTest : t))
@@ -108,6 +114,8 @@ const AdminHome = (): JSX.Element => {
     } catch (error) {
       console.error("Failed to update release status", error);
       setReleaseStatus("Failed to update release status");
+    } finally {
+      setTogglingId(null);
     }
   };
 
@@ -269,13 +277,12 @@ const AdminHome = (): JSX.Element => {
                           <label className="inline-flex items-center gap-2 cursor-pointer select-none">
                             <input
                               type="checkbox"
-                              checked={test.released}
+                              checked={Boolean(test.released)}
                               onChange={() => handleReleasedToggle(test)}
+                              disabled={togglingId === test._id}
                               className="peer sr-only"
                             />
-                            <span className="relative h-5 w-10 rounded-full bg-muted transition peer-checked:bg-brand-blue">
-                              <span className="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white shadow-sm transition peer-checked:translate-x-5" />
-                            </span>
+                            <span className="relative h-5 w-10 rounded-full bg-muted transition-colors peer-checked:bg-brand-blue after:content-[''] after:absolute after:left-0.5 after:top-0.5 after:h-4 after:w-4 after:rounded-full after:bg-white after:shadow-sm after:transition-transform after:duration-200 after:ease-in-out peer-checked:after:translate-x-5" />
                             <span className="text-xs font-medium text-muted-foreground peer-checked:text-brand-blue">
                               {test.released ? "Live" : "Draft"}
                             </span>

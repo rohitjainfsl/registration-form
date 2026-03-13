@@ -50,8 +50,35 @@ export const createTest = async (req, res) => {
 
 export const getAllTests = async (req, res) => {
   try {
-    const tests = await Test.find().sort({ createdAt: -1 }); 
-    res.status(200).json({ tests });
+    const tests = await Test.find()
+      .select("-questions")
+      .sort({ createdAt: -1 });
+    
+    const attemptedTests = await attemptQuiz.aggregate([
+      { $unwind: "$attempts" },
+      {
+        $match: {
+          "attempts.testId": { $exists: true },
+          "attempts.startTime": { $ne: null },
+        },
+      },
+      {
+        $group: {
+          _id: "$attempts.testId",
+          startTime: { $min: "$attempts.startTime" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          testId: { $toString: "$_id" },
+          startTime: 1,
+        },
+      },
+      { $sort: { startTime: -1 } },
+    ]);
+
+    res.status(200).json({ tests, attemptedTests });
   } catch (err) {
     console.error("Error fetching tests: ", err);
     res.status(500).json({ message: "Failed to fetch tests", error: err.message });
