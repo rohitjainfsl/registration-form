@@ -18,6 +18,7 @@ export async function studentlogin(req, res) {
 
     const user = await studentModel.findOne({ email });
 
+
     if (!user) {
       return res.status(404).json({ message: "Invalid email or password." });
     }
@@ -26,6 +27,9 @@ export async function studentlogin(req, res) {
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid email or password." });
     }
+    
+    console.log(isMatch);
+    
     
     const token = jwt.sign(
       { id: user._id, role: "student", loginStatus:user.firstTimesignin},
