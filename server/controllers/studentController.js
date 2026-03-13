@@ -11,6 +11,7 @@ export async function register(req, res) {
   try {
 
     let aadharFront = "", aadharBack = "";
+    const toBool = (value) => value === true || value === "true";
 
     const {
       name,
@@ -87,7 +88,7 @@ export async function register(req, res) {
       aadharFront,
       aadharBack,
       firstTimeSignin: true,
-      termsAccepted: termsAccepted ?? tcAccepted ?? false,
+      termsAccepted: toBool(termsAccepted) || toBool(tcAccepted) || false,
     });
 
     await newRegistration.save();

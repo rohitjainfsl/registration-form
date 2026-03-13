@@ -44,7 +44,6 @@ import {
 import type {
   Errors,
   RegistrationFormValues,
-  RegistrationPayload,
 } from "./interfaces";
 import { useNavigate } from "react-router-dom";
 
@@ -130,6 +129,8 @@ const SignupForm = () => {
   const [openTc, setOpenTc] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [emailExists, setEmailExists] = useState(false);
+  const [aadharFrontFile, setAadharFrontFile] = useState<File | null>(null);
+  const [aadharBackFile, setAadharBackFile] = useState<File | null>(null);
   const frontRef = useRef<HTMLInputElement>(null);
   const backRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
@@ -190,6 +191,18 @@ const SignupForm = () => {
     }
   };
 
+  const updatePreview = (
+    field: "aadharFront" | "aadharBack",
+    file: File,
+  ) => {
+    const current = formState[field];
+    if (current && current.startsWith("blob:")) {
+      URL.revokeObjectURL(current);
+    }
+    const previewUrl = URL.createObjectURL(file);
+    setField(field, previewUrl);
+  };
+
   const handleImageUpload = (
     e: React.ChangeEvent<HTMLInputElement>,
     field: "aadharFront" | "aadharBack",
@@ -204,49 +217,13 @@ const SignupForm = () => {
         });
         return;
       }
-      const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-      const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
-      if (!cloudName || !uploadPreset) {
-        toast({
-          title: "Cloudinary not configured",
-          description: "Missing Cloudinary environment variables.",
-          variant: "destructive",
-        });
-        return;
-      }
 
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", uploadPreset);
-      const folder = import.meta.env.VITE_CLOUDINARY_FOLDER;
-      if (folder) {
-        formData.append("folder", folder);
+      if (field === "aadharFront") {
+        setAadharFrontFile(file);
+      } else {
+        setAadharBackFile(file);
       }
-
-      fetch(`https://api.cloudinary.com/v1_1/${cloudName}/upload`, {
-        method: "POST",
-        body: formData,
-      })
-        .then(async (res) => {
-          if (!res.ok) {
-            throw new Error("Cloudinary upload failed");
-          }
-          return res.json();
-        })
-        .then((data: { secure_url?: string }) => {
-          if (!data.secure_url) {
-            throw new Error("Cloudinary did not return a URL");
-          }
-          setField(field, data.secure_url);
-        })
-        .catch((error) => {
-          console.error("Upload failed", error);
-          toast({
-            title: "Upload failed",
-            description: "Unable to upload image. Please try again.",
-            variant: "destructive",
-          });
-        });
+      updatePreview(field, file);
     }
   };
 
@@ -289,16 +266,44 @@ const SignupForm = () => {
 
     try {
       setIsSubmitting(true);
-      const payload: RegistrationPayload = {
-        ...formState,
-        dob: formState.dob ? formState.dob.toISOString() : null,
-      };
+      const formData = new FormData();
+      formData.append("name", formState.name);
+      formData.append("email", formState.email);
+      formData.append("phone", formState.phone);
+      formData.append("dob", formState.dob ? formState.dob.toISOString() : "");
+      formData.append("gender", formState.gender);
+      formData.append("fatherName", formState.fatherName);
+      formData.append("fatherPhone", formState.fatherPhone);
+      formData.append("localAddress", formState.localAddress);
+      formData.append("sameAsLocal", String(formState.sameAsLocal));
+      formData.append("permanentAddress", formState.permanentAddress);
+      formData.append("profession", formState.profession);
+      formData.append("qualification", formState.qualification);
+      formData.append("qualYear", formState.qualYear);
+      formData.append("college", formState.college);
+      formData.append("designation", formState.designation);
+      formData.append("company", formState.company);
+      formData.append("course", formState.course);
+      formData.append("referral", formState.referral);
+      formData.append("friendName", formState.friendName);
+      formData.append("tcAccepted", String(formState.tcAccepted));
+
+      if (aadharFrontFile) {
+        formData.append("aadharFront", aadharFrontFile);
+      } else if (formState.aadharFront && !formState.aadharFront.startsWith("blob:")) {
+        formData.append("aadharFront", formState.aadharFront);
+      }
+
+      if (aadharBackFile) {
+        formData.append("aadharBack", aadharBackFile);
+      } else if (formState.aadharBack && !formState.aadharBack.startsWith("blob:")) {
+        formData.append("aadharBack", formState.aadharBack);
+      }
 
       const res = await fetch(`${apiBase}/students/register`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify(payload),
+        body: formData,
       });
 
       if (!res.ok) {
@@ -311,6 +316,8 @@ const SignupForm = () => {
         description: "Your registration has been received successfully.",
       });
       dispatch({ type: "setMany", payload: initialFormState });
+      setAadharFrontFile(null);
+      setAadharBackFile(null);
       setSubmitted(false);
       setErrors({});
       setOpenTc(false);
@@ -623,7 +630,16 @@ const SignupForm = () => {
                           <button
                             type="button"
                             onClick={() => {
+                              const current = formState[item.field];
+                              if (current && current.startsWith("blob:")) {
+                                URL.revokeObjectURL(current);
+                              }
                               setField(item.field, null);
+                              if (item.field === "aadharFront") {
+                                setAadharFrontFile(null);
+                              } else {
+                                setAadharBackFile(null);
+                              }
                             }}
                             className="absolute top-2 right-2 rounded-full bg-destructive p-1 text-destructive-foreground hover:opacity-80"
                           >
