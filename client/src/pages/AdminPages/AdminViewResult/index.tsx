@@ -12,15 +12,6 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { FileText, Clock3, ListChecks } from "lucide-react";
 
-type Attempt = {
-  testId: string;
-  startTime: string;
-};
-
-type Student = {
-  attempts?: Attempt[];
-};
-
 type TestRecord = {
   testId: string;
   date: string;
@@ -48,55 +39,28 @@ export default function AllTests(): JSX.Element {
       });
 
       const data = await res.json();
+      const attempted: TestRecord[] = Array.isArray(data.attemptedTests)
+        ? data.attemptedTests.map((attempt: { testId: string; startTime: string }) => {
+            const dateObj = new Date(attempt.startTime);
+            return {
+              testId: attempt.testId,
+              date: dateObj.toLocaleDateString(),
+              time: dateObj.toLocaleTimeString(),
+            };
+          })
+        : [];
+
       setTestName(data.tests);
+      setTests(attempted);
+      setLoading(false);
     } catch (error) {
       console.error("Failed to fetch tests", error);
+      setError("Failed to fetch tests");
+      setLoading(false);
     }
   }
 
   useEffect(() => {
-    const fetchScores = async () => {
-      try {
-        const res = await fetch(`${apiBase}/students/score`, {
-          credentials: "include",
-        });
-
-        const data: Student[] = await res.json();
-
-        const testMap = new Map<string, TestRecord>();
-
-        if (Array.isArray(data)) {
-          data.forEach((student) => {
-            if (student.attempts && Array.isArray(student.attempts)) {
-              student.attempts.forEach((attempt) => {
-                if (attempt.testId && attempt.startTime) {
-                  const testIdStr = attempt.testId.toString();
-
-                  if (!testMap.has(testIdStr)) {
-                    const dateObj = new Date(attempt.startTime);
-
-                    testMap.set(testIdStr, {
-                      testId: testIdStr,
-                      date: dateObj.toLocaleDateString(),
-                      time: dateObj.toLocaleTimeString(),
-                    });
-                  }
-                }
-              });
-            }
-          });
-        }
-
-        setTests(Array.from(testMap.values()));
-        setLoading(false);
-      } catch (err) {
-        console.error("Failed to fetch tests:", err);
-        setError("Failed to fetch tests");
-        setLoading(false);
-      }
-    };
-
-    fetchScores();
     fetchTests();
   }, []);
 
