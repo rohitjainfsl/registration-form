@@ -37,6 +37,7 @@ import { useToast } from "@/hooks/use-toast";
 import {
   COURSE_OPTIONS,
   GENDER_OPTIONS,
+  PROFESSION_OPTIONS,
   REFERRAL_OPTIONS,
   registrationFormSchema,
 } from "./constant";
@@ -59,6 +60,7 @@ const initialFormState: RegistrationFormValues = {
   permanentAddress: "",
   aadharFront: null,
   aadharBack: null,
+  profession: "student",
   qualification: "",
   qualYear: "",
   college: "",
@@ -673,55 +675,120 @@ const SignupForm = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 rounded-lg border border-border p-3 sm:p-4">
-                  <Field
-                    label="Qualification"
-                    required
-                    error={getError("qualification")}
-                  >
-                    <Input
-                      name="qualification"
-                      placeholder="e.g. B.Tech"
-                      value={formState.qualification}
-                      onChange={(e) =>
-                        setField("qualification", e.target.value)
-                      }
-                      className={cn(
-                        hasError("qualification") && "border-destructive",
-                      )}
-                    />
-                  </Field>
-                  <Field
-                    label="Year"
-                    required
-                    error={getError("qualYear")}
-                  >
-                    <Input
-                      name="qualYear"
-                      placeholder="e.g. 2024"
-                      value={formState.qualYear}
-                      onChange={(e) => setField("qualYear", e.target.value)}
-                      className={cn(
-                        hasError("qualYear") && "border-destructive",
-                      )}
-                    />
-                  </Field>
-                  <Field
-                    label="College"
-                    required
-                    error={getError("college")}
-                  >
-                    <Input
-                      name="college"
-                      placeholder="College Name"
-                      value={formState.college}
-                      onChange={(e) => setField("college", e.target.value)}
-                      className={cn(
-                        hasError("college") && "border-destructive",
-                      )}
-                    />
-                  </Field>
-                </div>
+                <RadioGroup
+                  value={formState.profession ?? "student"}
+                  onValueChange={(val) =>
+                    setField("profession", val as "student" | "professional")
+                  }
+                  className="flex flex-wrap gap-4 sm:gap-6"
+                >
+                  {PROFESSION_OPTIONS.map((opt) => (
+                    <div
+                      key={opt.value}
+                      className="flex items-center space-x-2"
+                    >
+                      <RadioGroupItem
+                        value={opt.value}
+                        id={`prof-${opt.value}`}
+                      />
+                      <Label
+                        htmlFor={`prof-${opt.value}`}
+                        className="text-card-foreground font-normal cursor-pointer"
+                      >
+                        {opt.label}
+                      </Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+
+                {formState.profession === "student" && (
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 rounded-lg border border-border p-3 sm:p-4">
+                    <Field
+                      label="Qualification"
+                      required
+                      error={getError("qualification")}
+                    >
+                      <Input
+                        name="qualification"
+                        placeholder="e.g. B.Tech"
+                        value={formState.qualification}
+                        onChange={(e) =>
+                          setField("qualification", e.target.value)
+                        }
+                        className={cn(
+                          hasError("qualification") && "border-destructive",
+                        )}
+                      />
+                    </Field>
+                    <Field
+                      label="Year"
+                      required
+                      error={getError("qualYear")}
+                    >
+                      <Input
+                        name="qualYear"
+                        placeholder="e.g. 2024"
+                        value={formState.qualYear}
+                        onChange={(e) => setField("qualYear", e.target.value)}
+                        className={cn(
+                          hasError("qualYear") && "border-destructive",
+                        )}
+                      />
+                    </Field>
+                    <Field
+                      label="College"
+                      required
+                      error={getError("college")}
+                    >
+                      <Input
+                        name="college"
+                        placeholder="College Name"
+                        value={formState.college}
+                        onChange={(e) => setField("college", e.target.value)}
+                        className={cn(
+                          hasError("college") && "border-destructive",
+                        )}
+                      />
+                    </Field>
+                  </div>
+                )}
+
+                {formState.profession === "professional" && (
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 rounded-lg border border-border p-3 sm:p-4">
+                    <Field
+                      label="Designation"
+                      required
+                      error={getError("designation")}
+                    >
+                      <Input
+                        name="designation"
+                        placeholder="Your Designation"
+                        value={formState.designation}
+                        onChange={(e) =>
+                          setField("designation", e.target.value)
+                        }
+                        className={cn(
+                          hasError("designation") && "border-destructive",
+                        )}
+                      />
+                    </Field>
+                    <Field
+                      label="Company"
+                      required
+                      error={getError("company")}
+                    >
+                      <Input
+                        name="company"
+                        placeholder="Company Name"
+                        value={formState.company}
+                        onChange={(e) => setField("company", e.target.value)}
+                        className={cn(
+                          hasError("company") && "border-destructive",
+                        )}
+                      />
+                    </Field>
+                  </div>
+                )}
               </CardContent>
             </Card>
 

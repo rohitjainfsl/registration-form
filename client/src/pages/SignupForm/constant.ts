@@ -37,6 +37,7 @@ export const registrationFormSchema = z
     permanentAddress: z.string().trim().optional(),
     aadharFront: z.string().nullable(),
     aadharBack: z.string().nullable(),
+    profession: z.enum(["student", "professional"]),
     qualification: z.string().trim().optional(),
     qualYear: z.string().trim().optional(),
     college: z.string().trim().optional(),
@@ -72,34 +73,52 @@ export const registrationFormSchema = z
       });
     }
 
-    if (!data.qualification?.trim()) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["qualification"],
-        message: "Qualification is required",
-      });
-    }
+    if (data.profession === "student") {
+      if (!data.qualification?.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["qualification"],
+          message: "Qualification is required",
+        });
+      }
 
-    if (!data.qualYear?.trim()) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["qualYear"],
-        message: "Year is required",
-      });
-    } else if (!/^\d{4}$/.test(data.qualYear.trim())) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["qualYear"],
-        message: "Enter a valid year",
-      });
-    }
+      if (!data.qualYear?.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["qualYear"],
+          message: "Year is required",
+        });
+      } else if (!/^\d{4}$/.test(data.qualYear.trim())) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["qualYear"],
+          message: "Enter a valid year",
+        });
+      }
 
-    if (!data.college?.trim()) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["college"],
-        message: "College is required",
-      });
+      if (!data.college?.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["college"],
+          message: "College is required",
+        });
+      }
+    } else {
+      if (!data.designation?.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["designation"],
+          message: "Designation is required",
+        });
+      }
+
+      if (!data.company?.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["company"],
+          message: "Company is required",
+        });
+      }
     }
 
     if (data.referral === "friend" && !data.friendName?.trim()) {
@@ -122,6 +141,11 @@ export const registrationFormSchema = z
 export type RegistrationFormSchema = z.infer<typeof registrationFormSchema>;
 
 export const GENDER_OPTIONS = ["Male", "Female", "Other"] as const;
+
+export const PROFESSION_OPTIONS = [
+  { value: "student", label: "Student" },
+  { value: "professional", label: "Working Professional" },
+] as const;
 
 export const COURSE_OPTIONS = [
   "Full Stack Development",
