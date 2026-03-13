@@ -152,6 +152,23 @@ const AdminStudentDetail = (): JSX.Element => {
     ? getPublicIdFromUrl(student.aadharBack)
     : null;
 
+  // Use transformed Cloudinary URL when possible; fall back to the original URL so images still render
+  const aadharFrontSrc = useMemo(() => {
+    if (aadharFrontPublicId) {
+      const url = getPNGUrl(aadharFrontPublicId);
+      if (url) return url;
+    }
+    return student?.aadharFront ?? "";
+  }, [aadharFrontPublicId, student?.aadharFront]);
+
+  const aadharBackSrc = useMemo(() => {
+    if (aadharBackPublicId) {
+      const url = getPNGUrl(aadharBackPublicId);
+      if (url) return url;
+    }
+    return student?.aadharBack ?? "";
+  }, [aadharBackPublicId, student?.aadharBack]);
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Header />
@@ -366,11 +383,12 @@ const AdminStudentDetail = (): JSX.Element => {
                 <div className="space-y-4">
                   <div>
                     <p className="text-xs text-muted-foreground mb-2">Front</p>
-                    {aadharFrontPublicId ? (
+                    {aadharFrontSrc ? (
                       <img
-                        src={getPNGUrl(aadharFrontPublicId)}
+                        src={aadharFrontSrc}
                         alt="Aadhar Front"
                         className="w-full rounded-xl border border-border"
+                        loading="lazy"
                       />
                     ) : (
                       <div className="rounded-xl border border-dashed border-border p-4 text-center text-sm text-muted-foreground">
@@ -380,11 +398,12 @@ const AdminStudentDetail = (): JSX.Element => {
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground mb-2">Back</p>
-                    {aadharBackPublicId ? (
+                    {aadharBackSrc ? (
                       <img
-                        src={getPNGUrl(aadharBackPublicId)}
+                        src={aadharBackSrc}
                         alt="Aadhar Back"
                         className="w-full rounded-xl border border-border"
+                        loading="lazy"
                       />
                     ) : (
                       <div className="rounded-xl border border-dashed border-border p-4 text-center text-sm text-muted-foreground">

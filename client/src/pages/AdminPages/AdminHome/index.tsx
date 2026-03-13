@@ -171,7 +171,7 @@ const AdminHome = (): JSX.Element => {
               Create Test
             </Link>
             <Link
-              to="/admin/ViewStudent"
+              to="/admin/view/test"
               className="rounded-lg border border-brand-blue px-4 py-2.5 text-sm font-semibold text-brand-blue transition hover:bg-brand-blue hover:text-white"
             >
               View Students
@@ -291,7 +291,7 @@ const AdminHome = (): JSX.Element => {
                               Update
                             </button>
                             <button
-                              onClick={() => navigate(`/admin/view/test/${test._id}`)}
+                              onClick={() => navigate(`/admin/ViewTest/${test._id}`)}
                               className="inline-flex items-center gap-1 rounded-lg border border-border px-3 py-2 font-medium text-xs hover:border-brand-orange hover:text-brand-orange transition"
                             >
                               <Eye className="h-4 w-4" />

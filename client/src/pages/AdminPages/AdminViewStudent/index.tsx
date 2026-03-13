@@ -29,7 +29,7 @@ const sortOptions = [
   { value: "oldest", label: "Oldest First", icon: <SortAsc className="h-4 w-4" /> },
 ];
 
-const AdminViewResult = (): JSX.Element => {
+const AdminViewStudent = (): JSX.Element => {
   const [students, setStudents] = useState<Student[]>([]);
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<string>("name");
@@ -42,14 +42,14 @@ const AdminViewResult = (): JSX.Element => {
   const navigate = useNavigate();
   const apiBase = import.meta.env.VITE_API_URL;
 
-  // Redirect if not admin (safety; route should already be protected)
+  // Safety net: redirect non-admins (route is already protected)
   useEffect(() => {
     if (authChecked && (!isAuthenticated || role !== "admin")) {
       navigate("/admin/login", { replace: true });
     }
   }, [authChecked, isAuthenticated, role, navigate]);
 
-  // Fetch students
+  // Fetch students once
   useEffect(() => {
     const fetchStudents = async () => {
       try {
@@ -150,12 +150,12 @@ const AdminViewResult = (): JSX.Element => {
       <main className="container mx-auto px-4 py-10 space-y-8">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="space-y-2">
-            <p className="text-sm text-muted-foreground">Admin / Results</p>
+            <p className="text-sm text-muted-foreground">Admin / Students</p>
             <h1 className="text-3xl font-bold leading-tight bg-gradient-to-r from-brand-blue to-brand-orange bg-clip-text text-transparent">
-              Student Results
+              Student Directory
             </h1>
             <p className="text-sm text-muted-foreground max-w-2xl">
-              Search, sort, and manage student records with the blue-orange palette from the logo.
+              Search, sort, and manage student records.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -318,4 +318,4 @@ const AdminViewResult = (): JSX.Element => {
   );
 };
 
-export default AdminViewResult;
+export default AdminViewStudent;

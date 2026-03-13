@@ -34,6 +34,8 @@ import AdminViewStudent from "@/pages/AdminPages/AdminViewStudent";
 import AdminViewResult from "@/pages/AdminPages/AdminViewResult";
 import TestScoresPage from '@/pages/AdminPages/AdminViewResult/testScore/indexView'
 import AdminStudentDetail from "@/pages/AdminPages/AdminStudentDetail";
+import ViewTest from "./pages/AdminPages/AdminHome/ViewTest";
+import UpdateTest from "./pages/AdminPages/AdminHome/updateTest";
 
 
 
@@ -119,7 +121,7 @@ const AppRoutes = () => {
             }
           />
           <Route
-            path="/admin/ViewStudent"
+            path="/admin/view/test"
             element={
               <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
                 <AdminViewStudent />
@@ -142,6 +144,24 @@ const AppRoutes = () => {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/admin/ViewTest/:testId"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <ViewTest />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/update/test/:id"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <UpdateTest />
+              </ProtectedRoute>
+            }
+          />
+
+
           <Route
             path="/admin/test/:testId/scores"
             element={
