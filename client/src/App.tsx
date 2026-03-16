@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -30,19 +30,16 @@ import AdminLayout from "@/components/AdminLayout";
 import AdminCourseDetails from "@/pages/AdminPages/AdminCourseDetails";
 // import StudentChangePassword from "@/pages/StudentPages/StudentPanel";
 // import StudentDashboard from "@/pages/StudentPages/StudentPanel/StudentDashboard";
-import ResetPassword from '@/pages/ResetPassword'
-
+import ResetPassword from "@/pages/ResetPassword";
 
 import { AdminProvider } from "@/Context/Admincontext";
 import CreateTestForm from "@/pages/AdminPages/Admin Create test";
 import AdminViewStudent from "@/pages/AdminPages/AdminViewStudent";
 import AdminViewResult from "@/pages/AdminPages/AdminViewResult";
-import TestScoresPage from '@/pages/AdminPages/AdminViewResult/testScore/indexView'
+import TestScoresPage from "@/pages/AdminPages/AdminViewResult/testScore/indexView";
 import AdminStudentDetail from "@/pages/AdminPages/AdminStudentDetail";
 import ViewTest from "./pages/AdminPages/AdminHome/ViewTest";
 import UpdateTest from "./pages/AdminPages/AdminHome/updateTest";
-
-
 
 const queryClient = new QueryClient();
 
@@ -57,6 +54,11 @@ const AppRoutes = () => {
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 2000);
     return () => clearTimeout(t);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    console.log("scroll useEffect");
+    window.scrollTo(0, 0);
   }, [location.pathname]);
 
   return (
@@ -93,12 +95,7 @@ const AppRoutes = () => {
             <Route path="/register" element={<RegistrationForm />} />
             <Route path="/login" element={<Login />} />
 
-            <Route
-              path="/student/changepassword"
-              element={
-                <ResetPassword />
-              }
-            />
+            <Route path="/student/changepassword" element={<ResetPassword />} />
             <Route
               path="/student/studentpanel"
               element={
@@ -123,7 +120,6 @@ const AppRoutes = () => {
                 </ProtectedRoute>
               }
             />
-
           </Route>
 
           <Route
@@ -140,7 +136,10 @@ const AppRoutes = () => {
             <Route
               path="home"
               element={
-                <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
                   <AdminHome />
                 </ProtectedRoute>
               }
@@ -148,7 +147,10 @@ const AppRoutes = () => {
             <Route
               path="courses"
               element={
-                <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
                   <AdminCourseDetails />
                 </ProtectedRoute>
               }
@@ -156,7 +158,10 @@ const AppRoutes = () => {
             <Route
               path="view/test"
               element={
-                <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
                   <AdminViewStudent />
                 </ProtectedRoute>
               }
@@ -164,7 +169,10 @@ const AppRoutes = () => {
             <Route
               path="students/:id"
               element={
-                <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
                   <AdminStudentDetail />
                 </ProtectedRoute>
               }
@@ -172,7 +180,10 @@ const AppRoutes = () => {
             <Route
               path="tests"
               element={
-                <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
                   <AdminViewResult />
                 </ProtectedRoute>
               }
@@ -180,7 +191,10 @@ const AppRoutes = () => {
             <Route
               path="ViewTest/:testId"
               element={
-                <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
                   <ViewTest />
                 </ProtectedRoute>
               }
@@ -188,7 +202,10 @@ const AppRoutes = () => {
             <Route
               path="update/test/:id"
               element={
-                <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
                   <UpdateTest />
                 </ProtectedRoute>
               }
@@ -196,7 +213,10 @@ const AppRoutes = () => {
             <Route
               path="test/:testId/scores"
               element={
-                <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
                   <TestScoresPage />
                 </ProtectedRoute>
               }
@@ -204,7 +224,10 @@ const AppRoutes = () => {
             <Route
               path="create/test"
               element={
-                <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
                   <CreateTestForm />
                 </ProtectedRoute>
               }
