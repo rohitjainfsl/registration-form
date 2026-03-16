@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Phone, LogIn } from "lucide-react";
+import { Menu, X, Phone, LogIn, LogOut } from "lucide-react";
 import bundledLogo from "@/assets/logo.png";
 import { useNavigate, useLocation } from "react-router-dom";
 import LoginPage from "@/pages/Login";
+import { useAdminContext } from "@/Context/Admincontext";
 
 // Use public images to allow Vercel to serve retina variants from /public/images/
 const logoSrc = "/images/logo.png";
@@ -15,6 +16,7 @@ const navLinks = [
   { label: "Placements", href: "#placements" },
   { label: "Testimonials", href: "#testimonials" },
   { label: "Life at FSL", href: "/lifeatfsl" },
+  { label: "Career", href: "/career" },
   { label: "Contact", href: "#enquiry" },
 ];
 
@@ -30,6 +32,8 @@ const Header = () => {
   const [loginOpen, setLoginOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { isAuthenticated, role, logout } = useAdminContext();
+  const isStudentLoggedIn = isAuthenticated && role === "student";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -69,8 +73,16 @@ const Header = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const openLoginPage = () => {
+  const handleAuthAction = async () => {
     setMobileOpen(false);
+
+    if (isStudentLoggedIn) {
+      await logout();
+      setLoginOpen(false);
+      navigate("/");
+      return;
+    }
+
     setLoginOpen(true);
   };
 
@@ -158,20 +170,22 @@ const Header = () => {
             ))}
 
             {/* Updated Enroll Now Button */}
-            <a
-              href="/register"
-              className={`ml-4 ${enrollButtonClasses}`}
-            >
-              Enroll Now
-            </a>
+            {!isStudentLoggedIn && (
+              <a
+                href="/register"
+                className={`ml-4 ${enrollButtonClasses}`}
+              >
+                Enroll Now
+              </a>
+            )}
             <button
               type="button"
-              onClick={openLoginPage}
+              onClick={handleAuthAction}
               className={loginButtonClasses}
-              aria-label="Go to login"
+              aria-label={isStudentLoggedIn ? "Log out" : "Go to login"}
             >
-              <LogIn size={16} />
-              Login
+              {isStudentLoggedIn ? <LogOut size={16} /> : <LogIn size={16} />}
+              {isStudentLoggedIn ? "Logout" : "Login"}
             </button>
           </nav>
 
@@ -207,20 +221,22 @@ const Header = () => {
             ))}
 
             {/* Updated Enroll Now Button */}
-            <a
-              href="/register"
-              className={`mt-2 w-full text-center ${enrollButtonClasses}`}
-            >
-              Enroll Now
-            </a>
+            {!isStudentLoggedIn && (
+              <a
+                href="/register"
+                className={`mt-2 w-full text-center ${enrollButtonClasses}`}
+              >
+                Enroll Now
+              </a>
+            )}
             <button
               type="button"
-              onClick={openLoginPage}
+              onClick={handleAuthAction}
               className={`mt-2 w-full justify-center ${loginButtonClasses}`}
-              aria-label="Go to login"
+              aria-label={isStudentLoggedIn ? "Log out" : "Go to login"}
             >
-              <LogIn size={16} />
-              Login
+              {isStudentLoggedIn ? <LogOut size={16} /> : <LogIn size={16} />}
+              {isStudentLoggedIn ? "Logout" : "Login"}
             </button>
           </nav>
         </div>

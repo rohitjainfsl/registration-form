@@ -1,3 +1,36 @@
 import multer from "multer";
+
 const storage = multer.memoryStorage();
-export const fileArr = multer({ storage: storage }).any();  
+
+const pdfOnlyFilter = (req, file, cb) => {
+  const isPdf =
+    file.mimetype === "application/pdf" ||
+    file.originalname?.toLowerCase().endsWith(".pdf");
+
+  if (!isPdf) {
+    return cb(new Error("Only PDF files are allowed."));
+  }
+
+  cb(null, true);
+};
+
+export const fileArr = multer({ storage: storage }).any();
+const careerResumeUploader = multer({
+  storage,
+  fileFilter: pdfOnlyFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024,
+  },
+}).single("resume");
+
+export const careerResumeUpload = (req, res, next) => {
+  careerResumeUploader(req, res, (error) => {
+    if (error) {
+      return res.status(400).json({
+        message: error.message || "Invalid resume upload.",
+      });
+    }
+
+    next();
+  });
+};

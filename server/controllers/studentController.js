@@ -3,6 +3,7 @@ import { cloudinaryUpload } from "../middlewares/cloudinaryUpload.js";
 import { sendAckEmail, sendDataByEmail } from "../services/acknowledgement.js";
 import Test from "../models/testModel.js";
 import attemptQuiz from "../models/QuizAttempt.js";
+import careerApplicationModel from "../models/careerApplicationModel.js";
 import mongoose from "mongoose";
 
 
@@ -100,6 +101,50 @@ export async function register(req, res) {
     console.error("Registration error:", error);
     return res.status(500).send({
       message: "Error registering student",
+      error: error.message,
+    });
+  }
+}
+
+export async function createCareerApplication(req, res) {
+  try {
+    const name = typeof req.body.name === "string" ? req.body.name.trim() : "";
+    const email = typeof req.body.email === "string" ? req.body.email.trim().toLowerCase() : "";
+    const resumeFile = req.file;
+
+    if (!name || !email) {
+      return res.status(400).json({ message: "Name and email are required." });
+    }
+
+    if (!resumeFile) {
+      return res.status(400).json({ message: "Resume PDF is required." });
+    }
+
+    const isPdf =
+      resumeFile.mimetype === "application/pdf" ||
+      resumeFile.originalname?.toLowerCase().endsWith(".pdf");
+
+    if (!isPdf) {
+      return res.status(400).json({ message: "Only PDF resumes are allowed." });
+    }
+
+    const application = await careerApplicationModel.create({
+      name,
+      email,
+      resumeUrl: resumeFile.buffer,
+      resumeOriginalName: resumeFile.originalname,
+      resumeMimeType: resumeFile.mimetype,
+      resumeSize: resumeFile.size,
+    });
+
+    return res.status(201).json({
+      message: "Career application submitted successfully.",
+      applicationId: application._id,
+    });
+  } catch (error) {
+    console.error("Career application error:", error);
+    return res.status(500).json({
+      message: "Failed to submit career application.",
       error: error.message,
     });
   }

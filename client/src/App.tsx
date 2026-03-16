@@ -15,6 +15,7 @@ import ReactNativeMobile from "@/pages/courses/ReactNativeMobile";
 import DevOpsCloud from "@/pages/courses/DevOpsCloud";
 import RegistrationForm from "@/pages/SignupForm";
 import LifeAtFSL from "@/pages/LifeAtFSL";
+import CareerPage from "@/pages/CareerPage";
 import Loader from "@/components/Loader";
 import AdminLogin from "@/pages/AdminPages/AdminLogin";
 import AdminHome from "@/pages/AdminPages/AdminHome";
@@ -64,6 +65,7 @@ const AppRoutes = () => {
           <Route element={<AppLayout />}>
             <Route path="/" element={<Index />} />
             <Route path="/lifeatfsl" element={<LifeAtFSL />} />
+            <Route path="/career" element={<CareerPage />} />
             <Route
               path="/courses/full-stack-development"
               element={<FullStackDevelopment />}
