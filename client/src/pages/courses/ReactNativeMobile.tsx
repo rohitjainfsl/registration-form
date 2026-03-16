@@ -1,8 +1,7 @@
-import React from "react";
-import { courses, slugify } from "@/lib/courses";
-import CourseLayout from "@/components/CourseLayout";
+import CourseDetailBySlug from "@/components/CourseDetailBySlug";
+import { courses } from "@/lib/courses";
 
 export default function ReactNativeMobile() {
-  const course = courses.find((c) => slugify(c.title) === "react-native-mobile")!;
-  return <CourseLayout course={course} />;
+  const fallback = courses.find((c) => (c.slug ?? "") === "react-native-mobile");
+  return <CourseDetailBySlug slug="react-native-mobile" fallbackCourse={fallback} />;
 }
