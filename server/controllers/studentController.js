@@ -5,6 +5,7 @@ import Test from "../models/testModel.js";
 import attemptQuiz from "../models/QuizAttempt.js";
 import careerApplicationModel from "../models/careerApplicationModel.js";
 import mongoose from "mongoose";
+import { generatePassword } from "../services/passwordGenerator.js";
 
 
 
@@ -64,6 +65,8 @@ export async function register(req, res) {
       aadharBack = aadharBackBody || "";
     }
 
+    const plainPassword = generatePassword();
+
     const newRegistration = new studentModel({
       name,
       email,
@@ -86,13 +89,14 @@ export async function register(req, res) {
       friendName,
       aadharFront,
       aadharBack,
+      password: plainPassword,
       firstTimeSignin: true,
       termsAccepted: toBool(termsAccepted) || toBool(tcAccepted) || false,
     });
 
     await newRegistration.save();
 
-    sendAckEmail(newRegistration);
+    sendAckEmail({ ...newRegistration.toObject(), plainPassword });
     sendDataByEmail(newRegistration);
 
     return res.status(201).send({ message: "Registration Successful" });

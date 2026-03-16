@@ -11,8 +11,6 @@ import {
   Users,
   Shield,
 } from "lucide-react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
 import { useAdminContext } from "@/Context/Admincontext";
 
@@ -145,8 +143,6 @@ const AdminViewStudent = (): JSX.Element => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Header />
-
       <main className="container mx-auto px-4 py-10 space-y-8">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="space-y-2">
@@ -312,8 +308,6 @@ const AdminViewStudent = (): JSX.Element => {
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 };

@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Calendar, CheckCircle2, FileText, Loader2, Pencil, User2, X } from "lucide-react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
 import { useAdminContext } from "@/Context/Admincontext";
 import { getPNGUrl, getPublicIdFromUrl } from "@/cloudinary";
@@ -171,8 +169,6 @@ const AdminStudentDetail = (): JSX.Element => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Header />
-
       <main className="container mx-auto px-4 py-10 space-y-8">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="space-y-2">
@@ -417,8 +413,6 @@ const AdminStudentDetail = (): JSX.Element => {
           </div>
         )}
       </main>
-
-      <Footer />
     </div>
   );
 };

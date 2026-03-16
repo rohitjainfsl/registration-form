@@ -3,7 +3,7 @@ import DeveloperTeam from "./DeveloperTeam";
 
 const companies = [
   "TCS",
-  "Infosys",
+  "Nagarro",
   "Celebal",
   "HCL Technologies",
   "Genpact",

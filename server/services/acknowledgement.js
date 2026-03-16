@@ -80,7 +80,7 @@ export function sendAckEmail(newData) {
     subject: "Registration successful. Welcome to Full Stack Learning",
     templateId: process.env.SENDGRID_ACK_TEMPLATE_ID,
     dynamic_template_data: {
-      otp: newData.password,
+      otp: newData.plainPassword || newData.password,
       dashboard_link:
         process.env.STUDENT_DASHBOARD_URL ||
         "https://registration-form-1-mbw5.onrender.com/student"
@@ -108,13 +108,12 @@ export function sendDataByEmail(newData) {
   ];
 
   const dt = new Date();
-  const day = getDayName[dt.getDay()];
   const date = dt.getDate();
   const month = getMonthName[dt.getMonth()];
   const year = dt.getFullYear();
   const hour = dt.getHours();
   const min = dt.getMinutes();
-  const timestamp = `${day}, ${date} ${month} ${year} at ${hour}:${min.toString().padStart(2, '0')}`;
+  const timestamp = `${date} ${month} ${year} at ${hour}:${min.toString().padStart(2, '0')}`;
 
   const sendEmailWithImages = async () => {
     try {

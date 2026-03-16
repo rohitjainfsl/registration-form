@@ -1,8 +1,7 @@
-import React from "react";
-import { courses, slugify } from "@/lib/courses";
-import CourseLayout from "@/components/CourseLayout";
+import CourseDetailBySlug from "@/components/CourseDetailBySlug";
+import { courses } from "@/lib/courses";
 
 export default function DevOpsCloud() {
-  const course = courses.find((c) => slugify(c.title) === "devops-cloud")!;
-  return <CourseLayout course={course} />;
+  const fallback = courses.find((c) => (c.slug ?? "") === "devops-cloud");
+  return <CourseDetailBySlug slug="devops-cloud" fallbackCourse={fallback} />;
 }
