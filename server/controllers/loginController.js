@@ -37,10 +37,12 @@ export async function studentlogin(req, res) {
       { expiresIn: "1d" }
     );
 
+    const sameSite = (process.env.SAMESITE || "Lax").trim();
+
     res.cookie("studentToken", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.SAMESITE,
+      sameSite,
       maxAge: 2 * 60 * 60 * 1000, 
     });
     
@@ -105,10 +107,12 @@ export const adminLogin = async (req, res) => {
       expiresIn: "2h",
     });
 
+    const sameSite = (process.env.SAMESITE || "Lax").trim();
+
     res.cookie("adminToken", token, {
       httpOnly: true,
       secure:process.env.NODE_ENV === "production",
-      sameSite: process.env.SAMESITE,
+      sameSite,
       maxAge: 2 * 60 * 60 * 1000,
     });
 
@@ -156,10 +160,12 @@ export const logout = (req, res) => {
   }
 
   try {
+    const sameSite = (process.env.SAMESITE || "Lax").trim();
+
     res.clearCookie(`${role}Token`, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.SAMESITE,
+      sameSite,
     });
     return res.status(200).json({ message: "LogOut successful" });
   } catch (error) {

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Clock, Loader2, Star, Users } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Course, courses as fallbackCourses, getCourseIcon, slugify } from "@/lib/courses";
+import { Course, getCourseIcon, slugify } from "@/lib/courses";
 import { useCourses } from "@/hooks/useCourses";
 
 function CourseCard({ course, index }: { course: Course; index: number }) {
@@ -95,9 +95,8 @@ function CourseCard({ course, index }: { course: Course; index: number }) {
 }
 
 export default function CoursesSection() {
-  const { data, isFetching } = useCourses();
-  const sortedCourses =
-    (data && data.length > 0 ? data : fallbackCourses).slice().sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
+  const { data, isFetching, isLoading, isError } = useCourses();
+  const sortedCourses = (data ?? []).slice().sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
 
   return (
     <section id="courses" className="section-padding bg-muted/30">
@@ -117,18 +116,28 @@ export default function CoursesSection() {
             <div className="h-1 w-4 rounded-full bg-brand-orange" />
             <div className="h-1 w-2 rounded-full bg-brand-orange/50" />
           </div>
-          {isFetching && (
+          {(isFetching || isLoading) && (
             <div className="mt-4 inline-flex items-center gap-2 text-sm text-muted-foreground">
               <Loader2 className="h-4 w-4 animate-spin" /> Syncing latest courses
             </div>
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {sortedCourses.map((course, i) => (
-            <CourseCard key={course._id ?? course.slug ?? course.title} course={course} index={i} />
-          ))}
-        </div>
+        {isError ? (
+          <div className="rounded-2xl border border-dashed border-border bg-card/50 p-10 text-center text-muted-foreground">
+            Unable to load courses right now. Please try again soon.
+          </div>
+        ) : sortedCourses.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-border bg-card/50 p-10 text-center text-muted-foreground">
+            No courses available yet. Check back shortly.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {sortedCourses.map((course, i) => (
+              <CourseCard key={course._id ?? course.slug ?? course.title} course={course} index={i} />
+            ))}
+          </div>
+        )}
 
         <div className="text-center mt-12">
           <a

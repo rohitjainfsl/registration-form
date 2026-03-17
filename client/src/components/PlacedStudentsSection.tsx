@@ -223,7 +223,7 @@ export default function PlacedStudentsSection() {
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
           {placedStudents.map((s, i) => (
-            <PlacedCard key={s.name} s={s} index={i} />
+            <PlacedCard key={`${s.name}-${s.company}`} s={s} index={i} />
           ))}
           <PlaceholderCard index={placedStudents.length} />
         </div>

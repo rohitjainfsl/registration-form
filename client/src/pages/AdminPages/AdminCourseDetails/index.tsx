@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { useCourses, useSaveCourse } from "@/hooks/useCourses";
-import { Course, courses as defaultCourses, getCourseIcon, slugify } from "@/lib/courses";
+import { Course, getCourseIcon, slugify } from "@/lib/courses";
 
 const iconOptions = ["Layers", "Code2", "Server", "Database", "Globe", "Bot", "Smartphone"];
 const badgeColors = ["bg-brand-orange", "bg-brand-blue", "bg-green-500", "bg-red-500", "bg-slate-500"];
@@ -46,7 +46,7 @@ export default function AdminCourseDetails() {
   const { toast } = useToast();
 
   const courses = useMemo(() => {
-    const list = data && data.length > 0 ? data : defaultCourses;
+    const list = data ?? [];
     return list.slice().sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
   }, [data]);
 

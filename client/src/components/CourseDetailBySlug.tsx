@@ -2,20 +2,16 @@ import { Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import CourseLayout from "./CourseLayout";
 import { useCourse } from "@/hooks/useCourses";
-import { Course, courses as fallbackCourses, slugify } from "@/lib/courses";
+import { Course } from "@/lib/courses";
 
 type Props = {
   slug: string;
   fallbackCourse?: Course | null;
 };
 
-const getFallbackCourse = (slug: string, provided?: Course | null) =>
-  provided ?? fallbackCourses.find((c) => (c.slug ?? slugify(c.title)) === slug) ?? null;
-
 export default function CourseDetailBySlug({ slug, fallbackCourse }: Props) {
-  const fallback = getFallbackCourse(slug, fallbackCourse);
-  const { data, isLoading, isFetching } = useCourse(slug, fallback);
-  const course = data ?? fallback;
+  const { data, isLoading, isFetching } = useCourse(slug, fallbackCourse ?? null);
+  const course = data ?? fallbackCourse ?? null;
 
   if (isLoading && !course) {
     return (

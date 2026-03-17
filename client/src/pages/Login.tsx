@@ -184,9 +184,10 @@ export default function LoginPage({ onClose }: LoginPageProps) {
 
             <button
               type="submit"
-              className="w-full rounded-lg bg-brand-blue px-4 py-2.5 text-white text-sm font-semibold hover:opacity-90 transition"
+              disabled={loading}
+              className="w-full rounded-lg bg-brand-blue px-4 py-2.5 text-white text-sm font-semibold hover:opacity-90 transition disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Login
+              {loading ? "Logining" : "Login"}
             </button>
           </form>
 
