@@ -32,6 +32,7 @@ import AppLayout from "@/components/AppLayout/index";
 import StudentResult from "@/pages/StudentPages/StudentResult";
 import ResultDetailPage from "@/pages/StudentPages/ResultDetailPage";
 import StudentQuiz from "@/pages/StudentPages/StudentQuiz";
+import StudentAssignments from "@/pages/StudentPages/StudentAssignments";
 import Login from "@/pages/Login";
 import AdminLayout from "@/components/AdminLayout";
 import AdminCourseDetails from "@/pages/AdminPages/AdminCourseDetails";
@@ -138,6 +139,14 @@ const AppRoutes = () => {
               element={
                 <ProtectedRoute allowedRoles={["student"]} redirectTo="/login">
                   <StudentResult />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/student/assignments"
+              element={
+                <ProtectedRoute allowedRoles={["student"]} redirectTo="/login">
+                  <StudentAssignments />
                 </ProtectedRoute>
               }
             />

@@ -27,6 +27,10 @@ export default function StudentHeader() {
     "relative px-2 py-2 text-sm font-medium transition-colors duration-200 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-brand-orange after:transition-all after:duration-300 hover:after:w-full";
   const mobileResultButtonClasses =
     "rounded-lg px-4 py-3 text-left text-sm font-medium transition-colors duration-200 hover:bg-brand-blue-light hover:text-brand-blue";
+  const desktopAssignmentButtonClasses =
+    "relative px-2 py-2 text-sm font-medium text-foreground/80 transition-colors duration-200 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-brand-orange after:transition-all after:duration-300 hover:text-brand-blue hover:after:w-full";
+  const mobileAssignmentButtonClasses =
+    "rounded-lg px-4 py-3 text-left text-sm font-medium text-foreground/80 transition-colors duration-200 hover:bg-brand-blue-light hover:text-brand-blue";
   const logoutButtonClasses =
     "inline-flex items-center gap-2 rounded-lg border border-[#ea6936] px-4 py-2 text-sm font-semibold text-[#ea6936] transition hover:bg-[#ea6936] hover:text-white";
 
@@ -61,6 +65,13 @@ export default function StudentHeader() {
         <div className="hidden items-center gap-3 md:flex">
           <button
             type="button"
+            onClick={() => handleNavigate("/student/assignments")}
+            className={desktopAssignmentButtonClasses}
+          >
+            Assignment
+          </button>
+          <button
+            type="button"
             onClick={() => handleNavigate("/student/result")}
             className={`${desktopResultButtonClasses} text-foreground/80 hover:text-brand-blue`}
           >
@@ -89,6 +100,13 @@ export default function StudentHeader() {
       {mobileOpen && (
         <div className="border-t border-slate-200 bg-white px-4 py-4 md:hidden">
           <div className="flex flex-col gap-2">
+            <button
+              type="button"
+              onClick={() => handleNavigate("/student/assignments")}
+              className={mobileAssignmentButtonClasses}
+            >
+              Assignment
+            </button>
             <button
               type="button"
               onClick={() => handleNavigate("/student/result")}
