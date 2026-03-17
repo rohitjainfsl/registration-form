@@ -32,11 +32,11 @@ export default function StudentHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur">
-      <div className="mx-auto flex h-20 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto flex h-16 items-center justify-between px-4 md:h-20">
         <button
           type="button"
           onClick={() => handleNavigate("/student/studentpanel")}
-          className="flex items-center"
+          className="group flex items-center"
           aria-label="Go to student panel"
         >
           <img
@@ -53,7 +53,8 @@ export default function StudentHeader() {
                 image.dataset.fallback = "1";
               }
             }}
-            className="h-14 w-auto sm:h-16"
+            style={{ imageRendering: "auto" }}
+            className="h-[68px] w-auto transition-transform duration-300 group-hover:scale-105 sm:h-[70px] md:h-[80px] lg:h-[90px] xl:h-[87px]"
           />
         </button>
 
