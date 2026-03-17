@@ -3,7 +3,13 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+} from "react-router-dom";
 import Index from "@/pages/Index";
 import NotFound from "@/pages/NotFound";
 import CoursePage from "@/pages/CoursePage";
@@ -29,6 +35,7 @@ import StudentQuiz from "@/pages/StudentPages/StudentQuiz";
 import Login from "@/pages/Login";
 import AdminLayout from "@/components/AdminLayout";
 import AdminCourseDetails from "@/pages/AdminPages/AdminCourseDetails";
+import AdminAssignments from "@/pages/AdminPages/AdminAssignments";
 // import StudentChangePassword from "@/pages/StudentPages/StudentPanel";
 // import StudentDashboard from "@/pages/StudentPages/StudentPanel/StudentDashboard";
 import ResetPassword from "@/pages/ResetPassword";
@@ -154,6 +161,7 @@ const AppRoutes = () => {
           />
 
           <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<Navigate to="login" replace />} />
             <Route path="login" element={<AdminLogin />} />
             <Route
               path="home"
@@ -207,6 +215,17 @@ const AppRoutes = () => {
                   redirectTo="/admin/login"
                 >
                   <AdminViewResult />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="assignments"
+              element={
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
+                  <AdminAssignments />
                 </ProtectedRoute>
               }
             />

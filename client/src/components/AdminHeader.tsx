@@ -12,9 +12,8 @@ const adminLinks = [
   { label: "Dashboard", href: "/admin/home" },
   { label: "Students", href: "/admin/view/test" },
   { label: "Results", href: "/admin/tests" },
-  { label: "Create Test", href: "/admin/create/test" },
   { label: "Course Details", href: "/admin/courses" },
-  // { label: "Video Lectures", href: "/admin/video-lectures" },
+  { label: "Assignments", href: "/admin/assignments" },
 
 ];
 
@@ -159,7 +158,7 @@ const AdminHeader = () => {
             ))}
 
             {/* Keep CTA style consistent with "Enroll" button */}
-            <a
+            {/* <a
               href="/admin/create/test"
               onClick={(e) => {
                 e.preventDefault();
@@ -168,7 +167,7 @@ const AdminHeader = () => {
               className={`ml-4 ${enrollButtonClasses}`}
             >
               Create Test
-            </a>
+            </a> */}
             {!isAuthenticated ? (
               <button
                 type="button"

@@ -9,6 +9,7 @@ import loginRouter from "./routes/loginRouter.js";
 import cookieParser from "cookie-parser";
 import adminRoutes from "./routes/adminRoutes.js";
 import courseRoutes from "./routes/courseRoutes.js";
+import assignmentRoutes from "./routes/assignmentRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -37,3 +38,4 @@ app.use("/api/students", studentRouter);
 app.use("/api/auth", loginRouter);
 app.use("/api/test", adminRoutes);
 app.use("/api/courses", courseRoutes);
+app.use("/api/assignments", assignmentRoutes);
