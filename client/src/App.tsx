@@ -20,6 +20,7 @@ import Loader from "@/components/Loader";
 import AdminLogin from "@/pages/AdminPages/AdminLogin";
 import AdminHome from "@/pages/AdminPages/AdminHome";
 import ProtectedRoute from "@/pages/ProtectedRoute";
+import StudentPublicRoute from "@/pages/StudentPublicRoute";
 import StudentPanel from "@/pages/StudentPages/StudentPanel";
 import AppLayout from "@/components/AppLayout/index";
 import StudentResult from "@/pages/StudentPages/StudentResult";
@@ -67,7 +68,14 @@ const AppRoutes = () => {
       <div className={loading ? "pointer-events-none" : ""}>
         <Routes>
           <Route element={<AppLayout />}>
-            <Route path="/" element={<Index />} />
+            <Route
+              path="/"
+              element={
+                <StudentPublicRoute redirectTo="/student/studentpanel">
+                  <Index />
+                </StudentPublicRoute>
+              }
+            />
             <Route path="/lifeatfsl" element={<LifeAtFSL />} />
             <Route path="/career" element={<CareerPage />} />
             <Route
@@ -92,8 +100,22 @@ const AppRoutes = () => {
             />
             <Route path="/courses/devops-cloud" element={<DevOpsCloud />} />
             <Route path="/courses/:slug" element={<CoursePage />} />
-            <Route path="/register" element={<RegistrationForm />} />
-            <Route path="/login" element={<Login />} />
+            <Route
+              path="/register"
+              element={
+                <StudentPublicRoute redirectTo="/student/studentpanel">
+                  <RegistrationForm />
+                </StudentPublicRoute>
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                <StudentPublicRoute redirectTo="/student/studentpanel">
+                  <Login />
+                </StudentPublicRoute>
+              }
+            />
 
             <Route path="/student/changepassword" element={<ResetPassword />} />
             <Route

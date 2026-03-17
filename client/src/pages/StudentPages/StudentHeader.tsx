@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { LogOut, Menu, X } from "lucide-react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import bundledLogo from "@/assets/logo.png";
 import { useAdminContext } from "@/Context/Admincontext";
 
@@ -10,14 +10,11 @@ const logoSrcSet = "/images/logo@2x.png 2x, /images/logo.png 1x";
 export default function StudentHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
   const { logout } = useAdminContext();
 
   const handleNavigate = (path: string) => {
     setMobileOpen(false);
-    if (location.pathname !== path) {
-      navigate(path);
-    }
+    navigate(path);
   };
 
   const handleLogout = async () => {
@@ -26,9 +23,12 @@ export default function StudentHeader() {
     navigate("/login");
   };
 
-  const navButtonClasses =
-    "rounded-lg px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-900";
-  const activeNavButtonClasses = "bg-amber-100 text-amber-900";
+  const desktopResultButtonClasses =
+    "relative px-2 py-2 text-sm font-medium transition-colors duration-200 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-brand-orange after:transition-all after:duration-300 hover:after:w-full";
+  const mobileResultButtonClasses =
+    "rounded-lg px-4 py-3 text-left text-sm font-medium transition-colors duration-200 hover:bg-brand-blue-light hover:text-brand-blue";
+  const logoutButtonClasses =
+    "inline-flex items-center gap-2 rounded-lg border border-[#ea6936] px-4 py-2 text-sm font-semibold text-[#ea6936] transition hover:bg-[#ea6936] hover:text-white";
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur">
@@ -62,18 +62,14 @@ export default function StudentHeader() {
           <button
             type="button"
             onClick={() => handleNavigate("/student/result")}
-            className={`${navButtonClasses} ${
-              location.pathname.startsWith("/student/result")
-                ? activeNavButtonClasses
-                : ""
-            }`}
+            className={`${desktopResultButtonClasses} text-foreground/80 hover:text-brand-blue`}
           >
             Result
           </button>
           <button
             type="button"
             onClick={() => void handleLogout()}
-            className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
+            className={logoutButtonClasses}
           >
             <LogOut size={16} />
             Logout
@@ -96,18 +92,14 @@ export default function StudentHeader() {
             <button
               type="button"
               onClick={() => handleNavigate("/student/result")}
-              className={`${navButtonClasses} text-left ${
-                location.pathname.startsWith("/student/result")
-                  ? activeNavButtonClasses
-                  : ""
-              }`}
+              className={`${mobileResultButtonClasses} text-foreground/80`}
             >
               Result
             </button>
             <button
               type="button"
               onClick={() => void handleLogout()}
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
+              className={`${logoutButtonClasses} justify-center`}
             >
               <LogOut size={16} />
               Logout
