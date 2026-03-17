@@ -1,16 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Clock, Loader2, Star, Users } from "lucide-react";
 import { Link } from "react-router-dom";
-<<<<<<< HEAD
-import { Course, getCourseIcon, slugify } from "@/lib/courses";
-=======
 import {
   Course,
   courses as fallbackCourses,
   getCourseIcon,
   slugify,
 } from "@/lib/courses";
->>>>>>> 5c0e09ea27e9e9d32fde46ad3474696ee3a36f8a
 import { useCourses } from "@/hooks/useCourses";
 
 function CourseCard({ course, index }: { course: Course; index: number }) {
@@ -110,15 +106,10 @@ function CourseCard({ course, index }: { course: Course; index: number }) {
 }
 
 export default function CoursesSection() {
-<<<<<<< HEAD
-  const { data, isFetching, isLoading, isError } = useCourses();
-  const sortedCourses = (data ?? []).slice().sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
-=======
   const { data, isFetching } = useCourses();
   const sortedCourses = (data && data.length > 0 ? data : fallbackCourses)
     .slice()
     .sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
->>>>>>> 5c0e09ea27e9e9d32fde46ad3474696ee3a36f8a
 
   return (
     <section id="courses" className="section-padding bg-muted/30">
@@ -139,7 +130,7 @@ export default function CoursesSection() {
             <div className="h-1 w-4 rounded-full bg-brand-orange" />
             <div className="h-1 w-2 rounded-full bg-brand-orange/50" />
           </div>
-          {(isFetching || isLoading) && (
+          {(isFetching) && (
             <div className="mt-4 inline-flex items-center gap-2 text-sm text-muted-foreground">
               <Loader2 className="h-4 w-4 animate-spin" /> Syncing latest
               courses

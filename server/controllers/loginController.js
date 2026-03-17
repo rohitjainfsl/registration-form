@@ -42,13 +42,13 @@ export async function studentlogin(req, res) {
     res.cookie("studentToken", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite,
-      maxAge: 2 * 60 * 60 * 1000, 
+      sameSite: process.env.SAMESITE || "lax",
+      maxAge: 24 * 60 * 60 * 1000, 
     });
     
     return res.status(200).json({
       message: "Login successful",
-      role: user.role,
+      role: "student",
       loginStatus: user.firstTimesignin 
     });
   } catch (error) {
@@ -196,10 +196,9 @@ export const checkToken = (req, res)=>{
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     return res.status(200).json({
-      message:`${role} aunthenticated`,
-      role,
+      message:`${role} authenticated`,
+      role: decoded?.role || role,
       user: decoded,
-      // loginStatus:firstTimesignin,
     });
   } catch (error) {
     return res.status(401).json({

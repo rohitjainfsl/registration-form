@@ -1,103 +1,20 @@
-import { useRef, useEffect, useState } from "react";
-import { Briefcase, MapPin, TrendingUp } from "lucide-react";
-import BharatPareek from "@/assets/Bharat Pareek.jpg";
-import NishitaGupta from "@/assets/Nishita Gupta.jpg";
-import SuhaniJain from "@/assets/Suhani Jain.jpg";
-import RanveerSingh from "@/assets/Ranveer Singh.jpg";
-import RishabhJangir from "@/assets/Rishabh Jangir.jpg";
-import RiyaAnand from "@/assets/Riya Anand.jpg";
-import DeepeshSuiwal from "@/assets/Deepesh Suiwal.png";
-import TanmayShukla from "@/assets/Tanmay Shukla.jpg";
-import RitikSaluja from "@/assets/Ritik Saluja.jpg";
-import RajatJain from "@/assets/Rajat Jain.jpg";
-import RajatJainNagarro from "@/assets/Rajat Jain Nagarro.jpg";
+import { useRef, useEffect, useState, useMemo } from "react";
+import { Briefcase, MapPin } from "lucide-react";
 import Blank from "@/assets/blank.png";
 
-const placedStudents = [
-  {
-    name: "Nishita Gupta",
-    role: "Software Engineer",
-    company: "Accenture",
-    location: "Gurugram",
-    image: NishitaGupta,
-  },
-  {
-    name: "Deepesh Suiwal",
-    role: "Full Stack Dev",
-    company: "Hidden Mind Solutions",
-    location: "Udaipur",
-    image: DeepeshSuiwal,
-  },
-  {
-    name: "Suhani Jain",
-    role: "Full Stack Dev",
-    company: "Celebal",
-    location: "Jaipur",
-    image: SuhaniJain,
-  },
-  {
-    name: "Ranveer Singh",
-    role: "Frontend Developer",
-    company: "Vaibhav Global",
-    location: "Jaipur",
-    image: RanveerSingh,
-  },
-  {
-    name: "Riya Anand",
-    role: "SEO",
-    company: "Vaibhav Global",
-    location: "Jaipur",
-    image: RiyaAnand,
-  },
-  {
-    name: "Bharat Pareek",
-    role: "Full Stack Dev",
-    company: "My Saathi Tech",
-    location: "Bikaner",
-    image: BharatPareek,
-  },
-  {
-    name: "Tanmay Shukla",
-    role: "UI/UX Engineer",
-    company: "Vaibhav Global",
-    location: "Jaipur",
-    image: TanmayShukla,
-  },
-  {
-    name: "Ritik Saluja",
-    role: "Full Stack Dev",
-    company: "Dev Technosys",
-    location: "Jaipur",
-    image: RitikSaluja,
-  },
-  {
-    name: "Rishabh Jangir",
-    role: "UI/UX Engineer",
-    company: "Vaibhav Global",
-    location: "Jaipur",
-    image: RishabhJangir,
-  },
-  {
-    name: "Rajat Jain",
-    role: "Unqork developer",
-    company: "Genpact",
-    location: "Jaipur",
-    image: RajatJain,
-  },
-  {
-    name: "Rajat Jain",
-    role: "Frontend Engineer",
-    company: "Nagarro",
-    location: "Jaipur",
-    image: RajatJainNagarro,
-  },
-];
+type Student = {
+  name: string;
+  role: string;
+  company: string;
+  location: string;
+  image: string;
+};
 
 function PlacedCard({
   s,
   index,
 }: {
-  s: (typeof placedStudents)[0];
+  s: Student;
   index: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -125,7 +42,7 @@ function PlacedCard({
         <img
           src={s.image}
           alt={s.name}
-          className="w-full h-full object-top group-hover:scale-110 transition-transform duration-500"
+          className="w-full h-full object-contain bg-white group-hover:scale-105 transition-transform duration-500"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 to-transparent" />
         <div className="absolute bottom-3 left-3 right-3">
@@ -202,6 +119,41 @@ function PlaceholderCard({ index }: { index: number }) {
 }
 
 export default function PlacedStudentsSection() {
+  const apiBase = import.meta.env.VITE_API_URL;
+  const apiOrigin = useMemo(
+    () => apiBase?.replace(/\/api$/, "") ?? "",
+    [apiBase],
+  );
+
+  const [students, setStudents] = useState<Student[]>([]);
+
+  useEffect(() => {
+    const fetchPlaced = async () => {
+      try {
+        const res = await fetch(`${apiBase}/placed-students`);
+        if (!res.ok) throw new Error("Failed to fetch placed students");
+        const data = await res.json();
+        const mapped: Student[] = (data.students ?? []).map(
+          (s: any): Student => ({
+            name: s.name,
+            role: s.title,
+            company: s.company,
+            location: s.city,
+            image: s.photo?.startsWith("http")
+              ? s.photo
+              : `${apiOrigin}${s.photo || ""}`,
+          }),
+        );
+        setStudents(mapped);
+      } catch (error) {
+        console.error(error);
+        setStudents([]);
+      }
+    };
+
+    fetchPlaced();
+  }, [apiBase, apiOrigin]);
+
   return (
     <section id="placements" className="section-padding bg-muted/30">
       <div className="container mx-auto px-4">
@@ -222,10 +174,10 @@ export default function PlacedStudentsSection() {
           </div>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-          {placedStudents.map((s, i) => (
-            <PlacedCard key={`${s.name}-${s.company}`} s={s} index={i} />
+          {students.map((s, i) => (
+            <PlacedCard key={s.name} s={s} index={i} />
           ))}
-          <PlaceholderCard index={placedStudents.length} />
+          <PlaceholderCard index={students.length} />
         </div>
       </div>
     </section>
