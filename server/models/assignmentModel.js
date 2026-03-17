@@ -14,8 +14,13 @@ const assignmentSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    thumbnail: {
+      type: String,
+      default: null,
+      trim: true,
+    },
   },
-  { timestamps: { createdAt: true, updatedAt: false } },
+  { timestamps: true },
 );
 
 const Assignment = mongoose.model("Assignment", assignmentSchema);

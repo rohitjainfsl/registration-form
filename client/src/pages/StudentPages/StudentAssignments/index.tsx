@@ -4,6 +4,7 @@ type Assignment = {
   _id: string;
   title: string;
   videoLink: string;
+  thumbnail?: string | null;
   createdAt?: string;
 };
 
@@ -159,7 +160,7 @@ function StudentAssignments() {
                 key={assignment._id}
                 className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
               >
-                <div className="aspect-video bg-slate-100">
+                <div className="aspect-video bg-slate-100 relative overflow-hidden">
                   {previewEmbedUrl ? (
                     <iframe
                       id={containerId}
@@ -170,6 +171,24 @@ function StudentAssignments() {
                       allowFullScreen
                       referrerPolicy="strict-origin-when-cross-origin"
                     />
+                  ) : assignment.thumbnail ? (
+                    <button
+                      type="button"
+                      className="group relative h-full w-full"
+                      onClick={() => playVideo(assignment.videoLink, containerId)}
+                      disabled={!canEmbedVideo}
+                    >
+                      <img
+                        src={assignment.thumbnail}
+                        alt={assignment.title}
+                        className="h-full w-full object-cover"
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/40 transition">
+                        <div className="h-12 w-12 rounded-full bg-white/90 text-slate-800 grid place-items-center shadow">
+                          ▶
+                        </div>
+                      </div>
+                    </button>
                   ) : (
                     <div
                       id={containerId}
