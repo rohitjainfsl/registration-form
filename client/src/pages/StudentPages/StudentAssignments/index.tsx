@@ -7,30 +7,47 @@ type Assignment = {
   createdAt?: string;
 };
 
-const getEmbedUrl = (videoLink: string) => {
+type ActivePlayer = {
+  containerId: string;
+  embedUrl: string;
+} | null;
+
+const getYouTubeEmbedUrl = (videoLink: string, autoplay = false) => {
   try {
     const url = new URL(videoLink);
     const host = url.hostname.replace(/^www\./, "");
+    const autoplayQuery = autoplay ? "autoplay=1&rel=0" : "rel=0";
+    const playlistId = url.searchParams.get("list");
+
+    if (host === "youtube.com" || host === "m.youtube.com") {
+      if (url.pathname === "/playlist" && playlistId) {
+        return `https://www.youtube.com/embed/videoseries?list=${playlistId}&${autoplayQuery}`;
+      }
+    }
 
     if (host === "youtu.be") {
       const videoId = url.pathname.slice(1);
-      return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+      return videoId ? `https://www.youtube.com/embed/${videoId}?${autoplayQuery}` : null;
     }
 
     if (host === "youtube.com" || host === "m.youtube.com") {
       if (url.pathname === "/watch") {
         const videoId = url.searchParams.get("v");
-        return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+        if (videoId) {
+          return `https://www.youtube.com/embed/${videoId}?${autoplayQuery}`;
+        }
+
+        if (playlistId) {
+          return `https://www.youtube.com/embed/videoseries?list=${playlistId}&${autoplayQuery}`;
+        }
+
+        return null;
       }
 
       if (url.pathname.startsWith("/embed/")) {
-        return videoLink;
+        const videoId = url.pathname.split("/embed/")[1];
+        return videoId ? `https://www.youtube.com/embed/${videoId}?${autoplayQuery}` : null;
       }
-    }
-
-    if (host === "vimeo.com") {
-      const videoId = url.pathname.split("/").filter(Boolean)[0];
-      return videoId ? `https://player.vimeo.com/video/${videoId}` : null;
     }
   } catch {
     return null;
@@ -43,6 +60,7 @@ function StudentAssignments() {
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [activePlayer, setActivePlayer] = useState<ActivePlayer>(null);
 
   useEffect(() => {
     async function fetchAssignments() {
@@ -77,6 +95,20 @@ function StudentAssignments() {
 
     void fetchAssignments();
   }, []);
+
+  const playVideo = (videoUrl: string, containerId: string) => {
+    const embedUrl = getYouTubeEmbedUrl(videoUrl, true);
+
+    if (!embedUrl) {
+      return;
+    }
+
+    // Replacing the active player URL automatically stops the previous iframe playback.
+    setActivePlayer({
+      containerId,
+      embedUrl,
+    });
+  };
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 pb-10 pt-28 sm:px-6 lg:px-8">
@@ -117,8 +149,10 @@ function StudentAssignments() {
       {!loading && !error && assignments.length > 0 && (
         <div className="grid gap-6 md:grid-cols-2">
           {assignments.map((assignment) => {
-            const embedUrl = getEmbedUrl(assignment.videoLink);
-            const isDirectVideo = /\.(mp4|webm|ogg)(\?.*)?$/i.test(assignment.videoLink);
+            const containerId = `assignment-video-${assignment._id}`;
+            const previewEmbedUrl =
+              activePlayer?.containerId === containerId ? activePlayer.embedUrl : null;
+            const canEmbedVideo = Boolean(getYouTubeEmbedUrl(assignment.videoLink));
 
             return (
               <article
@@ -126,24 +160,24 @@ function StudentAssignments() {
                 className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
               >
                 <div className="aspect-video bg-slate-100">
-                  {embedUrl ? (
+                  {previewEmbedUrl ? (
                     <iframe
-                      src={embedUrl}
+                      id={containerId}
+                      src={previewEmbedUrl}
                       title={assignment.title}
                       className="h-full w-full"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
-                    />
-                  ) : isDirectVideo ? (
-                    <video
-                      src={assignment.videoLink}
-                      className="h-full w-full"
-                      controls
-                      preload="metadata"
+                      referrerPolicy="strict-origin-when-cross-origin"
                     />
                   ) : (
-                    <div className="flex h-full items-center justify-center px-6 text-center text-sm text-slate-600">
-                      Preview is not available for this video source.
+                    <div
+                      id={containerId}
+                      className="flex h-full items-center justify-center px-6 text-center text-sm text-slate-600"
+                    >
+                      {canEmbedVideo
+                        ? "Click Open Video to play this assignment here."
+                        : "Preview is not available for this video source."}
                     </div>
                   )}
                 </div>
@@ -155,14 +189,14 @@ function StudentAssignments() {
                       Added on {new Date(assignment.createdAt).toLocaleDateString("en-GB")}
                     </p>
                   )}
-                  <a
-                    href={assignment.videoLink}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="mt-4 inline-flex items-center rounded-lg border border-brand-blue px-4 py-2 text-sm font-semibold text-brand-blue transition hover:bg-brand-blue hover:text-white"
+                  <button
+                    type="button"
+                    onClick={() => playVideo(assignment.videoLink, containerId)}
+                    disabled={!canEmbedVideo}
+                    className="mt-4 inline-flex items-center rounded-lg border border-brand-blue px-4 py-2 text-sm font-semibold text-brand-blue transition hover:bg-brand-blue hover:text-white disabled:cursor-not-allowed disabled:border-slate-300 disabled:text-slate-400 disabled:hover:bg-transparent disabled:hover:text-slate-400"
                   >
-                    Open Video
-                  </a>
+                    {activePlayer?.containerId === containerId ? "Playing Video" : "Open Video"}
+                  </button>
                 </div>
               </article>
             );
