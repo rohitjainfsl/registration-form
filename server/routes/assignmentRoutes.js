@@ -4,13 +4,12 @@ import authMiddleware from "../middlewares/authJWT.js";
 
 const router = express.Router();
 
-// Admin-only for now. Add "studentToken" when exposing to students later.
 router.post(
   "/",
   authMiddleware("adminToken"),
   createAssignment,
 );
 
-router.get("/", authMiddleware("adminToken"), getAllAssignments);
+router.get("/", authMiddleware("adminToken", "studentToken"), getAllAssignments);
 
 export default router;
