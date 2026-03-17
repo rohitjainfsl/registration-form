@@ -8,11 +8,11 @@ import { useNavigate } from "react-router-dom";
 import {
   ExternalLink,
   Link as LinkIcon,
-  Loader2,
   Plus,
   Trash2,
   Video,
 } from "lucide-react";
+import Spinner from "@/components/ui/Spinner";
 import { useToast } from "@/hooks/use-toast";
 import { useAdminContext } from "@/Context/Admincontext";
 
@@ -390,7 +390,7 @@ const AdminAssignments = (): JSX.Element => {
                   disabled={assignmentSubmitting}
                   className="inline-flex items-center gap-2 rounded-lg bg-gradient-brand px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-brand-blue/20 transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
                 >
-                  {assignmentSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+                  {assignmentSubmitting ? <Spinner className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
                   {assignmentSubmitting
                     ? "Saving..."
                     : editingId
@@ -416,9 +416,9 @@ const AdminAssignments = (): JSX.Element => {
 
             {loading ? (
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Loading assignments...
-              </div>
+                  <Spinner className="h-4 w-4" />
+                  Loading assignments...
+                </div>
             ) : assignments.length === 0 ? (
               <div className="rounded-lg border border-dashed border-border bg-muted/40 px-4 py-6 text-sm text-muted-foreground">
                 No assignments yet. Add one to populate this list.
@@ -526,7 +526,7 @@ const AdminAssignments = (): JSX.Element => {
               disabled={categorySubmitting}
               className="inline-flex items-center gap-2 rounded-lg bg-gradient-brand px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-brand-blue/20 transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
             >
-              {categorySubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+              {categorySubmitting ? <Spinner className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
               {categoryEditingId ? "Update Category" : "Add Category"}
             </button>
           </form>

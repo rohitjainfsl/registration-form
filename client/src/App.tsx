@@ -42,6 +42,8 @@ import AdminSuccessStories from "@/pages/AdminPages/AdminSuccessStories";
 // import StudentChangePassword from "@/pages/StudentPages/StudentPanel";
 // import StudentDashboard from "@/pages/StudentPages/StudentPanel/StudentDashboard";
 import ResetPassword from "@/pages/ResetPassword";
+import ForgotPassword from "@/pages/ForgotPassword";
+import ResetStudentPassword from "@/pages/ResetStudentPassword";
 
 import { AdminProvider } from "@/Context/Admincontext";
 import CreateTestForm from "@/pages/AdminPages/Admin Create test";
@@ -126,6 +128,9 @@ const AppRoutes = () => {
                 </StudentPublicRoute>
               }
             />
+
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetStudentPassword />} />
 
             <Route path="/student/changepassword" element={<ResetPassword />} />
             <Route

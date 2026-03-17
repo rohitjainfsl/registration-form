@@ -8,12 +8,12 @@ import {
 import { useNavigate } from "react-router-dom";
 import {
   Briefcase,
-  Loader2,
   MapPin,
   Plus,
   Trash2,
   Upload,
 } from "lucide-react";
+import Spinner from "@/components/ui/Spinner";
 import { useToast } from "@/hooks/use-toast";
 import { useAdminContext } from "@/Context/Admincontext";
 
@@ -355,7 +355,7 @@ const AdminPlacedStudents = (): JSX.Element => {
                 disabled={submitting}
                 className="inline-flex items-center gap-2 rounded-lg bg-gradient-brand px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-brand-blue/20 transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
               >
-                {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+                {submitting ? <Spinner className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
                 {submitting
                   ? "Saving..."
                   : editingId
@@ -388,7 +388,7 @@ const AdminPlacedStudents = (): JSX.Element => {
 
           {loading ? (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Spinner className="h-4 w-4" />
               Loading students...
             </div>
           ) : students.length === 0 ? (

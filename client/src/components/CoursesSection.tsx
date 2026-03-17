@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Clock, Loader2, Star, Users } from "lucide-react";
+import { ArrowRight, Clock, Star, Users } from "lucide-react";
+import Spinner from "@/components/ui/Spinner";
 import { Link } from "react-router-dom";
 import {
   Course,
@@ -132,7 +133,7 @@ export default function CoursesSection() {
           </div>
           {(isFetching) && (
             <div className="mt-4 inline-flex items-center gap-2 text-sm text-muted-foreground">
-              <Loader2 className="h-4 w-4 animate-spin" /> Syncing latest
+              <Spinner className="h-4 w-4" /> Syncing latest
               courses
             </div>
           )}

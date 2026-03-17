@@ -2,13 +2,15 @@ import adminModel from "../models/adminModel.js";
 import studentModel from "../models/studentModel.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
+import { sendForgotPasswordEmail } from "../services/forgotPasswordEmail.js";
 import dotenv from "dotenv";
+import { log } from "console";
 dotenv.config();
 
 
 export async function studentlogin(req, res) {
   const { email, password, role, firstTimesignin } = req.body;
-
   try {
     if (!email || !password) {
       return res
@@ -18,17 +20,17 @@ export async function studentlogin(req, res) {
 
     const user = await studentModel.findOne({ email });
 
-
+    
     if (!user) {
       return res.status(404).json({ message: "Invalid email or password." });
     }
-
+    
     const isMatch = await bcrypt.compare(password, user.password);
+    console.log(isMatch); 
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid email or password." });
     }
     
-    console.log(isMatch);
     
     
     const token = jwt.sign(
@@ -73,8 +75,8 @@ export async function changePassword(req, res) {
       return res.status(400).json({ message: "Old password is incorrect." });
     }
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-    user.password = hashedPassword;
+    // Assign plaintext new password; model will hash on save
+    user.password = newPassword;
     user.firstTimesignin = false;
     await user.save();
     
@@ -205,5 +207,62 @@ export const checkToken = (req, res)=>{
       message:"invalid", error
     })
 
+  }
+};
+
+// Forgot password - generate token, save to user, and send reset link via SendGrid
+export const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ message: "Email is required" });
+
+  try {
+    const user = await studentModel.findOne({ email });
+    if (!user) return res.status(404).json({ message: "No user found with that email" });
+
+    // generate numeric OTP (6 digits)
+    const otp = String(Math.floor(100000 + Math.random() * 900000));
+    const expires = Date.now() + 60 * 60 * 1000; // 1 hour
+
+    user.resetPasswordToken = otp;
+    user.resetPasswordExpires = new Date(expires);
+    await user.save();
+
+    // send OTP email using service (it will use dynamic template if configured)
+    await sendForgotPasswordEmail({ to: email, name: user.name, otp, expiryMinutes: 60 });
+
+    return res.status(200).json({ message: "Password reset OTP sent" });
+  } catch (error) {
+    console.error("Forgot password error:", error);
+    return res.status(500).json({ message: "Error processing forgot password", error: error.message });
+  }
+};
+
+// Reset password - verify token and expiry then update password
+export const resetPassword = async (req, res) => {
+  const { email, token, newPassword } = req.body;
+  if (!email || !token || !newPassword) return res.status(400).json({ message: "Email, token and newPassword are required" });
+
+  try {
+    const user = await studentModel.findOne({ email, resetPasswordToken: token });
+    if (!user) return res.status(400).json({ message: "Invalid token or email" });
+
+    if (!user.resetPasswordExpires || user.resetPasswordExpires.getTime() < Date.now()) {
+      return res.status(400).json({ message: "Token expired" });
+    }
+
+    // Assign plaintext new password; model will hash on save
+    user.password = newPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    user.firstTimesignin = false;
+    await user.save();
+
+    console.log(email,newPassword);
+    
+
+    return res.status(200).json({ message: "Password has been reset" });
+  } catch (error) {
+    console.error("Reset password error:", error);
+    return res.status(500).json({ message: "Error resetting password", error: error.message });
   }
 };

@@ -1,4 +1,4 @@
-import { Loader2 } from "lucide-react";
+import Spinner from "@/components/ui/Spinner";
 import { Link } from "react-router-dom";
 import CourseLayout from "./CourseLayout";
 import { useCourse } from "@/hooks/useCourses";
@@ -16,7 +16,7 @@ export default function CourseDetailBySlug({ slug, fallbackCourse }: Props) {
   if (isLoading && !course) {
     return (
       <div className="container mx-auto px-4 py-20 flex items-center justify-center text-muted-foreground gap-2">
-        <Loader2 className="h-5 w-5 animate-spin" />
+        <Spinner className="h-5 w-5" />
         Loading course details...
       </div>
     );
@@ -38,7 +38,7 @@ export default function CourseDetailBySlug({ slug, fallbackCourse }: Props) {
     <>
       {isFetching && (
         <div className="sticky top-0 z-10 w-full bg-background/80 backdrop-blur flex items-center justify-center gap-2 py-2 text-xs text-muted-foreground">
-          <Loader2 className="h-4 w-4 animate-spin" />
+          <Spinner className="h-4 w-4" />
           Syncing latest course content...
         </div>
       )}

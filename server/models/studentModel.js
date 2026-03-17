@@ -30,6 +30,8 @@ const studentSchema = new Schema(
       enum: ["student", "admin", "professional"],
     },
     password: String,
+    resetPasswordToken: String,
+    resetPasswordExpires: Date,
     newPassword: String,
     firstTimesignin: { type: Boolean, default: true },
     fees: String,
@@ -49,9 +51,12 @@ studentSchema.pre("save", async function (next) {
       this.password = generatePassword();
     }
     
-    // Hash password if it's new or modified
-    if (this.isNew || this.isModified('password')) {
-      this.password = await bcrypt.hash(this.password, 10);
+    // Hash password on creation or when it was modified.
+    // Skip re-hashing if the value already looks like a bcrypt hash.
+    if (this.password && (this.isNew || this.isModified("password"))) {
+      if (typeof this.password === "string" && !this.password.startsWith("$2")) {
+        this.password = await bcrypt.hash(this.password, 10);
+      }
     }
     
     next();
