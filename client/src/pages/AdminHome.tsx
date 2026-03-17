@@ -169,14 +169,8 @@ const AdminHome = (): JSX.Element => {
               Create Test
             </Link>
             <Link
-              to="/admin/fetch/students"
-              className="rounded-lg border border-brand-blue px-4 py-2.5 text-sm font-semibold text-brand-blue transition hover:bg-brand-blue hover:text-white"
-            >
-              View Students
-            </Link>
-            <Link
-              to="/admin/tests"
               className="rounded-lg border border-border px-4 py-2.5 text-sm font-semibold text-foreground transition hover:border-brand-orange hover:text-brand-orange"
+              to="/admin/tests"
             >
               View Results
             </Link>
