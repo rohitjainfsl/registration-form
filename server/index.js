@@ -8,6 +8,7 @@ import connectToDB from "./connection.js";
 import loginRouter from "./routes/loginRouter.js";
 import cookieParser from "cookie-parser";
 import adminRoutes from "./routes/adminRoutes.js";
+import courseRoutes from "./routes/courseRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -35,3 +36,4 @@ app.listen(PORT, () => console.log("Server started at port " + PORT));
 app.use("/api/students", studentRouter);
 app.use("/api/auth", loginRouter);
 app.use("/api/test", adminRoutes);
+app.use("/api/courses", courseRoutes);

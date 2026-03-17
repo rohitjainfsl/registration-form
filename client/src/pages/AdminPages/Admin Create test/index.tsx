@@ -1,8 +1,6 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Loader2, Plus, Upload, X } from "lucide-react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
 
 type Question = {
@@ -119,8 +117,6 @@ const CreateTestForm = (): JSX.Element => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Header />
-
       <main className="container mx-auto px-4 py-10 space-y-8">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="space-y-2">
@@ -312,8 +308,6 @@ const CreateTestForm = (): JSX.Element => {
           </div>
         </form>
       </main>
-
-      <Footer />
     </div>
   );
 };

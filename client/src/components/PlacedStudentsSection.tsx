@@ -10,6 +10,7 @@ import DeepeshSuiwal from "@/assets/Deepesh Suiwal.png";
 import TanmayShukla from "@/assets/Tanmay Shukla.jpg";
 import RitikSaluja from "@/assets/Ritik Saluja.jpg";
 import RajatJain from "@/assets/Rajat Jain.jpg";
+import RajatJainNagarro from "@/assets/Rajat Jain Nagarro.jpg";
 import Blank from "@/assets/blank.png";
 
 const placedStudents = [
@@ -83,6 +84,13 @@ const placedStudents = [
     location: "Jaipur",
     image: RajatJain,
   },
+  {
+    name: "Rajat Jain",
+    role: "Frontend Engineer",
+    company: "Nagarro",
+    location: "Jaipur",
+    image: RajatJainNagarro,
+  },
 ];
 
 function PlacedCard({
@@ -108,15 +116,16 @@ function PlacedCard({
   return (
     <div
       ref={ref}
-      className={`group bg-card rounded-2xl overflow-hidden border border-border shadow-md card-hover transition-all duration-500 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-        }`}
+      className={`group bg-card rounded-2xl overflow-hidden border border-border shadow-md card-hover transition-all duration-500 ${
+        visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+      }`}
       style={{ transitionDelay: `${index * 100}ms` }}
     >
       <div className="relative h-48 overflow-hidden">
         <img
           src={s.image}
           alt={s.name}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          className="w-full h-full object-top group-hover:scale-110 transition-transform duration-500"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 to-transparent" />
         <div className="absolute bottom-3 left-3 right-3">
@@ -159,8 +168,9 @@ function PlaceholderCard({ index }: { index: number }) {
   return (
     <div
       ref={ref}
-      className={`group bg-card rounded-2xl overflow-hidden border border-border shadow-md card-hover transition-all duration-500 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-        }`}
+      className={`group bg-card rounded-2xl overflow-hidden border border-border shadow-md card-hover transition-all duration-500 ${
+        visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+      }`}
       style={{ transitionDelay: `${index * 100}ms` }}
     >
       <div className="relative h-48 overflow-hidden bg-muted">

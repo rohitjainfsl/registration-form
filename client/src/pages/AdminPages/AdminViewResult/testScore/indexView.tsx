@@ -1,7 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -121,8 +119,6 @@ function TestScoresPage(): JSX.Element {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Header />
-
       <main className="container mx-auto px-4 py-10 space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="space-y-2">
@@ -322,8 +318,6 @@ function TestScoresPage(): JSX.Element {
           </div>
         </div>
       )}
-
-      <Footer />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  createCareerApplication,
   register,
   fetchStudent,
   fetchStudentById,
@@ -17,12 +18,13 @@ import {
   getStudentQuizAttemptDetail
 
 } from "../controllers/studentController.js";
-import { fileArr } from "../middlewares/multer.js";
+import { careerResumeUpload, fileArr } from "../middlewares/multer.js";
 import authMiddleware from "../middlewares/authJWT.js";
 
 const studentRouter = Router();
 
 studentRouter.post("/register", fileArr, register);
+studentRouter.post("/career-apply", careerResumeUpload, createCareerApplication);
 studentRouter.get("/email-exists", checkEmailExists);
 studentRouter.get("/getStudents", authMiddleware("adminToken"), fetchStudent);
 studentRouter.get("/getStudents/:id",authMiddleware("adminToken", "studentToken"),fetchStudentById);

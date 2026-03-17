@@ -7,6 +7,7 @@ type AdminContextValue = {
   role: Role;
   authChecked: boolean;
   checkToken: () => Promise<void>;
+  logout: () => Promise<void>;
   setIsAuthenticated: (value: boolean) => void;
   setRole: (role: Role) => void;
 };
@@ -22,6 +23,7 @@ export const adminContext = createContext<AdminContextValue>({
   role: null,
   authChecked: false,
   checkToken: async () => {},
+  logout: async () => {},
   setIsAuthenticated: noop,
   setRole: noop,
 });
@@ -72,6 +74,28 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const logout = async () => {
+    if (!API_BASE) {
+      setIsAuthenticated(false);
+      setRole(null);
+      setAuthChecked(true);
+      return;
+    }
+
+    try {
+      await fetch(`${API_BASE}/auth/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch (error) {
+      console.error("logout failed", error);
+    } finally {
+      setIsAuthenticated(false);
+      setRole(null);
+      setAuthChecked(true);
+    }
+  };
+
   // On mount: hydrate from storage, then verify with API
   useEffect(() => {
     const storedAuth = localStorage.getItem(storageKeys.auth);
@@ -92,6 +116,7 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
       role,
       authChecked,
       checkToken,
+      logout,
       setIsAuthenticated,
       setRole,
     }),

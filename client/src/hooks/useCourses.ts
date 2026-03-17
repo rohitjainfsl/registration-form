@@ -1,0 +1,34 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchCourseBySlug, fetchCourses, saveCourse } from "@/lib/api/courses";
+import { Course, courses as defaultCourses, slugify } from "@/lib/courses";
+
+export const useCourses = () =>
+  useQuery<Course[]>({
+    queryKey: ["courses"],
+    queryFn: fetchCourses,
+    staleTime: 1000 * 60 * 5,
+    initialData: defaultCourses,
+  });
+
+export const useCourse = (slug?: string, fallback?: Course | null) =>
+  useQuery<Course | null>({
+    queryKey: ["courses", slug],
+    queryFn: () => fetchCourseBySlug(slug!),
+    enabled: Boolean(slug),
+    initialData: fallback ?? null,
+  });
+
+export const useSaveCourse = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: saveCourse,
+    onSuccess: (course) => {
+      queryClient.invalidateQueries({ queryKey: ["courses"] });
+      const slug = course?.slug || (course?.title ? slugify(course.title) : undefined);
+      if (slug) {
+        queryClient.invalidateQueries({ queryKey: ["courses", slug] });
+      }
+    },
+  });
+};

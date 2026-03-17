@@ -1,8 +1,7 @@
-import React from "react";
-import { courses, slugify } from "@/lib/courses";
-import CourseLayout from "@/components/CourseLayout";
+import CourseDetailBySlug from "@/components/CourseDetailBySlug";
+import { courses } from "@/lib/courses";
 
 export default function FrontendDevelopment() {
-  const course = courses.find((c) => slugify(c.title) === "frontend-development")!;
-  return <CourseLayout course={course} />;
+  const fallback = courses.find((c) => (c.slug ?? "") === "frontend-development");
+  return <CourseDetailBySlug slug="frontend-development" fallbackCourse={fallback} />;
 }

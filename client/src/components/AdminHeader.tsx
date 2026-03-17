@@ -1,23 +1,21 @@
-import { useState, useEffect } from "react";
-import { Menu, X, Phone, LogIn, LogOut } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { LogIn, LogOut, Menu, Phone, X } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
 import bundledLogo from "@/assets/logo.png";
-import { useNavigate, useLocation } from "react-router-dom";
-import LoginPage from "@/pages/Login";
 import { useAdminContext } from "@/Context/Admincontext";
 
-// Use public images to allow Vercel to serve retina variants from /public/images/
+// Match the universal header imagery for consistent retina support
 const logoSrc = "/images/logo.png";
 const logoSrcSet = "/images/logo@2x.png 2x, /images/logo.png 1x";
 
-const navLinks = [
-  { label: "Home", href: "#home" },
-  { label: "About", href: "#about" },
-  { label: "Courses", href: "#courses" },
-  { label: "Placements", href: "#placements" },
-  { label: "Testimonials", href: "#testimonials" },
-  { label: "Life at FSL", href: "/lifeatfsl" },
-  { label: "Career", href: "/career" },
-  { label: "Contact", href: "#enquiry" },
+const adminLinks = [
+  { label: "Dashboard", href: "/admin/home" },
+  { label: "Students", href: "/admin/view/test" },
+  { label: "Results", href: "/admin/tests" },
+  { label: "Create Test", href: "/admin/create/test" },
+  { label: "Course Details", href: "/admin/courses" },
+  // { label: "Video Lectures", href: "/admin/video-lectures" },
+
 ];
 
 const enrollButtonClasses =
@@ -26,79 +24,63 @@ const enrollButtonClasses =
 const loginButtonClasses =
   "px-4 py-2.5 rounded-lg text-sm font-semibold border border-brand-blue text-brand-blue hover:bg-brand-blue hover:text-white transition-all duration-200 flex items-center gap-2";
 
-const Header = () => {
+const AdminHeader = () => {
+  const { isAuthenticated, setIsAuthenticated, setRole } = useAdminContext();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [loginOpen, setLoginOpen] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { isAuthenticated, role, logout } = useAdminContext();
-  const isStudentLoggedIn = isAuthenticated && role === "student";
+  const apiBase = useMemo(
+    () => import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || "",
+    [],
+  );
 
+  // Match universal header scroll treatment
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const scrollToSection = (hash: string) => {
-    if (!hash || !hash.startsWith("#")) return;
-    requestAnimationFrame(() => {
-      const el = document.querySelector(hash);
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-    });
-  };
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [location.pathname]);
 
   const handleNavClick = (href: string) => {
     setMobileOpen(false);
-    if (href.startsWith("#")) {
-      if (location.pathname !== "/") {
-        navigate(`/${href}`);
-        return;
-      }
-      scrollToSection(href);
-      return;
-    }
     navigate(href);
   };
 
   const handleLogoClick = () => {
     setMobileOpen(false);
-    if (location.pathname !== "/") {
-      navigate("/");
-      return;
-    }
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    navigate("/admin/home");
   };
 
-  const handleAuthAction = async () => {
-    setMobileOpen(false);
-
-    if (isStudentLoggedIn) {
-      await logout();
-      setLoginOpen(false);
-      navigate("/");
-      return;
+  const logout = async () => {
+    if (loggingOut) return;
+    setLoggingOut(true);
+    try {
+      if (apiBase) {
+        await fetch(`${apiBase}/auth/logout`, {
+          method: "POST",
+          credentials: "include",
+        });
+      }
+    } catch (error) {
+      console.error("Admin logout failed", error);
+    } finally {
+      setIsAuthenticated(false);
+      setRole(null);
+      setLoggingOut(false);
+      navigate("/admin/login");
     }
-
-    setLoginOpen(true);
   };
-
-  // Auto-open login when navigation state requests it (e.g., after registration)
-  useEffect(() => {
-    if ((location.state as { openLogin?: boolean } | null)?.openLogin) {
-      setLoginOpen(true);
-      // Clear the state flag so it doesn't reopen on back/forward
-      navigate(location.pathname, { replace: true, state: {} });
-    }
-  }, [location, navigate]);
 
   return (
     <>
-      {loginOpen && <LoginPage onClose={() => setLoginOpen(false)} />}
-      {/* Top bar */}
+      {/* Top bar mirrors universal header */}
       <div className="bg-brand-blue text-primary-foreground text-sm py-2 px-4 flex items-center justify-center gap-6">
         <a
           href="tel:918824453320"
@@ -127,7 +109,7 @@ const Header = () => {
         <div className="container mx-auto px-4 flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <a
-            href="/"
+            href="/admin/home"
             onClick={(e) => {
               e.preventDefault();
               handleLogoClick();
@@ -137,7 +119,7 @@ const Header = () => {
             <img
               src={logoSrc}
               srcSet={logoSrcSet}
-              alt="FullStack Learning Logo"
+              alt="FullStack Learning Admin"
               loading="eager"
               decoding="async"
               style={{ imageRendering: "auto" }}
@@ -151,11 +133,14 @@ const Header = () => {
               }}
               className="h-[68px] sm:h-[70px] md:h-[80px] lg:h-[90px] xl:h-[87px] w-auto transition-transform duration-300 group-hover:scale-105"
             />
+            <span className="hidden sm:block text-lg font-semibold text-foreground">
+              Admin Panel
+            </span>
           </a>
 
           {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center gap-3">
-            {navLinks.map((link) => (
+            {adminLinks.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
@@ -163,30 +148,49 @@ const Header = () => {
                   e.preventDefault();
                   handleNavClick(link.href);
                 }}
-                className="relative px-2 py-2 text-sm font-medium text-foreground/80 hover:text-brand-blue transition-colors duration-200 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-brand-orange after:transition-all after:duration-300 hover:after:w-full"
+                className={`relative px-2 py-2 text-sm font-medium transition-colors duration-200 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-brand-orange after:transition-all after:duration-300 hover:after:w-full ${
+                  location.pathname.startsWith(link.href)
+                    ? "text-brand-blue"
+                    : "text-foreground/80 hover:text-brand-blue"
+                }`}
               >
                 {link.label}
               </a>
             ))}
 
-            {/* Updated Enroll Now Button */}
-            {!isStudentLoggedIn && (
-              <a
-                href="/register"
-                className={`ml-4 ${enrollButtonClasses}`}
-              >
-                Enroll Now
-              </a>
-            )}
-            <button
-              type="button"
-              onClick={handleAuthAction}
-              className={loginButtonClasses}
-              aria-label={isStudentLoggedIn ? "Log out" : "Go to login"}
+            {/* Keep CTA style consistent with "Enroll" button */}
+            <a
+              href="/admin/create/test"
+              onClick={(e) => {
+                e.preventDefault();
+                handleNavClick("/admin/create/test");
+              }}
+              className={`ml-4 ${enrollButtonClasses}`}
             >
-              {isStudentLoggedIn ? <LogOut size={16} /> : <LogIn size={16} />}
-              {isStudentLoggedIn ? "Logout" : "Login"}
-            </button>
+              Create Test
+            </a>
+            {!isAuthenticated ? (
+              <button
+                type="button"
+                onClick={() => handleNavClick("/admin/login")}
+                className={loginButtonClasses}
+                aria-label="Go to admin login"
+              >
+                <LogIn size={16} />
+                Admin Login
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={logout}
+                disabled={loggingOut}
+                className={`${loginButtonClasses} border-brand-orange text-brand-orange hover:bg-brand-orange hover:text-white`}
+                aria-label="Admin logout"
+              >
+                <LogOut size={16} />
+                {loggingOut ? "Logging out..." : "Admin Logout"}
+              </button>
+            )}
           </nav>
 
           {/* Mobile menu button */}
@@ -206,7 +210,7 @@ const Header = () => {
           }`}
         >
           <nav className="container mx-auto px-4 py-4 flex flex-col gap-2">
-            {navLinks.map((link) => (
+            {adminLinks.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
@@ -220,24 +224,39 @@ const Header = () => {
               </a>
             ))}
 
-            {/* Updated Enroll Now Button */}
-            {!isStudentLoggedIn && (
-              <a
-                href="/register"
-                className={`mt-2 w-full text-center ${enrollButtonClasses}`}
-              >
-                Enroll Now
-              </a>
-            )}
-            <button
-              type="button"
-              onClick={handleAuthAction}
-              className={`mt-2 w-full justify-center ${loginButtonClasses}`}
-              aria-label={isStudentLoggedIn ? "Log out" : "Go to login"}
+            <a
+              href="/admin/create/test"
+              onClick={(e) => {
+                e.preventDefault();
+                handleNavClick("/admin/create/test");
+              }}
+              className={`mt-2 w-full text-center ${enrollButtonClasses}`}
             >
-              {isStudentLoggedIn ? <LogOut size={16} /> : <LogIn size={16} />}
-              {isStudentLoggedIn ? "Logout" : "Login"}
-            </button>
+              Create Test
+            </a>
+
+            {!isAuthenticated ? (
+              <button
+                type="button"
+                onClick={() => handleNavClick("/admin/login")}
+                className={`mt-2 w-full justify-center ${loginButtonClasses}`}
+                aria-label="Go to admin login"
+              >
+                <LogIn size={16} />
+                Admin Login
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={logout}
+                disabled={loggingOut}
+                className={`mt-2 w-full justify-center ${loginButtonClasses} border-brand-orange text-brand-orange hover:bg-brand-orange hover:text-white disabled:opacity-60`}
+                aria-label="Admin logout"
+              >
+                <LogOut size={16} />
+                {loggingOut ? "Logging out..." : "Admin Logout"}
+              </button>
+            )}
           </nav>
         </div>
       </header>
@@ -245,4 +264,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default AdminHeader;
