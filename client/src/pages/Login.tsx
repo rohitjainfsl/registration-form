@@ -1,5 +1,5 @@
 import { useContext, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { X, Eye, EyeOff } from "lucide-react";
 import { adminContext } from "@/Context/Admincontext";
 
@@ -15,6 +15,7 @@ type LoginPageProps = {
 
 export default function LoginPage({ onClose }: LoginPageProps) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { setIsAuthenticated, setRole } = useContext(adminContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,7 +26,22 @@ export default function LoginPage({ onClose }: LoginPageProps) {
   const [showPassword, setShowPassword] = useState(false);
   const closeTimerRef = useRef<number | null>(null);
 
-  const close = useMemo(() => onClose ?? (() => navigate(-1)), [onClose, navigate]);
+  const close = useMemo(
+    () =>
+      onClose ??
+      (() => {
+        const fromPath =
+          (location.state as { from?: { pathname?: string } } | null)?.from?.pathname;
+
+        if (fromPath && !fromPath.startsWith("/student") && !fromPath.startsWith("/admin")) {
+          navigate(fromPath, { replace: true });
+          return;
+        }
+
+        navigate("/", { replace: true });
+      }),
+    [location.state, navigate, onClose]
+  );
 
   useEffect(() => {
     const t = window.requestAnimationFrame(() => setIsOpen(true));

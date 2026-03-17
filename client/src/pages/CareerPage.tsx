@@ -320,13 +320,12 @@ export default function CareerPage() {
               send us your profile anyway. Strong people create strong teams.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <button
-                type="button"
-                onClick={handleOpenModal}
+              <a
+                href="mailto:rohit@fullstacklearning.com?subject=Job Application&body=Hello, I would like to apply."
                 className="inline-flex items-center justify-center rounded-lg bg-white px-6 py-3 text-sm font-semibold text-brand-blue transition-all duration-200 hover:opacity-90"
               >
                 Send Application
-              </button>
+              </a>
               <a
                 href="tel:918824453320"
                 className="inline-flex items-center justify-center rounded-lg border border-white/40 px-6 py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-white/10"

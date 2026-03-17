@@ -1,7 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Clock, Loader2, Star, Users } from "lucide-react";
 import { Link } from "react-router-dom";
+<<<<<<< HEAD
 import { Course, getCourseIcon, slugify } from "@/lib/courses";
+=======
+import {
+  Course,
+  courses as fallbackCourses,
+  getCourseIcon,
+  slugify,
+} from "@/lib/courses";
+>>>>>>> 5c0e09ea27e9e9d32fde46ad3474696ee3a36f8a
 import { useCourses } from "@/hooks/useCourses";
 
 function CourseCard({ course, index }: { course: Course; index: number }) {
@@ -13,7 +22,7 @@ function CourseCard({ course, index }: { course: Course; index: number }) {
       ([entry]) => {
         if (entry.isIntersecting) setVisible(true);
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
@@ -43,12 +52,14 @@ function CourseCard({ course, index }: { course: Course; index: number }) {
       )}
 
       <div className="p-6">
-        <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${gradient} mb-4 group-hover:scale-110 transition-transform duration-300`}>
+        <div
+          className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${gradient} mb-4 group-hover:scale-110 transition-transform duration-300`}
+        >
           <Icon className="text-primary-foreground" size={24} />
         </div>
 
         <h3 className="text-lg font-bold text-foreground mb-2 group-hover:text-brand-blue transition-colors duration-200">
-          {course.title}
+          <Link to={`/courses/${slug}`}>{course.title}</Link>
         </h3>
         <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
           {course.description}
@@ -73,7 +84,8 @@ function CourseCard({ course, index }: { course: Course; index: number }) {
             <Users size={13} className="text-brand-blue" /> {course.students}
           </span>
           <span className="flex items-center gap-1">
-            <Star size={13} className="text-yellow-500 fill-yellow-500" /> {course.rating}
+            <Star size={13} className="text-yellow-500 fill-yellow-500" />{" "}
+            {course.rating}
           </span>
         </div>
 
@@ -86,7 +98,10 @@ function CourseCard({ course, index }: { course: Course; index: number }) {
             className="group/btn flex items-center gap-1.5 text-sm font-semibold text-brand-blue hover:text-brand-orange transition-colors duration-200"
           >
             Learn More
-            <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform duration-200" />
+            <ArrowRight
+              size={14}
+              className="group-hover/btn:translate-x-1 transition-transform duration-200"
+            />
           </Link>
         </div>
       </div>
@@ -95,8 +110,15 @@ function CourseCard({ course, index }: { course: Course; index: number }) {
 }
 
 export default function CoursesSection() {
+<<<<<<< HEAD
   const { data, isFetching, isLoading, isError } = useCourses();
   const sortedCourses = (data ?? []).slice().sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
+=======
+  const { data, isFetching } = useCourses();
+  const sortedCourses = (data && data.length > 0 ? data : fallbackCourses)
+    .slice()
+    .sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
+>>>>>>> 5c0e09ea27e9e9d32fde46ad3474696ee3a36f8a
 
   return (
     <section id="courses" className="section-padding bg-muted/30">
@@ -109,7 +131,8 @@ export default function CoursesSection() {
             Our <span className="text-gradient-brand">Popular Courses</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Industry-aligned curriculum designed by experts. Frontend | Backend | Full Stack
+            Industry-aligned curriculum designed by experts. Frontend | Backend
+            | Full Stack
           </p>
           <div className="flex items-center justify-center gap-2 mt-4">
             <div className="h-1 w-12 rounded-full bg-brand-blue" />
@@ -118,33 +141,30 @@ export default function CoursesSection() {
           </div>
           {(isFetching || isLoading) && (
             <div className="mt-4 inline-flex items-center gap-2 text-sm text-muted-foreground">
-              <Loader2 className="h-4 w-4 animate-spin" /> Syncing latest courses
+              <Loader2 className="h-4 w-4 animate-spin" /> Syncing latest
+              courses
             </div>
           )}
         </div>
 
-        {isError ? (
-          <div className="rounded-2xl border border-dashed border-border bg-card/50 p-10 text-center text-muted-foreground">
-            Unable to load courses right now. Please try again soon.
-          </div>
-        ) : sortedCourses.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-border bg-card/50 p-10 text-center text-muted-foreground">
-            No courses available yet. Check back shortly.
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sortedCourses.map((course, i) => (
-              <CourseCard key={course._id ?? course.slug ?? course.title} course={course} index={i} />
-            ))}
-          </div>
-        )}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {sortedCourses.map((course, i) => (
+            <CourseCard
+              key={course._id ?? course.slug ?? course.title}
+              course={course}
+              index={i}
+            />
+          ))}
+        </div>
 
         <div className="text-center mt-12">
           <a
             href="#enquiry"
             onClick={(e) => {
               e.preventDefault();
-              document.querySelector("#enquiry")?.scrollIntoView({ behavior: "smooth" });
+              document
+                .querySelector("#enquiry")
+                ?.scrollIntoView({ behavior: "smooth" });
             }}
             className="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold text-primary-foreground gradient-brand hover:opacity-90 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
           >

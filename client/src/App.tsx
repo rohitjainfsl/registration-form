@@ -1,9 +1,15 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+} from "react-router-dom";
 import Index from "@/pages/Index";
 import NotFound from "@/pages/NotFound";
 import CoursePage from "@/pages/CoursePage";
@@ -20,29 +26,29 @@ import Loader from "@/components/Loader";
 import AdminLogin from "@/pages/AdminPages/AdminLogin";
 import AdminHome from "@/pages/AdminPages/AdminHome";
 import ProtectedRoute from "@/pages/ProtectedRoute";
+import StudentPublicRoute from "@/pages/StudentPublicRoute";
 import StudentPanel from "@/pages/StudentPages/StudentPanel";
 import AppLayout from "@/components/AppLayout/index";
 import StudentResult from "@/pages/StudentPages/StudentResult";
 import ResultDetailPage from "@/pages/StudentPages/ResultDetailPage";
 import StudentQuiz from "@/pages/StudentPages/StudentQuiz";
+import StudentAssignments from "@/pages/StudentPages/StudentAssignments";
 import Login from "@/pages/Login";
 import AdminLayout from "@/components/AdminLayout";
 import AdminCourseDetails from "@/pages/AdminPages/AdminCourseDetails";
+import AdminAssignments from "@/pages/AdminPages/AdminAssignments";
 // import StudentChangePassword from "@/pages/StudentPages/StudentPanel";
 // import StudentDashboard from "@/pages/StudentPages/StudentPanel/StudentDashboard";
-import ResetPassword from '@/pages/ResetPassword'
-
+import ResetPassword from "@/pages/ResetPassword";
 
 import { AdminProvider } from "@/Context/Admincontext";
 import CreateTestForm from "@/pages/AdminPages/Admin Create test";
 import AdminViewStudent from "@/pages/AdminPages/AdminViewStudent";
 import AdminViewResult from "@/pages/AdminPages/AdminViewResult";
-import TestScoresPage from '@/pages/AdminPages/AdminViewResult/testScore/indexView'
+import TestScoresPage from "@/pages/AdminPages/AdminViewResult/testScore/indexView";
 import AdminStudentDetail from "@/pages/AdminPages/AdminStudentDetail";
 import ViewTest from "./pages/AdminPages/AdminHome/ViewTest";
 import UpdateTest from "./pages/AdminPages/AdminHome/updateTest";
-
-
 
 const queryClient = new QueryClient();
 
@@ -59,13 +65,25 @@ const AppRoutes = () => {
     return () => clearTimeout(t);
   }, [location.pathname]);
 
+  useEffect(() => {
+    console.log("scroll useEffect");
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   return (
     <>
       {loading && <Loader />}
       <div className={loading ? "pointer-events-none" : ""}>
         <Routes>
           <Route element={<AppLayout />}>
-            <Route path="/" element={<Index />} />
+            <Route
+              path="/"
+              element={
+                <StudentPublicRoute redirectTo="/student/studentpanel">
+                  <Index />
+                </StudentPublicRoute>
+              }
+            />
             <Route path="/lifeatfsl" element={<LifeAtFSL />} />
             <Route path="/career" element={<CareerPage />} />
             <Route
@@ -90,15 +108,24 @@ const AppRoutes = () => {
             />
             <Route path="/courses/devops-cloud" element={<DevOpsCloud />} />
             <Route path="/courses/:slug" element={<CoursePage />} />
-            <Route path="/register" element={<RegistrationForm />} />
-            <Route path="/login" element={<Login />} />
-
             <Route
-              path="/student/changepassword"
+              path="/register"
               element={
-                <ResetPassword />
+                <StudentPublicRoute redirectTo="/student/studentpanel">
+                  <RegistrationForm />
+                </StudentPublicRoute>
               }
             />
+            <Route
+              path="/login"
+              element={
+                <StudentPublicRoute redirectTo="/student/studentpanel">
+                  <Login />
+                </StudentPublicRoute>
+              }
+            />
+
+            <Route path="/student/changepassword" element={<ResetPassword />} />
             <Route
               path="/student/studentpanel"
               element={
@@ -116,6 +143,14 @@ const AppRoutes = () => {
               }
             />
             <Route
+              path="/student/assignments"
+              element={
+                <ProtectedRoute allowedRoles={["student"]} redirectTo="/login">
+                  <StudentAssignments />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/student/result-detail/:quizAttemptId"
               element={
                 <ProtectedRoute allowedRoles={["student"]} redirectTo="/login">
@@ -123,7 +158,6 @@ const AppRoutes = () => {
                 </ProtectedRoute>
               }
             />
-
           </Route>
 
           <Route
@@ -136,11 +170,15 @@ const AppRoutes = () => {
           />
 
           <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<Navigate to="login" replace />} />
             <Route path="login" element={<AdminLogin />} />
             <Route
               path="home"
               element={
-                <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
                   <AdminHome />
                 </ProtectedRoute>
               }
@@ -148,7 +186,10 @@ const AppRoutes = () => {
             <Route
               path="courses"
               element={
-                <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
                   <AdminCourseDetails />
                 </ProtectedRoute>
               }
@@ -156,7 +197,10 @@ const AppRoutes = () => {
             <Route
               path="view/test"
               element={
-                <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
                   <AdminViewStudent />
                 </ProtectedRoute>
               }
@@ -164,7 +208,10 @@ const AppRoutes = () => {
             <Route
               path="students/:id"
               element={
-                <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
                   <AdminStudentDetail />
                 </ProtectedRoute>
               }
@@ -172,15 +219,32 @@ const AppRoutes = () => {
             <Route
               path="tests"
               element={
-                <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
                   <AdminViewResult />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="assignments"
+              element={
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
+                  <AdminAssignments />
                 </ProtectedRoute>
               }
             />
             <Route
               path="ViewTest/:testId"
               element={
-                <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
                   <ViewTest />
                 </ProtectedRoute>
               }
@@ -188,7 +252,10 @@ const AppRoutes = () => {
             <Route
               path="update/test/:id"
               element={
-                <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
                   <UpdateTest />
                 </ProtectedRoute>
               }
@@ -196,7 +263,10 @@ const AppRoutes = () => {
             <Route
               path="test/:testId/scores"
               element={
-                <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
                   <TestScoresPage />
                 </ProtectedRoute>
               }
@@ -204,7 +274,10 @@ const AppRoutes = () => {
             <Route
               path="create/test"
               element={
-                <ProtectedRoute allowedRoles={["admin"]} redirectTo="/admin/login">
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
                   <CreateTestForm />
                 </ProtectedRoute>
               }
