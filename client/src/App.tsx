@@ -35,6 +35,8 @@ import Login from "@/pages/Login";
 import AdminLayout from "@/components/AdminLayout";
 import AdminCourseDetails from "@/pages/AdminPages/AdminCourseDetails";
 import AdminAssignments from "@/pages/AdminPages/AdminAssignments";
+import AdminPlacedStudents from "@/pages/AdminPages/AdminPlacedStudents";
+import AdminSuccessStories from "@/pages/AdminPages/AdminSuccessStories";
 // import StudentChangePassword from "@/pages/StudentPages/StudentPanel";
 // import StudentDashboard from "@/pages/StudentPages/StudentPanel/StudentDashboard";
 import ResetPassword from "@/pages/ResetPassword";
@@ -204,6 +206,28 @@ const AppRoutes = () => {
                   redirectTo="/admin/login"
                 >
                   <AdminAssignments />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="placed-students"
+              element={
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
+                  <AdminPlacedStudents />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="success-stories"
+              element={
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
+                  <AdminSuccessStories />
                 </ProtectedRoute>
               }
             />

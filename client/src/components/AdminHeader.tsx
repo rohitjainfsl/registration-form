@@ -14,6 +14,8 @@ const adminLinks = [
   { label: "Results", href: "/admin/tests" },
   { label: "Course Details", href: "/admin/courses" },
   { label: "Assignments", href: "/admin/assignments" },
+  { label: "Placed Students", href: "/admin/placed-students" },
+  { label: "Success Stories", href: "/admin/success-stories" },
 
 ];
 
@@ -99,11 +101,10 @@ const AdminHeader = () => {
 
       {/* Main header */}
       <header
-        className={`sticky top-0 z-50 w-full transition-all duration-400 ${
-          scrolled
+        className={`sticky top-0 z-50 w-full transition-all duration-400 ${scrolled
             ? "bg-background/95 backdrop-blur-md shadow-lg"
             : "bg-background shadow-sm"
-        }`}
+          }`}
       >
         <div className="container mx-auto px-4 flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
@@ -147,11 +148,10 @@ const AdminHeader = () => {
                   e.preventDefault();
                   handleNavClick(link.href);
                 }}
-                className={`relative px-2 py-2 text-sm font-medium transition-colors duration-200 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-brand-orange after:transition-all after:duration-300 hover:after:w-full ${
-                  location.pathname.startsWith(link.href)
+                className={`relative px-2 py-2 text-sm font-medium transition-colors duration-200 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-brand-orange after:transition-all after:duration-300 hover:after:w-full ${location.pathname.startsWith(link.href)
                     ? "text-brand-blue"
                     : "text-foreground/80 hover:text-brand-blue"
-                }`}
+                  }`}
               >
                 {link.label}
               </a>
@@ -204,9 +204,8 @@ const AdminHeader = () => {
 
         {/* Mobile Nav */}
         <div
-          className={`lg:hidden overflow-hidden transition-all duration-300 bg-background border-t border-border ${
-            mobileOpen ? "max-h-[700px] opacity-100" : "max-h-0 opacity-0"
-          }`}
+          className={`lg:hidden overflow-hidden transition-all duration-300 bg-background border-t border-border ${mobileOpen ? "max-h-[700px] opacity-100" : "max-h-0 opacity-0"
+            }`}
         >
           <nav className="container mx-auto px-4 py-4 flex flex-col gap-2">
             {adminLinks.map((link) => (

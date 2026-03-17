@@ -10,6 +10,8 @@ import cookieParser from "cookie-parser";
 import adminRoutes from "./routes/adminRoutes.js";
 import courseRoutes from "./routes/courseRoutes.js";
 import assignmentRoutes from "./routes/assignmentRoutes.js";
+import placedStudentRoutes from "./routes/placedStudentRoutes.js";
+import successStoryRoutes from "./routes/successStoryRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -39,3 +41,5 @@ app.use("/api/auth", loginRouter);
 app.use("/api/test", adminRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/assignments", assignmentRoutes);
+app.use("/api/placed-students", placedStudentRoutes);
+app.use("/api/success-stories", successStoryRoutes);
