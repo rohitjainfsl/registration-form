@@ -21,20 +21,32 @@ type Assignment = {
   title: string;
   videoLink: string;
   thumbnail: string;
+  category?: string;
   createdAt: string;
+};
+
+type Category = {
+  _id: string;
+  name: string;
 };
 
 const AdminAssignments = (): JSX.Element => {
   const [assignments, setAssignments] = useState<Assignment[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [categoryForm, setCategoryForm] = useState({ name: "" });
+  const [categoryEditingId, setCategoryEditingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
+  const [assignmentSubmitting, setAssignmentSubmitting] = useState(false);
+  const [categorySubmitting, setCategorySubmitting] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<{
     title: string;
     videoLink: string;
+    category: string;
   }>({
     title: "",
     videoLink: "",
+    category: "",
   });
 
   const { toast } = useToast();
@@ -85,9 +97,27 @@ const AdminAssignments = (): JSX.Element => {
     fetchAssignments();
   }, [apiBase, toast]);
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch(`${apiBase}/categories`);
+        const data = await res.json();
+        setCategories(
+          (data.categories ?? []).map((c: any) => ({
+            _id: c._id,
+            name: c.name,
+          })),
+        );
+      } catch (error) {
+        console.error("Failed to fetch categories", error);
+      }
+    };
+    fetchCategories();
+  }, [apiBase]);
+
   const resetForm = () => {
     setEditingId(null);
-    setForm({ title: "", videoLink: "" });
+    setForm({ title: "", videoLink: "", category: "" });
   };
 
   const startEdit = (assignment: Assignment) => {
@@ -96,6 +126,7 @@ const AdminAssignments = (): JSX.Element => {
     setForm({
       title: assignment.title,
       videoLink: assignment.videoLink,
+      category: assignment.category || "",
     });
   };
 
@@ -114,10 +145,11 @@ const AdminAssignments = (): JSX.Element => {
     }
 
     try {
-      setSubmitting(true);
+      setAssignmentSubmitting(true);
       const body = JSON.stringify({
         title: form.title.trim(),
         videoLink: form.videoLink.trim(),
+        category: form.category.trim(),
       });
 
       const isEdit = Boolean(editingId);
@@ -159,7 +191,7 @@ const AdminAssignments = (): JSX.Element => {
         variant: "destructive",
       });
     } finally {
-      setSubmitting(false);
+      setAssignmentSubmitting(false);
     }
   };
 
@@ -183,6 +215,92 @@ const AdminAssignments = (): JSX.Element => {
     }
   };
 
+  const handleCategorySubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const name = categoryForm.name.trim();
+    if (!name) {
+      toast({
+        title: "Category name required",
+        description: "Please enter a category name.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setCategorySubmitting(true);
+      const isEdit = Boolean(categoryEditingId);
+      const url = isEdit
+        ? `${apiBase}/categories/${categoryEditingId}`
+        : `${apiBase}/categories`;
+      const method = isEdit ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name }),
+      });
+
+      const payload = await res.json();
+      if (!res.ok) throw new Error(payload?.message || "Category save failed");
+
+      setCategories((prev) => {
+        if (isEdit) {
+          return prev.map((c) => (c._id === payload.category._id ? payload.category : c));
+        }
+        return [...prev, payload.category].sort((a, b) => a.name.localeCompare(b.name));
+      });
+      setCategoryForm({ name: "" });
+      setCategoryEditingId(null);
+      toast({ title: isEdit ? "Category updated" : "Category created" });
+    } catch (error: any) {
+      console.error(error);
+      toast({
+        title: "Category action failed",
+        description: error?.message ?? "Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setCategorySubmitting(false);
+    }
+  };
+
+  const startCategoryEdit = (category: Category) => {
+    setCategoryEditingId(category._id);
+    setCategoryForm({ name: category.name });
+  };
+
+  const handleCategoryDelete = async (id: string) => {
+    if (!window.confirm("Delete this category?")) return;
+    const toDelete = categories.find((c) => c._id === id);
+    try {
+      const res = await fetch(`${apiBase}/categories/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      const payload = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(payload?.message || "Delete failed");
+      setCategories((prev) => prev.filter((c) => c._id !== id));
+      if (categoryEditingId === id) {
+        setCategoryEditingId(null);
+        setCategoryForm({ name: "" });
+      }
+      setForm((prev) => ({
+        ...prev,
+        category: toDelete && prev.category === toDelete.name ? "" : prev.category,
+      }));
+      toast({ title: "Category deleted" });
+    } catch (error: any) {
+      console.error(error);
+      toast({
+        title: "Delete failed",
+        description: error?.message ?? "Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <main className="container mx-auto px-4 py-10 space-y-8">
@@ -193,8 +311,7 @@ const AdminAssignments = (): JSX.Element => {
               Assignments Dashboard
             </h1>
             <p className="text-sm text-muted-foreground max-w-2xl">
-              Upload assignment metadata once—thumbnail, title, and video link—so it can be surfaced
-              to students later without rework.
+              Upload once: title, video link, and category. Thumbnails are generated automatically from YouTube links.
             </p>
           </div>
           <div className="flex items-center gap-2 rounded-full border border-border bg-muted/60 px-4 py-2 text-sm text-muted-foreground">
@@ -222,6 +339,22 @@ const AdminAssignments = (): JSX.Element => {
                   className="w-full bg-transparent text-sm focus:outline-none"
                 />
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">Category</label>
+              <select
+                value={form.category}
+                onChange={(e) => setForm((prev) => ({ ...prev, category: e.target.value }))}
+                className="w-full rounded-lg border border-border px-3 py-2 text-sm shadow-sm focus:border-brand-blue focus:outline-none focus:ring-2 focus:ring-brand-blue/20"
+              >
+                <option value="">Select category</option>
+                {categories.map((cat) => (
+                  <option key={cat._id} value={cat.name}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="space-y-2">
@@ -254,11 +387,11 @@ const AdminAssignments = (): JSX.Element => {
                 )}
                 <button
                   type="submit"
-                  disabled={submitting}
+                  disabled={assignmentSubmitting}
                   className="inline-flex items-center gap-2 rounded-lg bg-gradient-brand px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-brand-blue/20 transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
                 >
-                  {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
-                  {submitting
+                  {assignmentSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+                  {assignmentSubmitting
                     ? "Saving..."
                     : editingId
                     ? "Update Assignment"
@@ -312,6 +445,11 @@ const AdminAssignments = (): JSX.Element => {
                       <p className="text-sm font-semibold text-foreground truncate" title={item.title}>
                         {item.title}
                       </p>
+                      {item.category && (
+                        <span className="inline-flex items-center rounded-full bg-white px-2 py-0.5 text-[11px] font-semibold text-brand-blue ring-1 ring-brand-blue/20">
+                          {item.category}
+                        </span>
+                      )}
                       <a
                         href={item.videoLink}
                         target="_blank"
@@ -349,9 +487,86 @@ const AdminAssignments = (): JSX.Element => {
             )}
           </div>
         </div>
+
+        <div className="grid gap-4 rounded-xl border border-border bg-white p-5 shadow-sm">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 className="text-lg font-semibold text-foreground">Categories</h3>
+              <p className="text-sm text-muted-foreground">
+                Create, rename, or remove categories. Updates reflect instantly across admin and student views.
+              </p>
+            </div>
+            <span className="rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground">
+              {categories.length} total
+            </span>
+          </div>
+
+          <form onSubmit={handleCategorySubmit} className="flex flex-wrap gap-3">
+            <input
+              type="text"
+              value={categoryForm.name}
+              onChange={(e) => setCategoryForm({ name: e.target.value })}
+              placeholder="e.g., HTML, CSS, React"
+              className="min-w-[220px] flex-1 rounded-lg border border-border px-3 py-2 text-sm focus:border-brand-blue focus:outline-none focus:ring-2 focus:ring-brand-blue/20"
+            />
+            {categoryEditingId && (
+              <button
+                type="button"
+                onClick={() => {
+                  setCategoryEditingId(null);
+                  setCategoryForm({ name: "" });
+                }}
+                className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-muted-foreground hover:border-brand-orange hover:text-brand-orange"
+              >
+                Cancel
+              </button>
+            )}
+            <button
+              type="submit"
+              disabled={categorySubmitting}
+              className="inline-flex items-center gap-2 rounded-lg bg-gradient-brand px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-brand-blue/20 transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              {categorySubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+              {categoryEditingId ? "Update Category" : "Add Category"}
+            </button>
+          </form>
+
+          <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3">
+            {categories.map((cat) => (
+              <div
+                key={cat._id}
+                className="flex items-center justify-between rounded-lg border border-border bg-muted/50 px-3 py-2 text-sm"
+              >
+                <span className="font-medium text-foreground">{cat.name}</span>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => startCategoryEdit(cat)}
+                    className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-brand-blue hover:bg-brand-blue/10 border border-border shadow-sm"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleCategoryDelete(cat._id)}
+                    className="rounded-full bg-white/90 p-1 text-red-600 hover:bg-red-50 border border-red-200 shadow-sm"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+            {categories.length === 0 && (
+              <p className="text-sm text-muted-foreground">
+                No categories yet. Add one to get started.
+              </p>
+            )}
+          </div>
+        </div>
       </main>
     </div>
   );
 };
 
 export default AdminAssignments;
+

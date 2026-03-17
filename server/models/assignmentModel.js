@@ -14,6 +14,11 @@ const assignmentSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    category: {
+      type: String,
+      trim: true,
+      default: "uncategorized",
+    },
     thumbnail: {
       type: String,
       default: null,

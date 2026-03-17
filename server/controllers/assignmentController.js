@@ -24,7 +24,7 @@ const youTubeThumbnail = (link) => {
 
 export const createAssignment = async (req, res) => {
   try {
-    const { title, videoLink } = req.body;
+    const { title, videoLink, category } = req.body;
 
     if (!title?.trim() || !videoLink?.trim()) {
       return res.status(400).json({ message: "Title and video link are required." });
@@ -35,6 +35,7 @@ export const createAssignment = async (req, res) => {
     const assignment = await Assignment.create({
       title: title.trim(),
       videoLink: videoLink.trim(),
+      category: category?.trim() || "uncategorized",
       thumbnail: thumb,
     });
 
@@ -64,7 +65,7 @@ export const getAllAssignments = async (_req, res) => {
 export const updateAssignment = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, videoLink } = req.body;
+    const { title, videoLink, category } = req.body;
     const update = {};
     if (title) update.title = title.trim();
     if (videoLink) {
@@ -72,6 +73,7 @@ export const updateAssignment = async (req, res) => {
       const thumb = youTubeThumbnail(videoLink);
       update.thumbnail = thumb;
     }
+    if (category) update.category = category.trim();
 
     const assignment = await Assignment.findByIdAndUpdate(id, update, { new: true });
     if (!assignment) return res.status(404).json({ message: "Assignment not found" });

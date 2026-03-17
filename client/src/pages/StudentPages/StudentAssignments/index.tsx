@@ -5,6 +5,7 @@ type Assignment = {
   title: string;
   videoLink: string;
   thumbnail?: string | null;
+  category?: string;
   createdAt?: string;
 };
 
@@ -12,6 +13,11 @@ type ActivePlayer = {
   containerId: string;
   embedUrl: string;
 } | null;
+
+type Category = {
+  _id: string;
+  name: string;
+};
 
 const getYouTubeEmbedUrl = (videoLink: string, autoplay = false) => {
   try {
@@ -58,7 +64,10 @@ const getYouTubeEmbedUrl = (videoLink: string, autoplay = false) => {
 };
 
 function StudentAssignments() {
+  const apiBase = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL;
   const [assignments, setAssignments] = useState<Assignment[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [activePlayer, setActivePlayer] = useState<ActivePlayer>(null);
@@ -69,7 +78,6 @@ function StudentAssignments() {
         setLoading(true);
         setError("");
 
-        const apiBase = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL;
         const response = await fetch(`${apiBase}/assignments`, {
           credentials: "include",
         });
@@ -95,7 +103,45 @@ function StudentAssignments() {
     }
 
     void fetchAssignments();
-  }, []);
+  }, [apiBase]);
+
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const res = await fetch(`${apiBase}/categories`);
+        const data = await res.json();
+        if (Array.isArray(data?.categories)) {
+          setCategories(
+            data.categories.map((c: any) => ({
+              _id: c._id,
+              name: c.name,
+            })),
+          );
+        }
+      } catch (err) {
+        console.error("Failed to fetch categories", err);
+      }
+    }
+    void fetchCategories();
+  }, [apiBase]);
+
+  useEffect(() => {
+    if (categories.length === 0 && assignments.length > 0) {
+      const derived = Array.from(
+        new Set(assignments.map((a) => a.category).filter(Boolean)),
+      ).map((name, idx) => ({ _id: `derived-${idx}`, name: name as string }));
+      setCategories(derived);
+    }
+  }, [assignments, categories.length]);
+
+  useEffect(() => {
+    if (
+      selectedCategory !== "All" &&
+      !categories.some((c) => c.name === selectedCategory)
+    ) {
+      setSelectedCategory("All");
+    }
+  }, [categories, selectedCategory]);
 
   const playVideo = (videoUrl: string, containerId: string) => {
     const embedUrl = getYouTubeEmbedUrl(videoUrl, true);
@@ -111,6 +157,12 @@ function StudentAssignments() {
     });
   };
 
+  const categoryTabs = ["All", ...Array.from(new Set(categories.map((c) => c.name)))];
+  const visibleAssignments =
+    selectedCategory === "All"
+      ? assignments
+      : assignments.filter((a) => (a.category ?? "uncategorized") === selectedCategory);
+
   return (
     <div className="mx-auto w-full max-w-6xl px-4 pb-10 pt-28 sm:px-6 lg:px-8">
       <div className="mb-8 flex flex-col gap-3">
@@ -124,6 +176,28 @@ function StudentAssignments() {
           </p>
         </div>
       </div>
+
+      {!loading && !error && assignments.length > 0 && (
+        <div className="mb-6 flex flex-wrap items-center gap-2">
+          {categoryTabs.map((tab) => {
+            const isActive = selectedCategory === tab;
+            return (
+              <button
+                key={tab}
+                type="button"
+                onClick={() => setSelectedCategory(tab)}
+                className={`rounded-full border px-3 py-1 text-sm font-semibold transition ${
+                  isActive
+                    ? "border-brand-blue bg-brand-blue text-white shadow-sm"
+                    : "border-slate-200 bg-white text-slate-700 hover:border-brand-blue/50 hover:text-brand-blue"
+                }`}
+              >
+                {tab}
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       {loading && (
         <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
@@ -149,7 +223,12 @@ function StudentAssignments() {
 
       {!loading && !error && assignments.length > 0 && (
         <div className="grid gap-6 md:grid-cols-2">
-          {assignments.map((assignment) => {
+          {visibleAssignments.length === 0 && (
+            <div className="md:col-span-2 rounded-2xl border border-slate-200 bg-white p-6 text-center text-sm text-slate-600 shadow-sm">
+              No assignments in this category yet.
+            </div>
+          )}
+          {visibleAssignments.map((assignment) => {
             const containerId = `assignment-video-${assignment._id}`;
             const previewEmbedUrl =
               activePlayer?.containerId === containerId ? activePlayer.embedUrl : null;
@@ -185,7 +264,7 @@ function StudentAssignments() {
                       />
                       <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/40 transition">
                         <div className="h-12 w-12 rounded-full bg-white/90 text-slate-800 grid place-items-center shadow">
-                          ▶
+                          ?
                         </div>
                       </div>
                     </button>
@@ -203,6 +282,11 @@ function StudentAssignments() {
 
                 <div className="p-5">
                   <h2 className="text-xl font-semibold text-slate-900">{assignment.title}</h2>
+                  {assignment.category && (
+                    <p className="mt-2 inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-brand-blue">
+                      {assignment.category}
+                    </p>
+                  )}
                   {assignment.createdAt && (
                     <p className="mt-2 text-xs uppercase tracking-[0.15em] text-slate-500">
                       Added on {new Date(assignment.createdAt).toLocaleDateString("en-GB")}
@@ -227,3 +311,4 @@ function StudentAssignments() {
 }
 
 export default StudentAssignments;
+
