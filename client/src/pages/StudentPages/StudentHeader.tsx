@@ -68,7 +68,7 @@ export default function StudentHeader() {
             onClick={() => handleNavigate("/student/assignments")}
             className={desktopAssignmentButtonClasses}
           >
-            Assignment
+            Assignments
           </button>
           <button
             type="button"
@@ -105,7 +105,7 @@ export default function StudentHeader() {
               onClick={() => handleNavigate("/student/assignments")}
               className={mobileAssignmentButtonClasses}
             >
-              Assignment
+              Assignments
             </button>
             <button
               type="button"
