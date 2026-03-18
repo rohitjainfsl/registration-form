@@ -44,6 +44,7 @@ import AdminHeroSection from "@/pages/AdminPages/AdminHeroSection";
 import AdminCompanies from "@/pages/AdminPages/AdminCompanies";
 import AdminEngineeringTeam from "@/pages/AdminPages/AdminEngineeringTeam";
 import AdminGetInTouch from "@/pages/AdminPages/AdminGetInTouch";
+import AdminFooter from "@/pages/AdminPages/AdminFooter";
 // import StudentChangePassword from "@/pages/StudentPages/StudentPanel";
 // import StudentDashboard from "@/pages/StudentPages/StudentPanel/StudentDashboard";
 import ResetPassword from "@/pages/ResetPassword";
@@ -181,7 +182,7 @@ const AppRoutes = () => {
             }
           />
 
-          <Route path="/admin" element={<AdminLayout />}>
+          <Route path="/admin/*" element={<AdminLayout />}>
             <Route index element={<Navigate to="login" replace />} />
             <Route path="login" element={<AdminLogin />} />
             <Route
@@ -324,6 +325,17 @@ const AppRoutes = () => {
                   redirectTo="/admin/login"
                 >
                   <AdminGetInTouch />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="footer"
+              element={
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
+                  <AdminFooter />
                 </ProtectedRoute>
               }
             />

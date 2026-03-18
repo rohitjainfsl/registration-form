@@ -25,6 +25,7 @@ const moreLinks = [
   { label: "Companies", href: "/admin/companies" },
   { label: "Engineering Team", href: "/admin/engineering-team" },
   { label: "Get In Touch", href: "/admin/get-in-touch" },
+  { label: "Footer", href: "/admin/footer" },
 ];
 
 const enrollButtonClasses =

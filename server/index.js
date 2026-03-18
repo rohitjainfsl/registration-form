@@ -18,6 +18,7 @@ import heroSectionRoutes from "./routes/heroSectionRoutes.js";
 import companiesSectionRoutes from "./routes/companiesSectionRoutes.js";
 import engineeringTeamRoutes from "./routes/engineeringTeamRoutes.js";
 import getInTouchRoutes from "./routes/getInTouchRoutes.js";
+import footerRoutes from "./routes/footerRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -55,3 +56,4 @@ app.use("/api/hero-section", heroSectionRoutes);
 app.use("/api/companies-section", companiesSectionRoutes);
 app.use("/api/engineering-team", engineeringTeamRoutes);
 app.use("/api/get-in-touch", getInTouchRoutes);
+app.use("/api/footer", footerRoutes);
