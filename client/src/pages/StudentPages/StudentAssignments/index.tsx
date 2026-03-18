@@ -7,6 +7,9 @@ type Assignment = {
   thumbnail?: string | null;
   category?: string;
   createdAt?: string;
+  trelloCardId?: string | null;
+  trelloCardUrl?: string | null;
+  trelloCardShortUrl?: string | null;
 };
 
 type ActivePlayer = {
@@ -287,6 +290,27 @@ function StudentAssignments() {
                       {assignment.category}
                     </p>
                   )}
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    <span
+                      className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+                        assignment.trelloCardUrl
+                          ? "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200"
+                          : "bg-amber-50 text-amber-700 ring-1 ring-amber-200"
+                      }`}
+                    >
+                      {assignment.trelloCardUrl ? "Synced" : "Not synced"}
+                    </span>
+                    {assignment.trelloCardUrl && (
+                      <a
+                        href={assignment.trelloCardUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 hover:underline"
+                      >
+                        View in Trello
+                      </a>
+                    )}
+                  </div>
                   {assignment.createdAt && (
                     <p className="mt-2 text-xs uppercase tracking-[0.15em] text-slate-500">
                       Added on {new Date(assignment.createdAt).toLocaleDateString("en-GB")}

@@ -23,6 +23,9 @@ type Assignment = {
   thumbnail: string;
   category?: string;
   createdAt: string;
+  trelloCardId?: string | null;
+  trelloCardUrl?: string | null;
+  trelloCardShortUrl?: string | null;
 };
 
 type Category = {
@@ -61,6 +64,9 @@ const AdminAssignments = (): JSX.Element => {
 
   const resolveThumbnail = (src: string) =>
     src?.startsWith("http") ? src : `${apiOrigin}${src}`;
+
+  const getTrelloStatus = (assignment: Assignment) =>
+    assignment.trelloCardUrl ? "Synced" : "Not synced";
 
   useEffect(() => {
     if (authChecked && (!isAuthenticated || role !== "admin")) {
@@ -450,6 +456,28 @@ const AdminAssignments = (): JSX.Element => {
                           {item.category}
                         </span>
                       )}
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span
+                          className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+                            item.trelloCardUrl
+                              ? "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200"
+                              : "bg-amber-50 text-amber-700 ring-1 ring-amber-200"
+                          }`}
+                        >
+                          {getTrelloStatus(item)}
+                        </span>
+                        {item.trelloCardUrl && (
+                          <a
+                            href={item.trelloCardUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 hover:underline"
+                          >
+                            <ExternalLink className="h-3 w-3" />
+                            View in Trello
+                          </a>
+                        )}
+                      </div>
                       <a
                         href={item.videoLink}
                         target="_blank"
