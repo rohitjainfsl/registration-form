@@ -1,6 +1,7 @@
 import type React from "react";
 import { useMemo, useState } from "react";
-import { ArrowRight, BadgeCheck, Loader2, PenSquare, Plus, RefreshCw, Sparkles } from "lucide-react";
+import { ArrowRight, BadgeCheck, PenSquare, Plus, RefreshCw, Sparkles } from "lucide-react";
+import Spinner from "@/components/ui/Spinner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { useCourses, useSaveCourse } from "@/hooks/useCourses";
-import { Course, courses as defaultCourses, getCourseIcon, slugify } from "@/lib/courses";
+import { Course, getCourseIcon, slugify } from "@/lib/courses";
 
 const iconOptions = ["Layers", "Code2", "Server", "Database", "Globe", "Bot", "Smartphone"];
 const badgeColors = ["bg-brand-orange", "bg-brand-blue", "bg-green-500", "bg-red-500", "bg-slate-500"];
@@ -46,7 +47,7 @@ export default function AdminCourseDetails() {
   const { toast } = useToast();
 
   const courses = useMemo(() => {
-    const list = data && data.length > 0 ? data : defaultCourses;
+    const list = data ?? [];
     return list.slice().sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
   }, [data]);
 
@@ -146,7 +147,7 @@ export default function AdminCourseDetails() {
           </div>
           <div className="flex items-center gap-2">
             <Button variant="outline" onClick={() => refetch()} disabled={isFetching}>
-              {isFetching ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <RefreshCw className="h-4 w-4 mr-2" />}
+              {isFetching ? <Spinner className="h-4 w-4 mr-2" /> : <RefreshCw className="h-4 w-4 mr-2" />}
               Refresh
             </Button>
             <Button onClick={() => openEditor()} className="gradient-brand text-white">
@@ -374,7 +375,7 @@ export default function AdminCourseDetails() {
                     Live preview updates as you type.
                   </div>
                   <Button type="submit" disabled={isPending}>
-                    {isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <PenSquare className="h-4 w-4 mr-2" />}
+                    {isPending ? <Spinner className="h-4 w-4 mr-2" /> : <PenSquare className="h-4 w-4 mr-2" />}
                     Save Course
                   </Button>
                 </DialogFooter>

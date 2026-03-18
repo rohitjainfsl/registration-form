@@ -3,7 +3,13 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+} from "react-router-dom";
 import Index from "@/pages/Index";
 import NotFound from "@/pages/NotFound";
 import CoursePage from "@/pages/CoursePage";
@@ -20,17 +26,24 @@ import Loader from "@/components/Loader";
 import AdminLogin from "@/pages/AdminPages/AdminLogin";
 import AdminHome from "@/pages/AdminPages/AdminHome";
 import ProtectedRoute from "@/pages/ProtectedRoute";
+import StudentPublicRoute from "@/pages/StudentPublicRoute";
 import StudentPanel from "@/pages/StudentPages/StudentPanel";
 import AppLayout from "@/components/AppLayout/index";
 import StudentResult from "@/pages/StudentPages/StudentResult";
 import ResultDetailPage from "@/pages/StudentPages/ResultDetailPage";
 import StudentQuiz from "@/pages/StudentPages/StudentQuiz";
+import StudentAssignments from "@/pages/StudentPages/StudentAssignments";
 import Login from "@/pages/Login";
 import AdminLayout from "@/components/AdminLayout";
 import AdminCourseDetails from "@/pages/AdminPages/AdminCourseDetails";
+import AdminAssignments from "@/pages/AdminPages/AdminAssignments";
+import AdminPlacedStudents from "@/pages/AdminPages/AdminPlacedStudents";
+import AdminSuccessStories from "@/pages/AdminPages/AdminSuccessStories";
 // import StudentChangePassword from "@/pages/StudentPages/StudentPanel";
 // import StudentDashboard from "@/pages/StudentPages/StudentPanel/StudentDashboard";
 import ResetPassword from "@/pages/ResetPassword";
+import ForgotPassword from "@/pages/ForgotPassword";
+import ResetStudentPassword from "@/pages/ResetStudentPassword";
 
 import { AdminProvider } from "@/Context/Admincontext";
 import CreateTestForm from "@/pages/AdminPages/Admin Create test";
@@ -67,7 +80,14 @@ const AppRoutes = () => {
       <div className={loading ? "pointer-events-none" : ""}>
         <Routes>
           <Route element={<AppLayout />}>
-            <Route path="/" element={<Index />} />
+            <Route
+              path="/"
+              element={
+                <StudentPublicRoute redirectTo="/student/studentpanel">
+                  <Index />
+                </StudentPublicRoute>
+              }
+            />
             <Route path="/lifeatfsl" element={<LifeAtFSL />} />
             <Route path="/career" element={<CareerPage />} />
             <Route
@@ -92,8 +112,25 @@ const AppRoutes = () => {
             />
             <Route path="/courses/devops-cloud" element={<DevOpsCloud />} />
             <Route path="/courses/:slug" element={<CoursePage />} />
-            <Route path="/register" element={<RegistrationForm />} />
-            <Route path="/login" element={<Login />} />
+            <Route
+              path="/register"
+              element={
+                <StudentPublicRoute redirectTo="/student/studentpanel">
+                  <RegistrationForm />
+                </StudentPublicRoute>
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                <StudentPublicRoute redirectTo="/student/studentpanel">
+                  <Login />
+                </StudentPublicRoute>
+              }
+            />
+
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetStudentPassword />} />
 
             <Route path="/student/changepassword" element={<ResetPassword />} />
             <Route
@@ -109,6 +146,14 @@ const AppRoutes = () => {
               element={
                 <ProtectedRoute allowedRoles={["student"]} redirectTo="/login">
                   <StudentResult />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/student/assignments"
+              element={
+                <ProtectedRoute allowedRoles={["student"]} redirectTo="/login">
+                  <StudentAssignments />
                 </ProtectedRoute>
               }
             />
@@ -132,6 +177,7 @@ const AppRoutes = () => {
           />
 
           <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<Navigate to="login" replace />} />
             <Route path="login" element={<AdminLogin />} />
             <Route
               path="home"
@@ -185,6 +231,39 @@ const AppRoutes = () => {
                   redirectTo="/admin/login"
                 >
                   <AdminViewResult />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="assignments"
+              element={
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
+                  <AdminAssignments />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="placed-students"
+              element={
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
+                  <AdminPlacedStudents />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="success-stories"
+              element={
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
+                  <AdminSuccessStories />
                 </ProtectedRoute>
               }
             />

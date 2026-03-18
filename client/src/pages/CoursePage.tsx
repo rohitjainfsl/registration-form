@@ -1,10 +1,8 @@
 import { useParams } from "react-router-dom";
 import CourseDetailBySlug from "@/components/CourseDetailBySlug";
-import { courses, slugify } from "@/lib/courses";
 
 export default function CoursePage() {
   const { slug } = useParams();
-  const fallback = slug ? courses.find((c) => (c.slug ?? slugify(c.title)) === slug) : null;
 
   if (!slug) {
     return (
@@ -14,5 +12,5 @@ export default function CoursePage() {
     );
   }
 
-  return <CourseDetailBySlug slug={slug} fallbackCourse={fallback ?? undefined} />;
+  return <CourseDetailBySlug slug={slug} />;
 }

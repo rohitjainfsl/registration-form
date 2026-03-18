@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   CheckCircle2,
-  Loader2,
   Search,
   Trash2,
   X,
@@ -11,6 +10,7 @@ import {
   Users,
   Shield,
 } from "lucide-react";
+import Spinner from "@/components/ui/Spinner";
 import { useToast } from "@/hooks/use-toast";
 import { useAdminContext } from "@/Context/Admincontext";
 
@@ -236,7 +236,7 @@ const AdminViewStudent = (): JSX.Element => {
                   disabled={deleting}
                   className="inline-flex items-center gap-2 rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 transition disabled:cursor-not-allowed disabled:opacity-70"
                 >
-                  {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                  {deleting ? <Spinner className="h-4 w-4" /> : <Trash2 className="h-4 w-4" />}
                   Delete ({selectedIds.length})
                 </button>
               )}

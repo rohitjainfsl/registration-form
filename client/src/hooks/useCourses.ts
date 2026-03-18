@@ -1,13 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchCourseBySlug, fetchCourses, saveCourse } from "@/lib/api/courses";
-import { Course, courses as defaultCourses, slugify } from "@/lib/courses";
+import { Course, slugify } from "@/lib/courses";
 
 export const useCourses = () =>
   useQuery<Course[]>({
     queryKey: ["courses"],
     queryFn: fetchCourses,
     staleTime: 1000 * 60 * 5,
-    initialData: defaultCourses,
   });
 
 export const useCourse = (slug?: string, fallback?: Course | null) =>

@@ -8,7 +8,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { ArrowLeft, Eye, Loader2, MailCheck } from "lucide-react";
+import { ArrowLeft, Eye, MailCheck } from "lucide-react";
+import Spinner from "@/components/ui/Spinner";
 
 type Attempt = {
   studentId: string;
@@ -158,7 +159,7 @@ function TestScoresPage(): JSX.Element {
               disabled={sendingEmail}
               className="inline-flex items-center gap-2 rounded-lg bg-gradient-brand px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-brand-blue/20 transition hover:opacity-90 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              {sendingEmail ? <Loader2 className="h-4 w-4 animate-spin" /> : <MailCheck className="h-4 w-4" />}
+              {sendingEmail ? <Spinner className="h-4 w-4" /> : <MailCheck className="h-4 w-4" />}
               Release Result
             </button>
           </div>

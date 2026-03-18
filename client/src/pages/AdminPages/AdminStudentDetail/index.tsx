@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Calendar, CheckCircle2, FileText, Loader2, Pencil, User2, X } from "lucide-react";
+import { Calendar, CheckCircle2, FileText, Pencil, User2, X } from "lucide-react";
+import Spinner from "@/components/ui/Spinner";
 import { useToast } from "@/hooks/use-toast";
 import { useAdminContext } from "@/Context/Admincontext";
 import { getPNGUrl, getPublicIdFromUrl } from "@/cloudinary";
@@ -191,8 +192,8 @@ const AdminStudentDetail = (): JSX.Element => {
         </div>
 
         {loading ? (
-          <div className="rounded-2xl border border-border bg-card p-10 text-center shadow-sm">
-            <Loader2 className="mx-auto h-6 w-6 animate-spin text-brand-blue" />
+            <div className="rounded-2xl border border-border bg-card p-10 text-center shadow-sm">
+            <Spinner className="mx-auto h-6 w-6 text-brand-blue" />
             <p className="mt-3 text-sm text-muted-foreground">Loading student...</p>
           </div>
         ) : !student ? (
@@ -358,7 +359,7 @@ const AdminStudentDetail = (): JSX.Element => {
                     disabled={saving}
                     className="inline-flex items-center gap-2 rounded-lg bg-brand-blue px-4 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-90 transition disabled:cursor-not-allowed disabled:opacity-70"
                   >
-                    {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Pencil className="h-4 w-4" />}
+                    {saving ? <Spinner className="h-4 w-4" /> : <Pencil className="h-4 w-4" />}
                     Save Changes
                   </button>
                   <div className="text-xs text-muted-foreground">

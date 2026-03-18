@@ -39,7 +39,7 @@ courseSchema.pre("validate", function (next) {
   next();
 });
 
-courseSchema.index({ slug: 1 }, { unique: true });
+
 
 const Course = mongoose.model("Course", courseSchema);
 

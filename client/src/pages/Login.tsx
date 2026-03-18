@@ -200,29 +200,36 @@ export default function LoginPage({ onClose }: LoginPageProps) {
 
             <button
               type="submit"
-              className="w-full rounded-lg bg-brand-blue px-4 py-2.5 text-white text-sm font-semibold hover:opacity-90 transition"
+              disabled={loading}
+              className="w-full rounded-lg bg-brand-blue px-4 py-2.5 text-white text-sm font-semibold hover:opacity-90 transition disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Login
+              {loading ? "Logining" : "Login"}
             </button>
           </form>
 
           <div className="mt-4 flex items-center justify-between">
        
 
-          <p className="text-sm text-muted-foreground">
-            Don't have an account?
+            <p className="text-sm text-muted-foreground">
+              Don't have an account?
+              <button
+                type="button"
+                className="text-brand-blue underline ml-1"
+                onClick={() => {
+                  handleRequestClose();
+                  window.setTimeout(() => navigate("/register"), 260);
+                }}
+              >
+                Create an account
+              </button>
+            </p>
             <button
               type="button"
-              className="text-brand-blue underline ml-1"
-              onClick={() => navigate("/register")}
-              >
-              Create an account
-            </button>
-          </p>
-               <button
-              type="button"
               className="text-sm text-brand-blue underline hover:opacity-80 transition"
-              onClick={() => navigate("/student/changepassword")}
+              onClick={() => {
+                handleRequestClose();
+                window.setTimeout(() => navigate("/forgot-password"), 260);
+              }}
             >
               Forgot password?
             </button>

@@ -64,7 +64,7 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
 
       const data = await res.json();
       setIsAuthenticated(true);
-      setRole((data?.role as Role) ?? "admin");
+      setRole((data?.role as Role) ?? null);
     } catch (error) {
       console.error("checkToken failed", error);
       setIsAuthenticated(false);

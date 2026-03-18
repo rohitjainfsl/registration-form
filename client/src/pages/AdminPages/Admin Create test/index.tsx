@@ -1,6 +1,7 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Loader2, Plus, Upload, X } from "lucide-react";
+import { ArrowLeft, Plus, Upload, X } from "lucide-react";
+import Spinner from "@/components/ui/Spinner";
 import { useToast } from "@/hooks/use-toast";
 
 type Question = {
@@ -298,7 +299,7 @@ const CreateTestForm = (): JSX.Element => {
             >
               {submitting ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Spinner className="h-4 w-4" />
                   Creating...
                 </>
               ) : (
