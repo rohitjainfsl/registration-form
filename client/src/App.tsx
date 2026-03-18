@@ -39,6 +39,12 @@ import AdminCourseDetails from "@/pages/AdminPages/AdminCourseDetails";
 import AdminAssignments from "@/pages/AdminPages/AdminAssignments";
 import AdminPlacedStudents from "@/pages/AdminPages/AdminPlacedStudents";
 import AdminSuccessStories from "@/pages/AdminPages/AdminSuccessStories";
+import AdminUniversalHeader from "@/pages/AdminPages/AdminUniversalHeader";
+import AdminHeroSection from "@/pages/AdminPages/AdminHeroSection";
+import AdminCompanies from "@/pages/AdminPages/AdminCompanies";
+import AdminEngineeringTeam from "@/pages/AdminPages/AdminEngineeringTeam";
+import AdminGetInTouch from "@/pages/AdminPages/AdminGetInTouch";
+import AdminFooter from "@/pages/AdminPages/AdminFooter";
 // import StudentChangePassword from "@/pages/StudentPages/StudentPanel";
 // import StudentDashboard from "@/pages/StudentPages/StudentPanel/StudentDashboard";
 import ResetPassword from "@/pages/ResetPassword";
@@ -176,7 +182,7 @@ const AppRoutes = () => {
             }
           />
 
-          <Route path="/admin" element={<AdminLayout />}>
+          <Route path="/admin/*" element={<AdminLayout />}>
             <Route index element={<Navigate to="login" replace />} />
             <Route path="login" element={<AdminLogin />} />
             <Route
@@ -264,6 +270,72 @@ const AppRoutes = () => {
                   redirectTo="/admin/login"
                 >
                   <AdminSuccessStories />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="universal-header"
+              element={
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
+                  <AdminUniversalHeader />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="hero-section"
+              element={
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
+                  <AdminHeroSection />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="companies"
+              element={
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
+                  <AdminCompanies />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="engineering-team"
+              element={
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
+                  <AdminEngineeringTeam />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="get-in-touch"
+              element={
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
+                  <AdminGetInTouch />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="footer"
+              element={
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
+                  <AdminFooter />
                 </ProtectedRoute>
               }
             />

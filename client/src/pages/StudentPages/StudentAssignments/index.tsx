@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Play } from "lucide-react";
 
 type Assignment = {
   _id: string;
@@ -265,9 +266,9 @@ function StudentAssignments() {
                         alt={assignment.title}
                         className="h-full w-full object-cover"
                       />
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/40 transition">
-                        <div className="h-12 w-12 rounded-full bg-white/90 text-slate-800 grid place-items-center shadow">
-                          ?
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/30 transition group-hover:bg-black/40">
+                        <div className="grid h-14 w-14 place-items-center rounded-full bg-white/90 text-slate-800 shadow transition group-hover:scale-105">
+                          <Play className="ml-1 h-6 w-6 fill-current" />
                         </div>
                       </div>
                     </button>
@@ -316,14 +317,7 @@ function StudentAssignments() {
                       Added on {new Date(assignment.createdAt).toLocaleDateString("en-GB")}
                     </p>
                   )}
-                  <button
-                    type="button"
-                    onClick={() => playVideo(assignment.videoLink, containerId)}
-                    disabled={!canEmbedVideo}
-                    className="mt-4 inline-flex items-center rounded-lg border border-brand-blue px-4 py-2 text-sm font-semibold text-brand-blue transition hover:bg-brand-blue hover:text-white disabled:cursor-not-allowed disabled:border-slate-300 disabled:text-slate-400 disabled:hover:bg-transparent disabled:hover:text-slate-400"
-                  >
-                    {activePlayer?.containerId === containerId ? "Playing Video" : "Open Video"}
-                  </button>
+                  
                 </div>
               </article>
             );

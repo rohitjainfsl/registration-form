@@ -5,25 +5,33 @@ import Spinner from "@/components/ui/Spinner";
 import { useToast } from "@/hooks/use-toast";
 
 type Question = {
+  id: string;
   text: string;
   file: File | null;
   options: string[];
-  correct_answer: string;
+  correctOptionIndex: string;
   codeSnippet: string;
 };
 
-const blankQuestion: Question = {
+type QuestionTextField = "text" | "codeSnippet" | "correctOptionIndex";
+
+const DEFAULT_OPTION_COUNT = 4;
+
+let questionIdCounter = 0;
+
+const createEmptyQuestion = (): Question => ({
+  id: `question-${questionIdCounter++}`,
   text: "",
   file: null,
-  options: ["", "", "", ""],
-  correct_answer: "",
+  options: Array.from({ length: DEFAULT_OPTION_COUNT }, () => ""),
+  correctOptionIndex: "",
   codeSnippet: "",
-};
+});
 
 const CreateTestForm = (): JSX.Element => {
   const [title, setTitle] = useState<string>("");
-  const [duration, setDuration] = useState<number>(60);
-  const [questions, setQuestions] = useState<Question[]>([blankQuestion]);
+  const [duration, setDuration] = useState<string>("");
+  const [questions, setQuestions] = useState<Question[]>(() => [createEmptyQuestion()]);
   const [submitting, setSubmitting] = useState(false);
 
   const navigate = useNavigate();
@@ -32,61 +40,154 @@ const CreateTestForm = (): JSX.Element => {
   const apiBase = import.meta.env.VITE_API_URL;
   const totalQuestions = questions.length;
 
+  const resetForm = () => {
+    setTitle("");
+    setDuration("");
+    setQuestions([createEmptyQuestion()]);
+  };
+
+  const updateQuestion = (questionId: string, updater: (question: Question) => Question) => {
+    setQuestions((prev) =>
+      prev.map((question) =>
+        question.id === questionId ? updater(question) : question
+      )
+    );
+  };
+
   const handleAddQuestion = () => {
-    setQuestions((prev) => [...prev, { ...blankQuestion }]);
+    setQuestions((prev) => [...prev, createEmptyQuestion()]);
   };
 
-  const handleRemoveQuestion = (index: number) => {
-    setQuestions((prev) => (prev.length === 1 ? prev : prev.filter((_, i) => i !== index)));
+  const handleRemoveQuestion = (questionId: string) => {
+    setQuestions((prev) =>
+      prev.length === 1 ? prev : prev.filter((question) => question.id !== questionId)
+    );
   };
 
-  const handleQuestionChange = (index: number, field: keyof Question, value: string) => {
-    setQuestions((prev) => {
-      const updated = [...prev];
-      (updated[index][field] as string) = value;
-      return updated;
+  const handleQuestionChange = (
+    questionId: string,
+    field: QuestionTextField,
+    value: string
+  ) => {
+    updateQuestion(questionId, (question) => ({
+      ...question,
+      [field]: value,
+    }));
+  };
+
+  const handleOptionChange = (questionId: string, optionIndex: number, value: string) => {
+    updateQuestion(questionId, (question) => {
+      const nextOptions = question.options.map((option, index) =>
+        index === optionIndex ? value : option
+      );
+
+      return {
+        ...question,
+        options: nextOptions,
+        correctOptionIndex:
+          question.correctOptionIndex === String(optionIndex) && !value.trim()
+            ? ""
+            : question.correctOptionIndex,
+      };
     });
   };
 
-  const handleOptionChange = (qIndex: number, oIndex: number, value: string) => {
-    setQuestions((prev) => {
-      const updated = [...prev];
-      updated[qIndex].options[oIndex] = value;
-      return updated;
-    });
+  const handleFileChange = (questionId: string, file: File | null) => {
+    updateQuestion(questionId, (question) => ({
+      ...question,
+      file,
+    }));
   };
 
-  const handleFileChange = (index: number, file: File | null) => {
-    setQuestions((prev) => {
-      const updated = [...prev];
-      updated[index].file = file;
-      return updated;
-    });
+  const handleDurationChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const nextValue = e.target.value;
+    if (/^\d*$/.test(nextValue)) {
+      setDuration(nextValue);
+    }
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (submitting) return;
 
+    const trimmedTitle = title.trim();
+    const parsedDuration = Number(duration);
+
+    if (!trimmedTitle) {
+      toast({
+        title: "Missing test title",
+        description: "Add a title before creating the test.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!duration || !Number.isInteger(parsedDuration) || parsedDuration <= 0) {
+      toast({
+        title: "Invalid duration",
+        description: "Enter the duration as a whole number of minutes.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const normalizedQuestions = questions.map((question, index) => {
+      const text = question.text.trim();
+      const options = question.options.map((option) => option.trim());
+      const codeSnippet = question.codeSnippet.trim();
+      const correctOptionIndex = Number(question.correctOptionIndex);
+
+      if (!text) {
+        throw new Error(`Question ${index + 1} needs a prompt.`);
+      }
+
+      if (options.some((option) => !option)) {
+        throw new Error(`Fill in all answer options for Question ${index + 1}.`);
+      }
+
+      if (
+        !Number.isInteger(correctOptionIndex) ||
+        correctOptionIndex < 0 ||
+        correctOptionIndex >= options.length
+      ) {
+        throw new Error(`Select the correct answer for Question ${index + 1}.`);
+      }
+
+      return {
+        text,
+        file: question.file,
+        options,
+        correct_answer: options[correctOptionIndex],
+        codeSnippet: codeSnippet || null,
+      };
+    });
+
+    if (!normalizedQuestions.length) {
+      toast({
+        title: "Add a question",
+        description: "Create at least one question before submitting.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setSubmitting(true);
 
     const formData = new FormData();
-    formData.append("title", title);
-    formData.append("numQuestions", String(totalQuestions));
-    formData.append("duration", String(duration));
+    formData.append("title", trimmedTitle);
+    formData.append("numQuestions", String(normalizedQuestions.length));
+    formData.append("duration", String(parsedDuration));
 
-    const qData = questions.map((q) => ({
-      text: q.text || null,
-      options: q.options,
-      correct_answer: q.correct_answer,
-      codeSnippet: q.codeSnippet || null,
-    }));
+    formData.append(
+      "questions",
+      JSON.stringify(
+        normalizedQuestions.map(({ file, ...question }) => question)
+      )
+    );
 
-    formData.append("questions", JSON.stringify(qData));
-
-    questions.forEach((q, index) => {
-      if (q.file) {
-        formData.append(`questionimage_${index}`, q.file);
+    normalizedQuestions.forEach((question, index) => {
+      if (question.file) {
+        formData.append(`questionimage_${index}`, question.file);
       }
     });
 
@@ -97,18 +198,26 @@ const CreateTestForm = (): JSX.Element => {
         body: formData,
       });
 
-      if (!res.ok) throw new Error("Failed to create test");
+      const data = await res.json().catch(() => null);
 
+      if (!res.ok) {
+        throw new Error(data?.message || "Failed to create test");
+      }
+
+      resetForm();
       toast({
         title: "Test created",
         description: "Your assessment is ready for publishing.",
       });
-      navigate("/admin/home");
+      navigate("/admin/home", { replace: true });
     } catch (err) {
       console.error("Error creating test:", err);
       toast({
         title: "Unable to create test",
-        description: "Please try again or check your connection.",
+        description:
+          err instanceof Error
+            ? err.message
+            : "Please try again or check your connection.",
         variant: "destructive",
       });
     } finally {
@@ -139,7 +248,7 @@ const CreateTestForm = (): JSX.Element => {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6" autoComplete="off">
           <div className="rounded-2xl border border-border bg-card shadow-lg p-6 space-y-4">
             <div className="flex items-center justify-between">
               <div>
@@ -159,6 +268,7 @@ const CreateTestForm = (): JSX.Element => {
                   value={title}
                   onChange={(e: ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
                   placeholder="e.g., Frontend Fundamentals"
+                  autoComplete="off"
                   className="w-full rounded-lg border border-border px-3 py-2 outline-none focus:ring-2 focus:ring-brand-blue"
                   required
                 />
@@ -167,20 +277,24 @@ const CreateTestForm = (): JSX.Element => {
               <label className="space-y-1 text-sm font-medium text-foreground">
                 Duration (minutes)
                 <input
-                  type="number"
-                  min={10}
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   value={duration}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => setDuration(Number(e.target.value))}
+                  onChange={handleDurationChange}
+                  placeholder="e.g., 60"
+                  autoComplete="off"
                   className="w-full rounded-lg border border-border px-3 py-2 outline-none focus:ring-2 focus:ring-brand-blue"
                   required
                 />
+                <p className="text-xs text-muted-foreground">Enter whole minutes only.</p>
               </label>
             </div>
           </div>
 
           <div className="space-y-4">
             {questions.map((q, index) => (
-              <div key={index} className="rounded-2xl border border-border bg-card shadow-lg p-6 space-y-4">
+              <div key={q.id} className="rounded-2xl border border-border bg-card shadow-lg p-6 space-y-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-sm text-muted-foreground">Question {index + 1}</p>
@@ -189,7 +303,7 @@ const CreateTestForm = (): JSX.Element => {
                   {questions.length > 1 && (
                     <button
                       type="button"
-                      onClick={() => handleRemoveQuestion(index)}
+                      onClick={() => handleRemoveQuestion(q.id)}
                       className="inline-flex items-center gap-1 rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 transition"
                     >
                       <X className="h-4 w-4" />
@@ -204,8 +318,9 @@ const CreateTestForm = (): JSX.Element => {
                     <input
                       type="text"
                       value={q.text}
-                      onChange={(e) => handleQuestionChange(index, "text", e.target.value)}
+                      onChange={(e) => handleQuestionChange(q.id, "text", e.target.value)}
                       placeholder="Write the question prompt"
+                      autoComplete="off"
                       className="w-full rounded-lg border border-border px-3 py-2 outline-none focus:ring-2 focus:ring-brand-blue"
                       required
                     />
@@ -215,8 +330,11 @@ const CreateTestForm = (): JSX.Element => {
                     Code Snippet (optional)
                     <textarea
                       value={q.codeSnippet}
-                      onChange={(e) => handleQuestionChange(index, "codeSnippet", e.target.value)}
+                      onChange={(e) =>
+                        handleQuestionChange(q.id, "codeSnippet", e.target.value)
+                      }
                       placeholder="Paste any code sample the student should reference"
+                      autoComplete="off"
                       className="w-full rounded-lg border border-border px-3 py-2 outline-none focus:ring-2 focus:ring-brand-blue"
                       rows={3}
                     />
@@ -231,7 +349,7 @@ const CreateTestForm = (): JSX.Element => {
                         type="file"
                         accept="image/*"
                         className="hidden"
-                        onChange={(e) => handleFileChange(index, e.target.files?.[0] || null)}
+                        onChange={(e) => handleFileChange(q.id, e.target.files?.[0] || null)}
                       />
                     </label>
                   </div>
@@ -239,12 +357,16 @@ const CreateTestForm = (): JSX.Element => {
 
                 <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
                   {q.options.map((opt, i) => (
-                    <label key={i} className="space-y-1 text-sm font-medium text-foreground">
+                    <label
+                      key={`${q.id}-option-${i}`}
+                      className="space-y-1 text-sm font-medium text-foreground"
+                    >
                       Option {String.fromCharCode(65 + i)}
                       <input
                         type="text"
                         value={opt}
-                        onChange={(e) => handleOptionChange(index, i, e.target.value)}
+                        onChange={(e) => handleOptionChange(q.id, i, e.target.value)}
+                        autoComplete="off"
                         className="w-full rounded-lg border border-border px-3 py-2 outline-none focus:ring-2 focus:ring-brand-blue"
                         required
                       />
@@ -255,20 +377,21 @@ const CreateTestForm = (): JSX.Element => {
                 <label className="space-y-1 text-sm font-medium text-foreground block">
                   Correct Answer
                   <select
-                    value={q.correct_answer}
-                    onChange={(e) => handleQuestionChange(index, "correct_answer", e.target.value)}
+                    value={q.correctOptionIndex}
+                    onChange={(e) =>
+                      handleQuestionChange(q.id, "correctOptionIndex", e.target.value)
+                    }
                     className="w-full rounded-lg border border-border px-3 py-2 outline-none focus:ring-2 focus:ring-brand-blue"
                     required
                   >
                     <option value="">Select correct answer</option>
-                    {q.options.map(
-                      (opt, i) =>
-                        opt && (
-                          <option key={i} value={opt}>
-                            {opt || `Option ${String.fromCharCode(65 + i)}`}
-                          </option>
-                        )
-                    )}
+                    {q.options.map((opt, i) => (
+                      <option key={`${q.id}-answer-${i}`} value={String(i)} disabled={!opt.trim()}>
+                        {opt.trim()
+                          ? `Option ${String.fromCharCode(65 + i)}: ${opt}`
+                          : `Option ${String.fromCharCode(65 + i)}`}
+                      </option>
+                    ))}
                   </select>
                 </label>
               </div>
