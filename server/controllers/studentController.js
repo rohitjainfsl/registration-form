@@ -17,7 +17,7 @@ export async function register(req, res) {
 
     const {
       name,
-      email,
+      email: rawEmail,
       phone,
       dob,
       gender,
@@ -65,6 +65,10 @@ export async function register(req, res) {
       aadharBack = aadharBackBody || "";
     }
 
+    const email = typeof rawEmail === "string" ? rawEmail.trim().toLowerCase() : "";
+    if (!email) {
+      return res.status(400).json({ message: "Email is required." });
+    }
     const plainPassword = generatePassword();
 
     const newRegistration = new studentModel({
@@ -90,7 +94,7 @@ export async function register(req, res) {
       aadharFront,
       aadharBack,
       password: plainPassword,
-      firstTimeSignin: true,
+      firstTimesignin: true,
       termsAccepted: toBool(termsAccepted) || toBool(tcAccepted) || false,
     });
 

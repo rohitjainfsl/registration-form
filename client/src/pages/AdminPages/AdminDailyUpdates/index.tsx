@@ -10,6 +10,7 @@ type DailyUpdate = {
   message: string;
   trelloCardUrl?: string | null;
   createdAt?: string;
+  status?: "todo" | "doing" | "done";
 };
 
 const AdminDailyUpdates = () => {
@@ -17,6 +18,7 @@ const AdminDailyUpdates = () => {
   const [updates, setUpdates] = useState<DailyUpdate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUpdates = async () => {
@@ -40,6 +42,30 @@ const AdminDailyUpdates = () => {
 
     void fetchUpdates();
   }, [apiBase]);
+
+  const handleStatusChange = async (updateId: string, status: "todo" | "doing" | "done") => {
+    try {
+      setUpdatingId(updateId);
+      const res = await fetch(`${apiBase}/daily-updates/${updateId}/status`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data?.message || "Failed to update status");
+      }
+      setUpdates((prev) =>
+        prev.map((item) => (item._id === updateId ? data.update : item)),
+      );
+    } catch (err) {
+      console.error("Status update failed", err);
+      setError(err instanceof Error ? err.message : "Failed to update status.");
+    } finally {
+      setUpdatingId(null);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
@@ -98,6 +124,24 @@ const AdminDailyUpdates = () => {
                       <ExternalLink className="h-3 w-3" />
                       View Trello card
                     </a>
+                  )}
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-xs font-semibold text-slate-500">Status</span>
+                  <select
+                    value={update.status || "todo"}
+                    onChange={(e) =>
+                      handleStatusChange(update._id, e.target.value as "todo" | "doing" | "done")
+                    }
+                    disabled={updatingId === update._id}
+                    className="rounded-md border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 focus:border-brand-blue focus:outline-none focus:ring-2 focus:ring-brand-blue/20 disabled:opacity-70"
+                  >
+                    <option value="todo">To Do</option>
+                    <option value="doing">Doing</option>
+                    <option value="done">Done</option>
+                  </select>
+                  {updatingId === update._id && (
+                    <span className="text-xs text-slate-400">Updating...</span>
                   )}
                 </div>
                 <p className="text-sm text-slate-700">{update.message}</p>

@@ -11,6 +11,12 @@ const dailyUpdateSchema = new mongoose.Schema(
     trelloCardId: { type: String, default: null, trim: true },
     trelloCardUrl: { type: String, default: null, trim: true },
     trelloCardShortUrl: { type: String, default: null, trim: true },
+    status: {
+      type: String,
+      enum: ["todo", "doing", "done"],
+      default: "todo",
+      trim: true,
+    },
   },
   { timestamps: true },
 );

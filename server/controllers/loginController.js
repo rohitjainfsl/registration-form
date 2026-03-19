@@ -8,9 +8,11 @@ import dotenv from "dotenv";
 import { log } from "console";
 dotenv.config();
 
+const escapeRegExp = (value = "") => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 export async function studentlogin(req, res) {
-  const { email, password, role, firstTimesignin } = req.body;
+  const { email: rawEmail, password } = req.body;
+  const email = typeof rawEmail === "string" ? rawEmail.trim().toLowerCase() : "";
   try {
     if (!email || !password) {
       return res
@@ -18,14 +20,24 @@ export async function studentlogin(req, res) {
         .json({ message: "Email and password are required." });
     }
 
-    const user = await studentModel.findOne({ email });
+    let user = await studentModel.findOne({ email });
+    if (!user && email) {
+      user = await studentModel.findOne({
+        email: { $regex: new RegExp(`^${escapeRegExp(email)}$`, "i") },
+      });
+    }
 
     
     if (!user) {
       return res.status(404).json({ message: "Invalid email or password." });
     }
     
-    const isMatch = await bcrypt.compare(password, user.password);
+    let isMatch = false;
+    if (user.firstTimesignin) {
+      isMatch = password === user.password;
+    } else {
+      isMatch = await bcrypt.compare(password, user.password);
+    }
     console.log(isMatch); 
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid email or password." });
@@ -87,8 +99,6 @@ export async function changePassword(req, res) {
     .json({ message: "Error changing password.", error: error.message });
   }
 }
-
-
 export const adminLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
