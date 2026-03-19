@@ -221,6 +221,7 @@ const AdminAssignments = (): JSX.Element => {
     }
   };
 
+
   const handleCategorySubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const name = categoryForm.name.trim();
@@ -447,7 +448,7 @@ const AdminAssignments = (): JSX.Element => {
                         <Video className="h-5 w-5 text-muted-foreground" />
                       )}
                     </div>
-                    <div className="flex-1 min-w-0 space-y-1">
+                    <div className="flex-1 min-w-0 space-y-2">
                       <p className="text-sm font-semibold text-foreground truncate" title={item.title}>
                         {item.title}
                       </p>

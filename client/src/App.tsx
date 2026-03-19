@@ -33,10 +33,12 @@ import StudentResult from "@/pages/StudentPages/StudentResult";
 import ResultDetailPage from "@/pages/StudentPages/ResultDetailPage";
 import StudentQuiz from "@/pages/StudentPages/StudentQuiz";
 import StudentAssignments from "@/pages/StudentPages/StudentAssignments";
+import StudentDailyUpdates from "@/pages/StudentPages/StudentDailyUpdates";
 import Login from "@/pages/Login";
 import AdminLayout from "@/components/AdminLayout";
 import AdminCourseDetails from "@/pages/AdminPages/AdminCourseDetails";
 import AdminAssignments from "@/pages/AdminPages/AdminAssignments";
+import AdminDailyUpdates from "@/pages/AdminPages/AdminDailyUpdates";
 import AdminPlacedStudents from "@/pages/AdminPages/AdminPlacedStudents";
 import AdminSuccessStories from "@/pages/AdminPages/AdminSuccessStories";
 import AdminUniversalHeader from "@/pages/AdminPages/AdminUniversalHeader";
@@ -164,6 +166,14 @@ const AppRoutes = () => {
               }
             />
             <Route
+              path="/student/daily-updates"
+              element={
+                <ProtectedRoute allowedRoles={["student"]} redirectTo="/login">
+                  <StudentDailyUpdates />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/student/result-detail/:quizAttemptId"
               element={
                 <ProtectedRoute allowedRoles={["student"]} redirectTo="/login">
@@ -248,6 +258,17 @@ const AppRoutes = () => {
                   redirectTo="/admin/login"
                 >
                   <AdminAssignments />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="daily-updates"
+              element={
+                <ProtectedRoute
+                  allowedRoles={["admin"]}
+                  redirectTo="/admin/login"
+                >
+                  <AdminDailyUpdates />
                 </ProtectedRoute>
               }
             />

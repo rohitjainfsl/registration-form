@@ -18,6 +18,7 @@ const primaryLinks = [
 const moreLinks = [
   { label: "Course Details", href: "/admin/courses" },
   { label: "Assignments", href: "/admin/assignments" },
+  { label: "Daily Updates", href: "/admin/daily-updates" },
   { label: "Placed Students", href: "/admin/placed-students" },
   { label: "Success Stories", href: "/admin/success-stories" },
   { label: "Universal Header", href: "/admin/universal-header" },
