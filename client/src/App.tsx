@@ -53,7 +53,7 @@ import ResetPassword from "@/pages/ResetPassword";
 import ForgotPassword from "@/pages/ForgotPassword";
 import ResetStudentPassword from "@/pages/ResetStudentPassword";
 
-import { AdminProvider } from "@/Context/Admincontext";
+import { AdminProvider, useAdminContext } from "@/Context/Admincontext";
 import CreateTestForm from "@/pages/AdminPages/Admin Create test";
 import AdminViewStudent from "@/pages/AdminPages/AdminViewStudent";
 import AdminViewResult from "@/pages/AdminPages/AdminViewResult";
@@ -66,7 +66,9 @@ const queryClient = new QueryClient();
 
 const AppRoutes = () => {
   const location = useLocation();
+  const { authChecked } = useAdminContext();
   const [loading, setLoading] = useState(true);
+  const showLoader = loading || !authChecked;
 
   useLayoutEffect(() => {
     setLoading(true);
@@ -84,8 +86,10 @@ const AppRoutes = () => {
 
   return (
     <>
-      {loading && <Loader />}
-      <div className={loading ? "pointer-events-none" : ""}>
+      {showLoader && <Loader />}
+      <div
+        className={`transition-opacity duration-200 ${showLoader ? "pointer-events-none opacity-0" : "opacity-100"}`}
+      >
         <Routes>
           <Route element={<AppLayout />}>
             <Route

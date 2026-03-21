@@ -1,3 +1,5 @@
+import { parseOptionalNumber } from "@/lib/utils";
+
 export type FooterLink = { _id?: string; label: string; href: string; order?: number };
 export type FooterSection = { _id?: string; title: string; links: FooterLink[]; order?: number };
 export type FooterSocial = { _id?: string; label: string; href: string; icon: string; order?: number };
@@ -94,7 +96,7 @@ const normalizeLinks = (value: unknown, fallback: FooterLink[]) => {
         _id: typeof (item as FooterLink)._id === "string" ? (item as FooterLink)._id : undefined,
         label,
         href,
-        order: Number((item as FooterLink).order) || 0,
+        order: parseOptionalNumber((item as FooterLink).order),
       };
     })
     .filter(Boolean) as FooterLink[];
@@ -111,7 +113,7 @@ const normalizeSections = (value: unknown, fallback: FooterSection[]) => {
       return {
         _id: typeof (item as FooterSection)._id === "string" ? (item as FooterSection)._id : undefined,
         title,
-        order: Number((item as FooterSection).order) || 0,
+        order: parseOptionalNumber((item as FooterSection).order),
         links: normalizeLinks((item as FooterSection).links, []),
       };
     })
@@ -133,7 +135,7 @@ const normalizeSocials = (value: unknown, fallback: FooterSocial[]) => {
         label,
         href,
         icon,
-        order: Number((item as FooterSocial).order) || 0,
+        order: parseOptionalNumber((item as FooterSocial).order),
       };
     })
     .filter(Boolean) as FooterSocial[];
